@@ -75,6 +75,7 @@ def test_add_row():
         name="Rex Eagle's Brother",
         email_list=email_list,
         phone=phone_row,
+        age=55,
         created_by=user,
         created_on=datetime.now()
     )
@@ -101,6 +102,7 @@ def insert_contact_record(user, name, email_list, phone, created_on):
         name=name,
         email_list=e_list,
         phone=p,
+        age=33,
         created_by=user,
         created_on=created_on
     )
@@ -117,7 +119,7 @@ def test_search():
     ]
     mydal.define_tables_of_db()
     user = anvil.users.get_user()
-    created_on = datetime.now()+timedelta(seconds=1) # so as not to clash with previous tests
+    created_on = datetime.now() + timedelta(seconds=1)  # so as not to clash with previous tests
     # create records
     Parameter = namedtuple("Parameter", PARAMETERS)
     for _v in VARIATIONS:
@@ -129,7 +131,7 @@ def test_search():
     contacts = app_tables.contact.search(
         tables.order_by('name', ascending=False), created_on=created_on)
     assert len(VARIATIONS) == len(contacts)
-    date_time_expected=created_on.replace(microsecond=0)
+    date_time_expected = created_on.replace(microsecond=0)
     assert all([date_time_expected == contact['created_on'] for contact in contacts])
     assert all(['M name' == contacts[0]['name'],
                 'L name' == contacts[1]['name'],
