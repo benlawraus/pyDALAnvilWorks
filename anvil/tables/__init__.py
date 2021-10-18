@@ -24,8 +24,9 @@ class BaseFunction:
         mydal.db.commit()
         return row_id
 
-    def get_by_id(self, **kwargs):
-        pass
+    def get_by_id(self, id):
+        return mydal.db[self.table_name](id)
+
 
     def search(self, *args, **kwargs):
         orderby = {}

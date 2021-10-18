@@ -5,8 +5,9 @@ import anvil.users
 from anvil import tables
 from anvil.tables import app_tables
 import tests.pydal_def as mydal
-from datetime import datetime, timedelta
+from datetime import timedelta
 import pytest
+from tests.common import *
 
 
 def test_tables():
@@ -136,3 +137,26 @@ def test_search():
     assert all(['M name' == contacts[0]['name'],
                 'L name' == contacts[1]['name'],
                 'D name' == contacts[2]['name']])
+
+
+def test_get_by_id():
+    mydal.define_tables_of_db()
+    # test anvil.users.get_user
+    user_id = mydal.db.users.insert(**user_generator())
+    mydal.db.commit()
+    user = anvil.users.get_user()  # gets last inserted user
+    assert user_id == user.id
+    user_act = anvil.users.get_by_id(user_id)
+    assert user_id == user_act.id
+
+    # test app_tables.contact.get_by_id
+    email_list = [email_generator() for count in range(3)]
+    contact_id = insert_contact_record(user,
+                                       name_generator(),
+                                       email_list,
+                                       phone_generator(),
+                                       datetime.now().replace(microsecond=0))
+    contact_row = app_tables.contact.get_by_id(contact_id)
+    contact_expected = mydal.db.contact(contact_id)
+    assert contact_expected.name == contact_row['name'] and \
+           contact_expected.created_on == contact_row['created_on']
