@@ -9,7 +9,7 @@ def add_row(**kwargs):
 
 
 def select_user():
-    row = mydal.db().select(mydal.db.users.ALL, orderby=mydal.db.users.id).first()
+    row = mydal.db().select(mydal.db.users.ALL, orderby=mydal.db.users.id).last()
     return row
 
 def get_user():
@@ -17,6 +17,6 @@ def get_user():
     row = select_user()
     if row is None:
         # create a user
-        add_row()
+        add_row(name="Rex Eagle")
         row = select_user()
     return row
