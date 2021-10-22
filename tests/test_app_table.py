@@ -1,8 +1,6 @@
 """File containing pytest tests"""
 from collections import namedtuple
 
-import pydal.helpers.classes
-
 import anvil.users
 from anvil import tables
 from anvil.tables import app_tables

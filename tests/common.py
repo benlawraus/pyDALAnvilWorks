@@ -1,6 +1,7 @@
 import string
 import random
 from datetime import datetime
+from typing import Dict
 
 
 def random_number(size=3):
@@ -15,25 +16,32 @@ def random_name(size=5, chars=string.ascii_lowercase):
     return first_name.capitalize()
 
 
-def name_generator():
+def name_generator()->str:
+    """Returns a random string in the form of 'first_name space last_name'."""
     size1 = random.choice((3, 4, 5, 6, 7))
     size2 = random.choice((3, 4, 5, 6, 7))
     return random_name(size1) + " " + random_name(size2)
 
 
-def phone_generator():
+def phone_generator()->str:
+    """Returns a random 10 digit number as a string."""
     return "(" + random_number() + ")" + random_number() + " " + random_number(4)
 
 
-def email_generator():
+def email_generator()->str:
+    """Returns a string of characters in the form of 'str@str.com'"""
     return random_name(8) + "@" + random_name(8) + ".com"
 
 
-def location_generator():
+def location_generator()->str:
+    """Returns a string of characters in the form of '5-digits space name, name"""
     return random_number(5) + " " + random_name(6) + "," + random_name(7)
 
 
-def user_generator():
+def user_generator()->Dict:
+    """Returns a dict of user attributes.
+
+    `last_login` and `signed_up` are the same time."""
     time_now = datetime.now()
     return dict(
         name=name_generator(),
