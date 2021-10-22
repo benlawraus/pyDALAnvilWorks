@@ -82,26 +82,48 @@ def get_user():
     return user_ref  # gets last inserted user
 
 
-def test_get_by_id():
-    mydal.define_tables_of_db()
-    # test anvil.users.get_by_id()
-    user_ref = get_user()
-    user_act = anvil.users.get_by_id(user_ref)
-    user_row = mydal.db.users(user_ref)
-    assert user_row == user_act
+class TestUser:
+    def test_get_user(self):
+        mydal.define_tables_of_db()
+        # test anvil.users.get_by_id()
+        user_ref = get_user()
+        user = anvil.users.get_user()
+        assert mydal.db.users(user_ref) == user
 
-    # test app_tables.contact.get_by_id
-    email_list = [email_generator() for count in range(3)]
-    contact_ref = insert_contact_record(user_ref,
-                                        name_generator(),
-                                        email_list,
-                                        phone_generator(),
-                                        datetime.now().replace(microsecond=0))
-    contact_row = app_tables.contact.get_by_id(contact_ref)
-    contact_expected = mydal.db.contact(contact_ref)
-    assert contact_expected.name == contact_row['name'] and \
-           contact_expected.created_on == contact_row['created_on'] and \
-           contact_expected == contact_row
+    def test_user_get_by_id(self):
+        mydal.define_tables_of_db()
+        # test anvil.users.get_by_id()
+        user_ref = get_user()
+        user_act = anvil.users.get_by_id(user_ref)
+        user_row = mydal.db.users(user_ref)
+        assert user_row == user_act
+
+
+class TestID:
+
+    def test_get_id(self):
+        mydal.define_tables_of_db()
+        # test app_tables.contact.get_by_id
+        user = anvil.users.get_user()
+        email_list = [email_generator() for count in range(3)]
+        contact_ref = insert_contact_record(user,
+                                            name_generator(),
+                                            email_list,
+                                            phone_generator(),
+                                            datetime.now().replace(microsecond=0))
+        contact_row = app_tables.contact.get_by_id(contact_ref)
+        contact_expected = mydal.db.contact(contact_ref)
+        assert contact_expected.name == contact_row['name'] and \
+               contact_expected.created_on == contact_row['created_on'] and \
+               contact_expected == contact_row
+        contact_id = contact_row.get_id()
+        # test for Row class
+        assert contact_ref == contact_id
+        # test for Reference class
+        assert contact_id == contact_ref['id']
+        # test for referenced field
+        assert isinstance(contact_ref['phone'], pydal.helpers.classes.Reference)
+        assert contact_ref['phone'] == contact_ref['phone'].get_id()
 
 
 class TestRow:

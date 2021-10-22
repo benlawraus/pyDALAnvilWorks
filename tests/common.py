@@ -34,13 +34,15 @@ def location_generator():
 
 
 def user_generator():
+    time_now = datetime.now()
     return dict(
         name=name_generator(),
         email=email_generator(),
         enabled=True,
-        signed_up=datetime.now(),
+        signed_up=time_now,
         password_hash=random_name(32),
         confirmed_email=True,
         email_confirmation_key=random_name(32),
-        last_login=datetime.now(),
+        last_login=time_now,
         remembered_logins=random_name(16))
+

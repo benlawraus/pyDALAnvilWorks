@@ -4,7 +4,6 @@ import tests.pydal_def as mydal
 
 
 def order_by(*args, **kwargs):
-    print("From order_by:")
     return {**{'orderby': '|'.join(args)}, **kwargs}
 
 
@@ -64,7 +63,8 @@ app_tables = AppTables()
 
 
 def get_id(self):
-    return self.id
+    return self['id']
 
 
 pydal.objects.Row.get_id = get_id
+pydal.helpers.classes.Reference.get_id = get_id
