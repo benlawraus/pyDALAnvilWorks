@@ -66,11 +66,5 @@ app_tables = AppTables()
 def get_id(self):
     return self.id
 
-def sub_field_ref_for_record(self, table_name):
-    for field in vars(self):
-        type_of = mydal.db[table_name][field].type
-        print(type(type_of))
-
-
 
 pydal.objects.Row.get_id = get_id
