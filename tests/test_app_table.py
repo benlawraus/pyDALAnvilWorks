@@ -1,12 +1,13 @@
 """File containing pytest tests"""
 from collections import namedtuple
 
+import pydal.helpers.classes
+
 import anvil.users
 from anvil import tables
 from anvil.tables import app_tables
 import tests.pydal_def as mydal
 from datetime import timedelta
-import pytest
 from tests.common import *
 
 
@@ -20,83 +21,19 @@ def test_order_by():
     assert True
 
 
-def test_get_user():
-    mydal.define_tables_of_db()
-    # write a user
-    user_d = dict(
-        name="Rex Eagle",
-        email="my_email@address.com",
-        enabled=True,
-        signed_up=datetime.now(),
-        password_hash="adsfasdf",
-        confirmed_email=True,
-        email_confirmation_key="dfgrgdf",
-        last_login=datetime.now())
-    assert anvil.users.add_row(**user_d) is not None
-    # get a user
-    user = anvil.users.get_user()
-    assert "Rex Eagle" == user.name
-
-
-def email_records(user):
-    # write two email records
-    email_d = dict(
-        address='firstname.lastname@email.com',
-        created_by=user
-    )
-    row1 = app_tables.email.add_row(**email_d)
-    email_d = dict(
-        address='2ndemail.Eagle@email.com',
-        created_by=user
-    )
-    row2 = app_tables.email.add_row(**email_d)
-    return [row1, row2]
-
-
-def phone_record(user):
-    phone_d = dict(
-        number="(888) 808 0808",
-        created_by=user
-    )
-    return app_tables.phone.add_row(**phone_d)
-
-
-def test_add_row():
-    """Tests single_link and multi-link lists in record"""
-    mydal.define_tables_of_db()
-    # get user (run test_get_user at least once)
-    user = anvil.users.get_user()
-    assert "Rex Eagle" == user['name']
-    email_list = email_records(user)
-    assert all(email_list)
-    phone_row = phone_record(user)
-    assert phone_row
-    # write a contact
-    contact_d = dict(
-        name="Rex Eagle's Brother",
-        email_list=email_list,
-        phone=phone_row,
-        age=55,
-        created_by=user,
-        created_on=datetime.now()
-    )
-    contact_row = app_tables.contact.add_row(**contact_d)
-    assert contact_row
-
-
-def insert_email_record(user, email, created_on):
-    db_row_id = mydal.db.email.insert(address=email, created_by=user, created_on=created_on)
+def insert_email_record(user, email: str, created_on: datetime) -> pydal.helpers.classes.Reference:
+    db_row_ref = mydal.db.email.insert(address=email, created_by=user, created_on=created_on)
     mydal.db.commit()
-    return db_row_id
+    return db_row_ref
 
 
-def insert_phone_record(user, phone, created_on):
-    db_row_id = mydal.db.phone.insert(number=phone, created_by=user, created_on=created_on)
+def insert_phone_record(user, phone: str, created_on: datetime) -> pydal.helpers.classes.Reference:
+    db_row_ref = mydal.db.phone.insert(number=phone, created_by=user, created_on=created_on)
     mydal.db.commit()
-    return db_row_id
+    return db_row_ref
 
 
-def insert_contact_record(user, name, email_list, phone, created_on):
+def insert_contact_record(user, name, email_list, phone, created_on) -> pydal.helpers.classes.Reference:
     e_list = [insert_email_record(user, e, created_on) for e in email_list]
     p = insert_phone_record(user, phone, created_on)
     contact = mydal.db.contact.insert(
@@ -139,24 +76,56 @@ def test_search():
                 'D name' == contacts[2]['name']])
 
 
+def get_user():
+    user_ref = mydal.db.users.insert(**user_generator())
+    mydal.db.commit()
+    return user_ref  # gets last inserted user
+
+
 def test_get_by_id():
     mydal.define_tables_of_db()
-    # test anvil.users.get_user
-    user_id = mydal.db.users.insert(**user_generator())
-    mydal.db.commit()
-    user = anvil.users.get_user()  # gets last inserted user
-    assert user_id == user.id
-    user_act = anvil.users.get_by_id(user_id)
-    assert user_id == user_act.id
+    # test anvil.users.get_by_id()
+    user_ref = get_user()
+    user_act = anvil.users.get_by_id(user_ref)
+    user_row = mydal.db.users(user_ref)
+    assert user_row == user_act
 
     # test app_tables.contact.get_by_id
     email_list = [email_generator() for count in range(3)]
-    contact_id = insert_contact_record(user,
-                                       name_generator(),
-                                       email_list,
-                                       phone_generator(),
-                                       datetime.now().replace(microsecond=0))
-    contact_row = app_tables.contact.get_by_id(contact_id)
-    contact_expected = mydal.db.contact(contact_id)
+    contact_ref = insert_contact_record(user_ref,
+                                        name_generator(),
+                                        email_list,
+                                        phone_generator(),
+                                        datetime.now().replace(microsecond=0))
+    contact_row = app_tables.contact.get_by_id(contact_ref)
+    contact_expected = mydal.db.contact(contact_ref)
     assert contact_expected.name == contact_row['name'] and \
-           contact_expected.created_on == contact_row['created_on']
+           contact_expected.created_on == contact_row['created_on'] and \
+           contact_expected == contact_row
+
+
+class TestRow:
+    def test_add_row(self):
+        """Tests single_link and multi-link lists in record"""
+        mydal.define_tables_of_db()
+        # get user (run test_get_user at least once)
+        user = get_user()
+        created_on = datetime.now()
+        email_list = [insert_email_record(user, email_generator(), created_on=created_on) \
+                      for ix in range(2)]
+        assert all(email_list)
+        phone_row = insert_phone_record(user, phone_generator(), created_on)
+        assert phone_row
+        # write a contact
+        contact_d = dict(
+            name="Rex Eagle's Brother",
+            email_list=email_list,
+            phone=phone_row,
+            age=55,
+            created_by=user,
+            created_on=created_on
+        )
+        contact_row = app_tables.contact.add_row(**contact_d)
+        assert email_list[0].address == contact_row['email_list'][0]['address']
+
+        assert contact_row

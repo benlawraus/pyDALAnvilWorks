@@ -1,5 +1,5 @@
-def func_decor1(func1=None):
-    return func1
+def func_decor1(func1=None, *args):
+    return func1(*args)
 
 
 def func_decor2(func1=None):
