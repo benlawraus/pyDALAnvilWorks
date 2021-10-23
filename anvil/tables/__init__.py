@@ -28,8 +28,6 @@ class BaseFunction:
         mydal.db.commit()
         return row_type
 
-
-
     def get_by_id(self, id):
         return mydal.db[self.table_name](id)
 
@@ -66,5 +64,36 @@ def get_id(self):
     return self['id']
 
 
+def delete_row(self):
+    # Row object
+    self.delete_record()
+    mydal.db.commit()
+    return
+
+
+def delete_ref(self):
+    # Reference object
+    mydal.db[self._table](self).delete_record()
+    mydal.db.commit()
+    return
+
+
+def update_row(self, **kwargs):
+    t_name = self.update_record.tablename
+    mydal.db(mydal.db[t_name].id == self.id).update(**kwargs)
+    mydal.db.commit()
+    return
+
+
+def update_ref(self, **kwargs):
+    mydal.db(mydal.db[self._table].id == self).update(**kwargs)
+    mydal.db.commit()
+    return
+
+
 pydal.objects.Row.get_id = get_id
 pydal.helpers.classes.Reference.get_id = get_id
+pydal.objects.Row.delete = delete_row
+pydal.helpers.classes.Reference.delete = delete_ref
+pydal.objects.Row.update = update_row
+pydal.helpers.classes.Reference.update = update_ref

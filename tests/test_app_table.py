@@ -1,6 +1,7 @@
 """File containing pytest tests"""
 from collections import namedtuple
 
+import pydal
 import anvil.users
 from anvil import tables
 from anvil.tables import app_tables
@@ -10,8 +11,7 @@ from tests.common import *
 
 
 def test_tables():
-    tables
-    assert True
+    assert tables
 
 
 def test_order_by():
@@ -47,8 +47,8 @@ def insert_contact_record(user, name, email_list, phone, created_on) -> pydal.he
 
 
 def test_search():
-    PARAMETERS = "name,email_list, phone"
-    VARIATIONS = [
+    parameters = "name,email_list, phone"
+    variations = [
         ("L name", ['a@a.com', 'b@a.com'], "444 Phone"),
         ("D name", ['s@a.com', 'd@a.com'], "222 Phone"),
         ("M name", ['f@a.com', 'g@a.com'], "333 Phone"),
@@ -57,8 +57,8 @@ def test_search():
     user = anvil.users.get_user()
     created_on = datetime.now() + timedelta(seconds=1)  # so as not to clash with previous tests
     # create records
-    Parameter = namedtuple("Parameter", PARAMETERS)
-    for _v in VARIATIONS:
+    Parameter = namedtuple("Parameter", parameters)
+    for _v in variations:
         para = Parameter(*_v)
         insert_contact_record(user, para.name, para.email_list, para.phone, created_on)
     db_rows = app_tables.contact.search(created_on=created_on)
@@ -66,7 +66,7 @@ def test_search():
 
     contacts = app_tables.contact.search(
         tables.order_by('name', ascending=False), created_on=created_on)
-    assert len(VARIATIONS) == len(contacts)
+    assert len(variations) == len(contacts)
     date_time_expected = created_on.replace(microsecond=0)
     assert all([date_time_expected == contact['created_on'] for contact in contacts])
     assert all(['M name' == contacts[0]['name'],
@@ -82,6 +82,7 @@ def get_user():
 
 class TestUser:
     def test_get_user(self):
+        """Tests anvil.works  `anvil.users.get_user()`"""
         mydal.define_tables_of_db()
         # test anvil.users.get_by_id()
         user_ref = get_user()
@@ -89,6 +90,7 @@ class TestUser:
         assert mydal.db.users(user_ref) == user
 
     def test_user_get_by_id(self):
+        """Tests anvil.works  `anvil.users.get_by_id(id)`"""
         mydal.define_tables_of_db()
         # test anvil.users.get_by_id()
         user_ref = get_user()
@@ -100,10 +102,11 @@ class TestUser:
 class TestID:
 
     def test_get_id(self):
+        """Tests anvil.works `Row.get_id()` and `app_tables.table.get_by_id(id)`"""
         mydal.define_tables_of_db()
         # test app_tables.contact.get_by_id
         user = anvil.users.get_user()
-        email_list = [email_generator() for count in range(3)]
+        email_list = [email_generator() for _ in range(3)]
         contact_ref = insert_contact_record(user,
                                             name_generator(),
                                             email_list,
@@ -131,8 +134,8 @@ class TestRow:
         # get user (run test_get_user at least once)
         user = get_user()
         created_on = datetime.now()
-        email_list = [insert_email_record(user, email_generator(), created_on=created_on) \
-                      for ix in range(2)]
+        email_list = [insert_email_record(user, email_generator(), created_on=created_on)
+                      for _ in range(2)]
         assert all(email_list)
         phone_row = insert_phone_record(user, phone_generator(), created_on)
         assert phone_row
@@ -146,6 +149,52 @@ class TestRow:
             created_on=created_on
         )
         contact_row = app_tables.contact.add_row(**contact_d)
+        assert contact_row
         assert email_list[0].address == contact_row['email_list'][0]['address']
 
-        assert contact_row
+    def test_delete(self):
+        """Tests anvil.works `row.delete()`"""
+        mydal.define_tables_of_db()
+        created_on = datetime.now().replace(microsecond=0)
+        user = get_user()
+        # Test Reference object
+        phone_ref = insert_phone_record(user, "(408) 444-5555", created_on)
+        phone_rows = mydal.db(mydal.db.phone.created_on == created_on).select()
+        assert 1 == len(phone_rows)
+        assert phone_ref.delete() is None
+        phone_rows = mydal.db(mydal.db.phone.created_on == created_on).select()
+        assert 0 == len(phone_rows)
+        # Test Row object
+        insert_phone_record(user, "(408) 444-5555", created_on)
+        # check that it is there
+        phone_rows = mydal.db(mydal.db.phone.created_on == created_on).select()
+        assert 1 == len(phone_rows)
+        ph_rows=mydal.db(mydal.db.phone).select()
+        nr_records_before_delete = len(ph_rows)
+        # delete and check that is it missing, and only that one
+        assert phone_rows[0].delete() is None
+        phone_rows = mydal.db(mydal.db.phone.created_on == created_on).select()
+        assert 0 == len(phone_rows)
+        ph_rows=mydal.db(mydal.db.phone).select()
+        assert nr_records_before_delete-1 == len(ph_rows)
+
+    def test_update(self):
+        """Tests `Row.update(**kwargs)`"""
+        mydal.define_tables_of_db()
+        created_on = datetime.now().replace(microsecond=0)
+        user = get_user()
+        # Test Reference object
+        phone_ref = insert_phone_record(user, phone_generator(), created_on)
+        number = phone_generator()
+        phone_ref.update(number=number)
+        phone_rows = mydal.db(mydal.db.phone.number == number).select()
+        assert number == phone_rows[0].number
+        # Test Row object
+        phone_ref = insert_phone_record(user, phone_generator(), created_on)
+        phone_row = mydal.db.phone(phone_ref)
+        number = phone_generator()
+        phone_row.update(number=number)
+        phone_rows = mydal.db(mydal.db.phone.number == number).select()
+        assert number == phone_rows[0].number
+
+
