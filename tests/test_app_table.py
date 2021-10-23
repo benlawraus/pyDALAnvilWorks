@@ -158,22 +158,24 @@ class TestRow:
         created_on = datetime.now().replace(microsecond=0)
         user = get_user()
         # Test Reference object
-        phone_ref = insert_phone_record(user, "(408) 444-5555", created_on)
-        phone_rows = mydal.db(mydal.db.phone.created_on == created_on).select()
+        number = phone_generator()
+        phone_ref = insert_phone_record(user, number, created_on)
+        phone_rows = mydal.db(mydal.db.phone.number == number).select()
         assert 1 == len(phone_rows)
         assert phone_ref.delete() is None
-        phone_rows = mydal.db(mydal.db.phone.created_on == created_on).select()
+        phone_rows = mydal.db(mydal.db.phone.number == number).select()
         assert 0 == len(phone_rows)
         # Test Row object
-        insert_phone_record(user, "(408) 444-5555", created_on)
+        number = phone_generator()
+        insert_phone_record(user, number, created_on)
         # check that it is there
-        phone_rows = mydal.db(mydal.db.phone.created_on == created_on).select()
+        phone_rows = mydal.db(mydal.db.phone.number == number).select()
         assert 1 == len(phone_rows)
         ph_rows=mydal.db(mydal.db.phone).select()
         nr_records_before_delete = len(ph_rows)
         # delete and check that is it missing, and only that one
         assert phone_rows[0].delete() is None
-        phone_rows = mydal.db(mydal.db.phone.created_on == created_on).select()
+        phone_rows = mydal.db(mydal.db.phone.number == number).select()
         assert 0 == len(phone_rows)
         ph_rows=mydal.db(mydal.db.phone).select()
         assert nr_records_before_delete-1 == len(ph_rows)
