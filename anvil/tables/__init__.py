@@ -79,7 +79,7 @@ def delete_ref(self):
 
 
 def update_row(self, **kwargs):
-    t_name = self.update_record.tablename
+    t_name = self.update_attr_list_record.tablename
     mydal.db(mydal.db[t_name].id == self.id).update(**kwargs)
     mydal.db.commit()
     return
