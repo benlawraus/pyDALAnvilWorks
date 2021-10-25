@@ -14,7 +14,8 @@ class BaseFunction:
         self.table_name = table_name
 
     def get(self, **kwargs):
-        pass
+        return mydal.db[self.table_name](**kwargs)
+
 
     def add_row(self, **kwargs) -> pydal.helpers.classes.Reference:
         if self.table_name not in mydal.db.tables:
@@ -79,7 +80,7 @@ def delete_ref(self):
 
 
 def update_row(self, **kwargs):
-    t_name = self.update_attr_list_record.tablename
+    t_name = self.update_record.tablename
     mydal.db(mydal.db[t_name].id == self.id).update(**kwargs)
     mydal.db.commit()
     return
