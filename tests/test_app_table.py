@@ -9,7 +9,6 @@ import tests.pydal_def as mydal
 from datetime import timedelta
 from tests.common import *
 
-
 def test_tables():
     assert tables
 
@@ -19,48 +18,51 @@ def test_order_by():
     assert True
 
 
-def insert_email_record(user, email: str, created_on: datetime) -> pydal.helpers.classes.Reference:
-    db_row_ref = mydal.db.email.insert(address=email, created_by=user, created_on=created_on)
+def insert_email_record(created_by, address: str, created_on: datetime) -> pydal.helpers.classes.Reference:
+    db_row_ref = mydal.db.email.insert(address=address, created_by=created_by, created_on=created_on)
     mydal.db.commit()
     return db_row_ref
 
 
-def insert_phone_record(user, phone: str, created_on: datetime) -> pydal.helpers.classes.Reference:
-    db_row_ref = mydal.db.phone.insert(number=phone, created_by=user, created_on=created_on)
+def insert_phone_record(created_by, number: str, created_on: datetime) -> pydal.helpers.classes.Reference:
+    db_row_ref = mydal.db.phone.insert(number=number, created_by=created_by, created_on=created_on)
     mydal.db.commit()
     return db_row_ref
 
 
-def insert_contact_record(user, name, email_list, phone, created_on) -> pydal.helpers.classes.Reference:
-    e_list = [insert_email_record(user, e, created_on) for e in email_list]
-    p = insert_phone_record(user, phone, created_on)
+def insert_contact_record(**kwargs) -> pydal.helpers.classes.Reference:
+    e_list = [insert_email_record(**e) for e in kwargs['email_list']]
+    p = insert_phone_record(**kwargs['phone'])
     contact = mydal.db.contact.insert(
-        name=name,
+        name=kwargs['name'],
         email_list=e_list,
         phone=p,
-        age=33,
-        created_by=user,
-        created_on=created_on
+        age=kwargs['age'],
+        created_by=kwargs['created_by'],
+        created_on=kwargs['created_on']
     )
     mydal.db.commit()
     return contact
 
 
 def test_search():
-    parameters = "name,email_list, phone"
+    parameters = "name"
     variations = [
-        ("L name", ['a@a.com', 'b@a.com'], "444 Phone"),
-        ("D name", ['s@a.com', 'd@a.com'], "222 Phone"),
-        ("M name", ['f@a.com', 'g@a.com'], "333 Phone"),
+        ("L name",),
+        ("D name",),
+        ("M name",),
     ]
     mydal.define_tables_of_db()
     user = anvil.users.get_user()
-    created_on = datetime.now() + timedelta(seconds=1)  # so as not to clash with previous tests
+    created_on = datetime.now() + timedelta(seconds=10)  # so as not to clash with previous tests
     # create records
     Parameter = namedtuple("Parameter", parameters)
     for _v in variations:
         para = Parameter(*_v)
-        insert_contact_record(user, para.name, para.email_list, para.phone, created_on)
+        insert_contact_record(created_by=user, name=para.name,
+                              email_list=[generate_email_instance(user)],
+                              phone=generate_phone_instance(user),
+                              created_on=created_on, age=33)
     db_rows = app_tables.contact.search(created_on=created_on)
     assert created_on.replace(microsecond=0) == db_rows[0]['created_on']
 
@@ -106,12 +108,7 @@ class TestID:
         mydal.define_tables_of_db()
         # test app_tables.contact.get_by_id
         user = anvil.users.get_user()
-        email_list = [email_generator() for _ in range(3)]
-        contact_ref = insert_contact_record(user,
-                                            name_generator(),
-                                            email_list,
-                                            phone_generator(),
-                                            datetime.now().replace(microsecond=0))
+        contact_ref = insert_contact_record(**generate_contact_instance(user))
         contact_row = app_tables.contact.get_by_id(contact_ref)
         contact_expected = mydal.db.contact(contact_ref)
         assert contact_expected.name == contact_row['name'] and \
@@ -198,5 +195,15 @@ class TestRow:
         phone_row.update(number=number)
         phone_rows = mydal.db(mydal.db.phone.number == number).select()
         assert number == phone_rows[0].number
+
+    def test_get(self):
+        mydal.define_tables_of_db()
+        user= anvil.users.get_user()  # gets last user
+        # insert a contact
+        instance=generate_contact_instance(user)
+        contact_ref=insert_contact_record(**instance)
+        contact_row=app_tables.contact.get(name=instance['name'], age=instance['age'])
+        assert instance['name'] == contact_row['name']
+        assert contact_ref['id'] == contact_row('id')
 
 
