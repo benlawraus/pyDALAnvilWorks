@@ -1,3 +1,4 @@
+from typing import Optional
 import pydal.helpers.classes
 
 import tests.pydal_def as mydal
@@ -13,10 +14,6 @@ class BaseFunction:
     def __init__(self, table_name):
         self.table_name = table_name
 
-    def get(self, **kwargs):
-        return mydal.db[self.table_name](**kwargs)
-
-
     def add_row(self, **kwargs) -> pydal.helpers.classes.Reference:
         if self.table_name not in mydal.db.tables:
             raise AttributeError("Table not in database.")
@@ -29,7 +26,7 @@ class BaseFunction:
         mydal.db.commit()
         return row_type
 
-    def get_by_id(self, id):
+    def get_by_id(self, id)->Optional[pydal.objects.Row]:
         return mydal.db[self.table_name](id)
 
     def search(self, *args, **kwargs):
@@ -48,6 +45,9 @@ class BaseFunction:
         for key in kwargs:
             query.append(mydal.db[self.table_name][key] == kwargs[key])
         return mydal.db(*query).select(**orderby)
+
+    def get(self, **kwargs) -> Optional[pydal.objects.Row]:
+        return mydal.db[self.table_name](**kwargs)
 
 
 class AppTables:
