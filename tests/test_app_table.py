@@ -89,7 +89,7 @@ class TestUser:
         # test anvil.users.get_by_id()
         user_ref = get_user()
         user = anvil.users.get_user()
-        assert mydal.db.users(user_ref) == user
+        assert mydal.db.users(user_ref)['id'] == user
 
     def test_user_get_by_id(self):
         """Tests anvil.works  `anvil.users.get_by_id(id)`"""
@@ -181,7 +181,7 @@ class TestRow:
         """Tests `Row.update(**kwargs)`"""
         mydal.define_tables_of_db()
         created_on = datetime.now().replace(microsecond=0)
-        user = get_user()
+        user = anvil.users.get_user()
         # Test Reference object
         phone_ref = insert_phone_record(user, phone_generator(), created_on)
         number = phone_generator()
