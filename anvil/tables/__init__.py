@@ -19,12 +19,11 @@ class BaseFunction:
             raise AttributeError("Table not in database.")
         try:
             reference = mydal.db[self.table_name].insert(**kwargs)
-            row_type = mydal.db[self.table_name](reference)
         except TypeError:
             msg = f"\n{self.table_name}:\n fields:\n {kwargs}"
             raise TypeError(msg)
         mydal.db.commit()
-        return row_type
+        return reference
 
     def get_by_id(self, id)->Optional[pydal.objects.Row]:
         return mydal.db[self.table_name](id)
