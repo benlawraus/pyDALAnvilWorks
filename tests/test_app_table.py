@@ -129,7 +129,9 @@ class TestRow:
         """Tests single_link and multi-link lists in record"""
         mydal.define_tables_of_db()
         # get user (run test_get_user at least once)
-        user = get_user()
+        user_ref = get_user()
+        user = anvil.users.get_user()
+        assert user_ref == user
         created_on = datetime.now()
         email_list = [insert_email_record(user, email_generator(), created_on=created_on)
                       for _ in range(2)]
@@ -138,16 +140,23 @@ class TestRow:
         assert phone_row
         # write a contact
         contact_d = dict(
-            name="Rex Eagle's Brother",
+            name=name_generator(),
             email_list=email_list,
             phone=phone_row,
             age=55,
             created_by=user,
             created_on=created_on
         )
-        contact_row = app_tables.contact.add_row(**contact_d)
-        assert contact_row
-        assert email_list[0].address == contact_row['email_list'][0]['address']
+        contact_ref = app_tables.contact.add_row(**contact_d)
+        assert contact_ref
+        assert email_list[0].address == contact_ref['email_list'][0]['address']
+        contact_d['name']=name_generator()
+        contact_ref2 = app_tables.contact.add_row(**contact_d)
+        assert contact_ref2
+        assert email_list[0].address == contact_ref2['email_list'][0]['address']
+        contact_row = mydal.db.contact(name = contact_ref.name)
+        contact_row2 = mydal.db.contact(name = contact_ref2.name)
+        assert contact_row.id != contact_row2.id
 
     def test_delete(self):
         """Tests anvil.works `row.delete()`"""

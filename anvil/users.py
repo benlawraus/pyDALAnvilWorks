@@ -1,9 +1,8 @@
 from datetime import datetime
 
 import pydal.objects
-import pickle
 import tests.pydal_def as mydal
-
+from pydal import Field
 
 def add_row(**kwargs):
     row_ref = mydal.db['users'].insert(**kwargs)
@@ -19,19 +18,16 @@ def get_by_id(id):
 
 def get_user() -> pydal.helpers.classes.Reference:
     """Retrieves the last user added to the database."""
-    # First see if a user is in mydal.db
-    row = mydal.db().select(mydal.db.users.ALL, orderby=~mydal.db.users.id).first()
-    # turn it into a reference
-    if row is None:
-        # create a user
-        return add_row(name="Rex Eagle")
-    # turn into reference
-    dict_of = {'id':row['id']}
-    for key in row.as_dict():
-        if key != 'id':
-            dict_of.update({key:row[key]})
-    row.delete_record()
-    mydal.db.commit()
-    ref = mydal.db.users.insert(**dict_of)
-    mydal.db.commit()
-    return ref
+    if mydal.db is None:
+        raise ConnectionError("Database not connected")
+    if mydal.logged_in_user is None:
+        if 'logged_in_users' not in mydal.db.tables:
+            mydal.db.define_table('logged_in_users', Field('user_ref', 'reference users'))
+        rows = mydal.db().select(mydal.db.users.ALL, orderby=~mydal.db.users.id)
+        if len(rows)==0:
+            ref = mydal.db.users.insert(name="Rex Eagle")
+            new_log = mydal.db.logged_in_users.insert(user_ref=ref)
+        else:
+            new_log = mydal.db.logged_in_users.insert(user_ref=rows[0])
+        mydal.logged_in_user = new_log.user_ref
+    return mydal.logged_in_user

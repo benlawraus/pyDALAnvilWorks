@@ -25,7 +25,7 @@ class BaseFunction:
         mydal.db.commit()
         return reference
 
-    def get_by_id(self, id)->Optional[pydal.objects.Row]:
+    def get_by_id(self, id) -> Optional[pydal.objects.Row]:
         return mydal.db[self.table_name](id)
 
     def search(self, *args, **kwargs):
@@ -80,13 +80,13 @@ def delete_ref(self):
 
 def update_row(self, **kwargs):
     t_name = self.update_record.tablename
-    mydal.db(mydal.db[t_name].id == self.id).update(**kwargs)
+    mydal.db(mydal.db[t_name].id == self.id).modify(**kwargs)
     mydal.db.commit()
     return
 
 
 def update_ref(self, **kwargs):
-    mydal.db(mydal.db[self._table].id == self).update(**kwargs)
+    mydal.db(mydal.db[self._table].id == self).modify(**kwargs)
     mydal.db.commit()
     return
 
