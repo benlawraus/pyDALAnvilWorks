@@ -1,5 +1,7 @@
 from pydal import DAL, Field
 db = None
+logged_in_user = None
+
 def define_tables_of_db():
 	global db
 	if db is None:

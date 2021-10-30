@@ -8,6 +8,8 @@ from anvil.tables import app_tables
 import tests.pydal_def as mydal
 from datetime import timedelta
 from tests.common import *
+from typing import Tuple
+
 
 def test_tables():
     assert tables
@@ -124,6 +126,15 @@ class TestID:
         assert contact_ref['phone'] == contact_ref['phone'].get_id()
 
 
+def insert_get_contact_row_ref() -> Tuple[pydal.objects.Row, pydal.helpers.classes.Reference]:
+    user = anvil.users.get_user()  # gets last user
+    # insert a contact
+    instance = generate_contact_instance(user)
+    contact_ref = insert_contact_record(**instance)
+    contact_row = app_tables.contact.get(name=instance['name'], age=instance['age'])
+    return contact_row, contact_ref
+
+
 class TestRow:
     def test_add_row(self):
         """Tests single_link and multi-link lists in record"""
@@ -150,12 +161,12 @@ class TestRow:
         contact_ref = app_tables.contact.add_row(**contact_d)
         assert contact_ref
         assert email_list[0].address == contact_ref['email_list'][0]['address']
-        contact_d['name']=name_generator()
+        contact_d['name'] = name_generator()
         contact_ref2 = app_tables.contact.add_row(**contact_d)
         assert contact_ref2
         assert email_list[0].address == contact_ref2['email_list'][0]['address']
-        contact_row = mydal.db.contact(name = contact_ref.name)
-        contact_row2 = mydal.db.contact(name = contact_ref2.name)
+        contact_row = mydal.db.contact(name=contact_ref.name)
+        contact_row2 = mydal.db.contact(name=contact_ref2.name)
         assert contact_row.id != contact_row2.id
 
     def test_delete(self):
@@ -177,14 +188,14 @@ class TestRow:
         # check that it is there
         phone_rows = mydal.db(mydal.db.phone.number == number).select()
         assert 1 == len(phone_rows)
-        ph_rows=mydal.db(mydal.db.phone).select()
+        ph_rows = mydal.db(mydal.db.phone).select()
         nr_records_before_delete = len(ph_rows)
         # delete and check that is it missing, and only that one
         assert phone_rows[0].delete() is None
         phone_rows = mydal.db(mydal.db.phone.number == number).select()
         assert 0 == len(phone_rows)
-        ph_rows=mydal.db(mydal.db.phone).select()
-        assert nr_records_before_delete-1 == len(ph_rows)
+        ph_rows = mydal.db(mydal.db.phone).select()
+        assert nr_records_before_delete - 1 == len(ph_rows)
 
     def test_update(self):
         """Tests `Row.update(**kwargs)`"""
@@ -207,12 +218,17 @@ class TestRow:
 
     def test_get(self):
         mydal.define_tables_of_db()
-        user= anvil.users.get_user()  # gets last user
+        user = anvil.users.get_user()  # gets last user
         # insert a contact
-        instance=generate_contact_instance(user)
-        contact_ref=insert_contact_record(**instance)
-        contact_row=app_tables.contact.get(name=instance['name'], age=instance['age'])
+        instance = generate_contact_instance(user)
+        contact_ref = insert_contact_record(**instance)
+        contact_row = app_tables.contact.get(name=instance['name'], age=instance['age'])
         assert instance['name'] == contact_row['name']
         assert contact_ref['id'] == contact_row('id')
 
-
+    def test_dict_row(self):
+        mydal.define_tables_of_db()
+        contact_row, contact_ref = insert_get_contact_row_ref()
+        print("contact_row:", dict(contact_row))
+        print("contact_row_asdict:", contact_row.as_dict())
+        print(dict(**contact_row))
