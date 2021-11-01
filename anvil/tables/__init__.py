@@ -80,13 +80,13 @@ def delete_ref(self):
 
 def update_row(self, **kwargs):
     t_name = self.update_record.tablename
-    mydal.db(mydal.db[t_name].id == self.id).modify(**kwargs)
+    mydal.db(mydal.db[t_name].id == self.id).update(**kwargs)
     mydal.db.commit()
     return
 
 
 def update_ref(self, **kwargs):
-    mydal.db(mydal.db[self._table].id == self).modify(**kwargs)
+    mydal.db(mydal.db[self._table].id == self).update(**kwargs)
     mydal.db.commit()
     return
 
