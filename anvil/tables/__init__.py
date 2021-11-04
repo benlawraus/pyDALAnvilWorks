@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict, List
 import pydal.helpers.classes
 
 import tests.pydal_def as mydal
@@ -47,6 +47,12 @@ class BaseFunction:
 
     def get(self, **kwargs) -> Optional[pydal.objects.Row]:
         return mydal.db[self.table_name](**kwargs)
+
+    def list_columns(self) -> List[Dict[str, str]]:
+        field_list = []
+        for field in mydal.db[self.table_name].fields:
+            field_list.append({'name': field, 'type': mydal.db[self.table_name][field].type})
+        return field_list
 
 
 class AppTables:

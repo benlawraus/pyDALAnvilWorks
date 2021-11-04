@@ -1,4 +1,5 @@
 """File containing pytest tests"""
+import time
 from collections import namedtuple
 
 import pydal
@@ -90,8 +91,9 @@ class TestUser:
         mydal.define_tables_of_db()
         # test anvil.users.get_by_id()
         user_ref = get_user()
+        mydal.logged_in_user = None
         user = anvil.users.get_user()
-        assert mydal.db.users(user_ref)['id'] == user
+        assert user_ref == user
 
     def test_user_get_by_id(self):
         """Tests anvil.works  `anvil.users.get_by_id(id)`"""
@@ -140,9 +142,7 @@ class TestRow:
         """Tests single_link and multi-link lists in record"""
         mydal.define_tables_of_db()
         # get user (run test_get_user at least once)
-        user_ref = get_user()
         user = anvil.users.get_user()
-        assert user_ref == user
         created_on = datetime.now()
         email_list = [insert_email_record(user, email_generator(), created_on=created_on)
                       for _ in range(2)]

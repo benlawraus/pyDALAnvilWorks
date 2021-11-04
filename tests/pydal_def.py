@@ -1,11 +1,17 @@
+import os
+import inspect
+
 from pydal import DAL, Field
+
 db = None
 logged_in_user = None
+abs_path = os.path.dirname(inspect.getfile(lambda: 0))
+
 
 def define_tables_of_db():
 	global db
 	if db is None:
-		db = DAL('sqlite://storage.sqlite', folder='database')
+		db = DAL('sqlite://storage.sqlite', folder=abs_path+'/database')
 	if 'users' not in db.tables:
 		db.define_table('users'
 			, Field('name', type='string', default=None)

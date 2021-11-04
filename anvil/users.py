@@ -29,5 +29,6 @@ def get_user() -> pydal.helpers.classes.Reference:
             new_log = mydal.db.logged_in_users.insert(user_ref=ref)
         else:
             new_log = mydal.db.logged_in_users.insert(user_ref=rows[0])
+        mydal.db.commit()
         mydal.logged_in_user = new_log.user_ref
     return mydal.logged_in_user

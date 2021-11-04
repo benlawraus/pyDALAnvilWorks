@@ -1,6 +1,6 @@
 What is it?
 ------------
-Python programs to allow you to use any database while testing your `anvil.works <https://anvil.works>`_ app.
+To allow you to use any database while testing your `anvil.works <https://anvil.works>`_ app.
 
 How is it done?
 ---------------
@@ -16,11 +16,12 @@ Copy this repo's directory structure into your cloned anvil.works app. Instead o
 the local version instead.
 
 Of course, you will need a complete mirror of your anvil.works external database. To set that up,
-use this `converter <https://github.com/benlawraus/useAnvilYaml>`_. In your cloned anvil.works
+use this `converter <https://github.com/benlawraus/yaml2schema>`_. In your cloned anvil.works
 app, there is a file called `anvil.yaml`. This file contains a description of your
-database schema. The `converter <https://github.com/benlawraus/useAnvilYaml>`_ will read
+database schema. The `converter <https://github.com/benlawraus/yaml2schema>`_ will read
 the `anvil.yaml` and generate a `pyDAL <https://py4web.com/_documentation/static/en/chapter-07.html>`_
-definition file (`pydal_def.py`) that you can use to run your tests.
+definition file (`pydal_def.py`) that you can use to run your tests. Place `pydal_def.py` into your
+`tests` directory. Also create a `database` directory there to put all your database files.
 
 A csv file can be exported from your anvil.works database and imported into your sqlite using  `pyDAL`.
 But really, you should generate dummy data during your tests anyway.
