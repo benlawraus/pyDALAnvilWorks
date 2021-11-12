@@ -229,6 +229,6 @@ class TestRow:
     def test_dict_row(self):
         mydal.define_tables_of_db()
         contact_row, contact_ref = insert_get_contact_row_ref()
-        print("contact_row:", dict(contact_row))
-        print("contact_row_asdict:", contact_row.as_dict())
-        print(dict(**contact_row))
+        assert dict(contact_row)
+        assert contact_row.as_dict()
+        assert dict(**contact_row)

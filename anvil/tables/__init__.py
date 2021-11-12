@@ -114,10 +114,8 @@ def update_row(self, **kwargs):
 
 def update_ref(self, **kwargs):
     mydal.db(mydal.db[self._table].id == self).update(**kwargs)
-    print("update_ref", self._record)
     for key in kwargs:
-        if key in self._record:
-            self[key] = kwargs[key]
+        self[key] = kwargs[key]
     mydal.db.commit()
     return
 
