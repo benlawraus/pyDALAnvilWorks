@@ -33,13 +33,13 @@ class BaseFunction:
     def add_to_query(self, key, val):
         if isinstance(val, not_):
             self.query.append(mydal.db[self.table_name][key] != val.arg)
-        if isinstance(val, less_than):
+        elif isinstance(val, less_than):
             self.query.append(mydal.db[self.table_name][key] < val.arg)
-        if isinstance(val, greater_than):
+        elif isinstance(val, greater_than):
             self.query.append(mydal.db[self.table_name][key] > val.arg)
-        if isinstance(val, greater_than_or_equal_to):
+        elif isinstance(val, greater_than_or_equal_to):
             self.query.append(mydal.db[self.table_name][key] >= val.arg)
-        if isinstance(val, less_than_or_equal_to):
+        elif isinstance(val, less_than_or_equal_to):
             self.query.append(mydal.db[self.table_name][key] <= val.arg)
         else:
             self.query.append(mydal.db[self.table_name][key] == val)

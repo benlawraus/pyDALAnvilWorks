@@ -6,6 +6,7 @@ import pydal
 import anvil.users
 from anvil import tables
 from anvil.tables import app_tables
+import anvil.tables.query as q
 import tests.pydal_def as mydal
 from datetime import timedelta
 from tests.common import *
@@ -48,44 +49,63 @@ def insert_contact_record(**kwargs) -> pydal.helpers.classes.Reference:
     return contact
 
 
-def test_search():
-    parameters = "name"
-    variations = [
-        ("L name",),
-        ("D name",),
-        ("M name",),
-    ]
-    mydal.define_tables_of_db()
-    user = anvil.users.get_user()
-    created_on = datetime.now() + timedelta(seconds=10)  # so as not to clash with previous tests
-    # create records
-    Parameter = namedtuple("Parameter", parameters)
-    for _v in variations:
-        para = Parameter(*_v)
-        insert_contact_record(created_by=user, name=para.name,
-                              email_list=[generate_email_instance(user)],
-                              phone=generate_phone_instance(user),
-                              created_on=created_on, age=33)
-    ######################################
-    db_rows = app_tables.contact.search(created_on=created_on)
-    ######################################
-    assert created_on.replace(microsecond=0) == db_rows[0]['created_on']
-    ######################################
-    contacts = app_tables.contact.search(
-        tables.order_by('name', ascending=False), created_on=created_on)
-    ######################################
-    assert len(variations) == len(contacts)
-    date_time_expected = created_on.replace(microsecond=0)
-    assert all([date_time_expected == contact['created_on'] for contact in contacts])
-    assert all(['M name' == contacts[0]['name'],
-                'L name' == contacts[1]['name'],
-                'D name' == contacts[2]['name']])
-
-
 def get_user():
     user_ref = mydal.db.users.insert(**user_generator())
     mydal.db.commit()
     return user_ref  # gets last inserted user
+
+
+class TestSearch:
+    parameters = "name, age"
+    variations = [
+        ("L name", 33),
+        ("D name", 12),
+        ("X name", 54),
+        ("M name", 67),
+        ("Y name", 11),
+        ("F name", 33),
+        ("H name", 98),
+        ("B name", 45),
+        ("N name", 22),
+        ("Z name", 23),
+    ]
+
+    def test_search(self):
+        mydal.define_tables_of_db()
+        user = anvil.users.get_user()
+        created_on = datetime.now() + timedelta(seconds=10)  # so as not to clash with previous tests
+        # create records
+        Parameter = namedtuple("Parameter", self.parameters)
+        for _v in self.variations:
+            para = Parameter(*_v)
+            insert_contact_record(created_by=user, name=para.name,
+                                  email_list=[generate_email_instance(user)],
+                                  phone=generate_phone_instance(user),
+                                  created_on=created_on, age=para.age)
+        ######################################
+        db_rows = app_tables.contact.search(created_on=created_on)
+        ######################################
+        assert created_on.replace(microsecond=0) == db_rows[0]['created_on']
+        ######################################
+        contacts = app_tables.contact.search(
+            tables.order_by('name', ascending=False), created_on=created_on)
+        ######################################
+        assert len(self.variations) == len(contacts)
+        date_time_expected = created_on.replace(microsecond=0)
+        assert all([date_time_expected == contact['created_on'] for contact in contacts])
+        assert all(['Z name' == contacts[0]['name'],
+                    'Y name' == contacts[1]['name'],
+                    'X name' == contacts[2]['name']])
+        return user
+
+    def test_search_operators(self):
+        # generate new user
+        user = TestUser().test_get_user()
+        # generate some new records with this user
+        user = TestSearch().test_search()
+        rows = app_tables.contact.search(age=q.greater_than(33))
+        for row in rows:
+            assert 33 < row['age']
 
 
 class TestUser:
@@ -99,6 +119,7 @@ class TestUser:
         user = anvil.users.get_user()
         ######################################
         assert user_ref == user
+        return user
 
     def test_user_get_by_id(self):
         """Tests anvil.works  `anvil.users.get_by_id(id)`"""
