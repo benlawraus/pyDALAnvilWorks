@@ -33,7 +33,7 @@ Your directory structure on your laptop will then look like this::
     - server_code  (git-cloned from anvil.works)
     - tests (your tests you run on your laptop)
         - database  (your sqlite and pydal files to run your database on your laptop)
-        - pydal_def.py
+        - pydal_def.py  # generated from anvil.yaml using yaml2schema
         - test1.py
     - anvil.yaml (git-cloned from anvil.works)
 
