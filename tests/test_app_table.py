@@ -103,9 +103,33 @@ class TestSearch:
         user = TestUser().test_get_user()
         # generate some new records with this user
         user = TestSearch().test_search()
+        #####################
         rows = app_tables.contact.search(age=q.greater_than(33))
+        #####################
+        assert 0 < len(rows)
         for row in rows:
             assert 33 < row['age']
+        rows = app_tables.contact.search(age=q.greater_than_or_equal_to(33))
+        assert 0 < len(rows)
+        for row in rows:
+            assert 33 <= row['age']
+        rows = app_tables.contact.search(age=q.less_than(33))
+        assert 0 < len(rows)
+        for row in rows:
+            assert 33 > row['age']
+        rows = app_tables.contact.search(age=q.less_than_or_equal_to(33))
+        assert 0 < len(rows)
+        for row in rows:
+            assert 33 >= row['age']
+        rows = app_tables.contact.search(age=q.less_than_or_equal_to(33))
+        assert 0 < len(rows)
+        for row in rows:
+            assert 33 >= row['age']
+        rows = app_tables.contact.search(age=q.not_(33))
+        assert 0 < len(rows)
+        for row in rows:
+            assert 33 != row['age']
+
 
 
 class TestUser:
@@ -141,7 +165,9 @@ class TestID:
         # test app_tables.contact.get_by_id
         user = anvil.users.get_user()
         contact_ref = insert_contact_record(**generate_contact_instance(user))
+        ######################################
         contact_row = app_tables.contact.get_by_id(contact_ref)
+        ######################################
         contact_expected = mydal.db.contact(contact_ref)
         assert contact_expected.name == contact_row['name'] and \
                contact_expected.created_on == contact_row['created_on'] and \
@@ -163,7 +189,9 @@ def insert_get_contact_row_ref() -> Tuple[pydal.objects.Row, pydal.helpers.class
     # insert a contact
     instance = generate_contact_instance(user)
     contact_ref = insert_contact_record(**instance)
+    #################################################
     contact_row = app_tables.contact.get(name=instance['name'], age=instance['age'])
+    #################################################
     return contact_row, contact_ref
 
 
