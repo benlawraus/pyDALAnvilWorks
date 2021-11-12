@@ -78,6 +78,7 @@ The following will run on your laptop (without internet) with a database table `
     rows = app_tables.contact.search(age=q.less_than_or_equal_to(33))
     rows = app_tables.contact.search(age=q.less_than_or_equal_to(33))
     rows = app_tables.contact.search(age=q.not_(33))
+    app_tables.contact.list_columns()
 
 to be continued....
 
