@@ -2,6 +2,7 @@ from typing import Optional, Dict, List
 import pydal.helpers.classes
 
 import tests.pydal_def as mydal
+from anvil.tables.query import *
 
 
 def order_by(*args, **kwargs):
@@ -12,7 +13,8 @@ class BaseFunction:
     """Saving rows and getting rows to/from the database"""
 
     def __init__(self, table_name):
-        self.table_name = table_name
+        self.query: List = []  # list of pydal.objects.Query
+        self.table_name: str = table_name
 
     def add_row(self, **kwargs) -> pydal.helpers.classes.Reference:
         if self.table_name not in mydal.db.tables:
@@ -25,8 +27,22 @@ class BaseFunction:
         mydal.db.commit()
         return reference
 
-    def get_by_id(self, id) -> Optional[pydal.objects.Row]:
-        return mydal.db[self.table_name](id)
+    def get_by_id(self, uid) -> Optional[pydal.objects.Row]:
+        return mydal.db[self.table_name](uid)
+
+    def add_to_query(self, key, val):
+        if isinstance(val, not_):
+            self.query.append(mydal.db[self.table_name][key] != val.arg)
+        if isinstance(val, less_than):
+            self.query.append(mydal.db[self.table_name][key] < val.arg)
+        if isinstance(val, greater_than):
+            self.query.append(mydal.db[self.table_name][key] > val.arg)
+        if isinstance(val, greater_than_or_equal_to):
+            self.query.append(mydal.db[self.table_name][key] >= val.arg)
+        if isinstance(val, less_than_or_equal_to):
+            self.query.append(mydal.db[self.table_name][key] <= val.arg)
+        else:
+            self.query.append(mydal.db[self.table_name][key] == val)
 
     def search(self, *args, **kwargs):
         orderby = {}
@@ -40,10 +56,10 @@ class BaseFunction:
                 if not args[0]['ascending']:
                     _o = ~_o
             orderby = {'orderby': _o}
-        query = []
+        self.query = []
         for key in kwargs:
-            query.append(mydal.db[self.table_name][key] == kwargs[key])
-        return mydal.db(*query).select(**orderby)
+            self.add_to_query(key, kwargs[key])
+        return mydal.db(*self.query).select(**orderby)
 
     def get(self, **kwargs) -> Optional[pydal.objects.Row]:
         return mydal.db[self.table_name](**kwargs)
@@ -51,6 +67,8 @@ class BaseFunction:
     def list_columns(self) -> List[Dict[str, str]]:
         field_list = []
         for field in mydal.db[self.table_name].fields:
+            if field == 'id':
+                continue
             field_list.append({'name': field, 'type': mydal.db[self.table_name][field].type})
         return field_list
 
@@ -87,12 +105,19 @@ def delete_ref(self):
 def update_row(self, **kwargs):
     t_name = self.update_record.tablename
     mydal.db(mydal.db[t_name].id == self.id).update(**kwargs)
+    for key in kwargs:
+        if key in self.__dict__:
+            self[key] = kwargs[key]
     mydal.db.commit()
     return
 
 
 def update_ref(self, **kwargs):
     mydal.db(mydal.db[self._table].id == self).update(**kwargs)
+    print("update_ref", self._record)
+    for key in kwargs:
+        if key in self._record:
+            self[key] = kwargs[key]
     mydal.db.commit()
     return
 
