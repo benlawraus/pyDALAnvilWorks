@@ -254,4 +254,3 @@ class TestRow:
         contact_row, contact_ref = insert_get_contact_row_ref()
         assert dict(contact_row)
         assert contact_row.as_dict()
-        assert dict(**contact_row)
