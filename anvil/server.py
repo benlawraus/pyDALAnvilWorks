@@ -1,5 +1,6 @@
 """Thanks to https://realpython.com/primer-on-python-decorators/
 """
+import importlib
 from functools import wraps
 import anvil.users
 import tests.pydal_def as mydal
@@ -13,8 +14,9 @@ def callable(_func=None, *, require_user=None):
     def decorator_callable(func):
         """Decorator of the function. """
         # register
-        module = __import__(func.__module__)
-        PLUGINS[func.__name__] = func.__qualname__
+        module = importlib.import_module(func.__module__)
+        print(dir(module))
+        PLUGINS[func.__name__] = func
 
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -38,24 +40,16 @@ def callable(_func=None, *, require_user=None):
 
 
 def call(*args):
+    # register
     """arg[0] = function name, arg[1:] are the arguments of function."""
+    if PLUGINS is None:
+        importlib.import_module("server_code.server_code_functions")
+    a = PLUGINS
     if len(args) == 1:
-        return PLUGINS[args[0]['call']()]
+        return PLUGINS[args[0]]()
     else:
-        return PLUGINS[args[0]['call'](*args[1:])]
+        return PLUGINS[args[0]](*args[1:])
 
-
-def func_decor1(func1=None, *args):
-    return func1(*args)
-
-
-def func_decor2(func1=None):
-    def inner(func2):
-        return func2
-
-    print(func1)
-    # def inner(*args, **kwargs):
-    return inner  # (*args, **kwargs)
 
 
 def class_decor(_class):
