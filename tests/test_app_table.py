@@ -2,7 +2,6 @@
 import time
 from collections import namedtuple
 
-import pydal
 import anvil.users
 from anvil import tables
 from anvil.tables import app_tables
@@ -73,7 +72,7 @@ class TestSearch:
     def test_search(self):
         mydal.define_tables_of_db()
         user = anvil.users.get_user()
-        created_on = datetime.now() + timedelta(seconds=10)  # so as not to clash with previous tests
+        created_on = datetime.now() + timedelta(seconds=2)  # so as not to clash with previous tests
         # create records
         Parameter = namedtuple("Parameter", self.parameters)
         for _v in self.variations:
@@ -83,12 +82,12 @@ class TestSearch:
                                   phone=generate_phone_instance(user),
                                   created_on=created_on, age=para.age)
         ######################################
-        db_rows = app_tables.contact.search(created_on=created_on)
+        db_rows = app_tables.contact.search(q.all_of(created_by=user, created_on=created_on))
         ######################################
         assert created_on.replace(microsecond=0) == db_rows[0]['created_on']
         ######################################
         contacts = app_tables.contact.search(
-            tables.order_by('name', ascending=False), created_on=created_on)
+            tables.order_by('name', ascending=False), q.all_of(created_by=user,created_on=created_on))
         ######################################
         assert len(self.variations) == len(contacts)
         date_time_expected = created_on.replace(microsecond=0)
@@ -100,36 +99,35 @@ class TestSearch:
 
     def test_search_operators(self):
         # generate new user
-        user = TestUser().test_get_user()
+        TestUser().test_get_user()
         # generate some new records with this user
         user = TestSearch().test_search()
         #####################
-        rows = app_tables.contact.search(age=q.greater_than(33))
+        rows = app_tables.contact.search(q.all_of(created_by=user, age=q.greater_than(33)))
         #####################
         assert 0 < len(rows)
         for row in rows:
             assert 33 < row['age']
-        rows = app_tables.contact.search(age=q.greater_than_or_equal_to(33))
+        rows = app_tables.contact.search(q.all_of(created_by=user, age=q.greater_than_or_equal_to(33)))
         assert 0 < len(rows)
         for row in rows:
             assert 33 <= row['age']
-        rows = app_tables.contact.search(age=q.less_than(33))
+        rows = app_tables.contact.search(q.all_of(created_by=user, age=q.less_than(33)))
         assert 0 < len(rows)
         for row in rows:
             assert 33 > row['age']
-        rows = app_tables.contact.search(age=q.less_than_or_equal_to(33))
+        rows = app_tables.contact.search(q.all_of(created_by=user, age=q.less_than_or_equal_to(33)))
         assert 0 < len(rows)
         for row in rows:
             assert 33 >= row['age']
-        rows = app_tables.contact.search(age=q.less_than_or_equal_to(33))
+        rows = app_tables.contact.search(q.all_of(created_by=user, age=q.less_than_or_equal_to(33)))
         assert 0 < len(rows)
         for row in rows:
             assert 33 >= row['age']
-        rows = app_tables.contact.search(age=q.not_(33))
+        rows = app_tables.contact.search(q.all_of(created_by=user, age=q.not_(33)))
         assert 0 < len(rows)
         for row in rows:
             assert 33 != row['age']
-
 
 
 class TestUser:
@@ -137,10 +135,10 @@ class TestUser:
         """Tests anvil.works  `anvil.users.get_user()`"""
         mydal.define_tables_of_db()
         # test anvil.users.get_by_id()
-        user_ref = get_user()
+        user_ref = get_user()  # create a new user
         mydal.logged_in_user = None
         ######################################
-        user = anvil.users.get_user()
+        user = anvil.users.get_user()  # gets last user?
         ######################################
         assert user_ref == user
         return user
