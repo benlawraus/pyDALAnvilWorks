@@ -39,21 +39,52 @@ Your directory structure on your laptop will then look like this::
 
 Examples
 ---------
-A example `pytest` is::
+This will run in your terminal (good for python 3.7+). Before doing, make sure you
+create a copy of the example app in your `anvil.works` account. The link is
+`clone example <https://anvil.works/build#clone:NX66PIIAF3ECPA55=JEYUW7CMGRTSBFXCKYRVXSI4>`_::
 
-    import pydal
-    import anvil.users
-    from anvil import tables
-    from anvil.tables import app_tables
-    import tests.pydal_def as mydal  # this is your database definition
-
-    def some_test():
-        # set up the database abstraction layer (DAL)
-        mydal.define_tables_of_db()
-        # do some tests (assuming you already placed records in your sqlite database
-        contacts = app_tables.contact.search(
-            tables.order_by('name', ascending=False), created_on=created_on)
-        assert xxxx
+    mkdir "work"
+    cd work
+    setopt interactivecomments  # allow comments for zsh
+    # create a virtualenv
+    python3 -m venv ./venv
+    source venv/bin/activate
+    # these are used by yaml2schema
+    pip3 install datamodel-code-generator
+    pip3 install strictyaml
+    # clone anvil demo app
+    myAnvilApp="pyDALAnvilWorksApp"
+    myAnvilGit="ssh://xxxxxxxxxxxxxxxxxxx@anvil.works:2222/xxxxxxxxxxxxxxxx.git"
+    git clone $myAnvilGit $myAnvilApp
+    # clone yaml2schema
+    git clone https://github.com/benlawraus/yaml2schema.git
+    # clone the anvil adapter
+    git clone https://github.com/benlawraus/pyDALAnvilWorks.git
+    # rename it to something else so we can use it to work there
+    myworkdir="mywork"
+    mv pyDALAnvilWorks $myworkdir
+    ###################################################
+    # create the pydal definitions file in our work directory so we can save our tests on github
+    mkdir $myworkdir/temp
+    mkdir $myworkdir/temp/input
+    mkdir $myworkdir/temp/output
+    cp  $myAnvilApp/anvil.yaml $myworkdir/temp/input
+    # anvil yaml too broad for what we need, so refine it with anvil_refined.yaml.
+    # For your project, you may want to also refine the anvil.yaml schema
+    cp yaml2schema/src/yaml2schema/input/anvil_refined.yaml $myworkdir/temp/input
+    # finally! create the database schema
+    cd $myworkdir/temp
+    python3 ../../yaml2schema/src/yaml2schema/main.py
+    # take it and use it in our test directory
+    cd ..
+    mv temp/output/pydal_def.py tests
+    # copy our server and client files
+    cp ../$myAnvilApp/server_code/*.py server_code
+    cp ../$myAnvilApp/client_code/*.py client_code
+    pip3 install pyDAL
+    pip3 install pytest
+    pip3 install pytest-tornasync
+    python3 -m pytest
 
 
 See real tests in the `tests` directory.
