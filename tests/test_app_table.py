@@ -145,7 +145,7 @@ class TestSearch:
         rows = app_tables.contact.search(q.all_of(q.any_of(age=45, name="N name"), created_by=user))
         assert 2 == len(rows)
         for row in rows:
-            assert 45 == row['age'] or "N name" == row['name']
+            assert (45 == row['age'] or "N name" == row['name']) and (user==row['created_by'])
 
 
 class TestUser:
