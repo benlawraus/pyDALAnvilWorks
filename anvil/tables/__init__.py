@@ -5,8 +5,10 @@ import tests.pydal_def as mydal
 from anvil.tables.query import *
 
 
-def order_by(*args, **kwargs):
-    return {**{'orderby': '|'.join(args)}, **kwargs}
+class order_by:
+    def __init__(self, *args, **kwargs):
+        self.order = '|'.join(args)
+        self.kwargs = kwargs
 
 
 class BaseFunction:
@@ -31,35 +33,57 @@ class BaseFunction:
         return mydal.db[self.table_name](uid)
 
     def add_to_query(self, key, val):
-        if isinstance(val, not_):
-            self.query.append(mydal.db[self.table_name][key] != val.arg)
+        if isinstance(val, all_of):
+            _q = []
+            if len(val.args) > 0:
+                for arg in val.args:
+                    # there must be a key
+                    _q.append(mydal.db[self.table_name][key] == self.add_to_query(None, arg))
+            else:
+                for _key in val.kwargs:
+                    # there must be no key
+                    _q.append(self.add_to_query(_key, val.kwargs[_key]))
+            _query = _q[0]
+            if len(_q) > 1:
+                for ix in range(1, len(_q)):
+                    _query &= _q[ix]
+            return _query
+        elif isinstance(val, not_):
+            return mydal.db[self.table_name][key] != val.arg
         elif isinstance(val, less_than):
-            self.query.append(mydal.db[self.table_name][key] < val.arg)
+            return mydal.db[self.table_name][key] < val.arg
         elif isinstance(val, greater_than):
-            self.query.append(mydal.db[self.table_name][key] > val.arg)
+            return mydal.db[self.table_name][key] > val.arg
         elif isinstance(val, greater_than_or_equal_to):
-            self.query.append(mydal.db[self.table_name][key] >= val.arg)
+            return mydal.db[self.table_name][key] >= val.arg
         elif isinstance(val, less_than_or_equal_to):
-            self.query.append(mydal.db[self.table_name][key] <= val.arg)
+            return mydal.db[self.table_name][key] <= val.arg
+        elif key is not None:
+            return mydal.db[self.table_name][key] == val
         else:
-            self.query.append(mydal.db[self.table_name][key] == val)
+            return val
 
     def search(self, *args, **kwargs):
         orderby = {}
+        self.query = None
         if len(args) > 0:
-            ord_for = args[0]['orderby'].split('|')
-            _o = mydal.db[self.table_name][ord_for[0]]
-            if len(ord_for) > 1:
-                for f in ord_for[1:]:
-                    _o |= mydal.db[self.table_name][f]
-            if 'ascending' in args[0]:
-                if not args[0]['ascending']:
-                    _o = ~_o
-            orderby = {'orderby': _o}
-        self.query = []
+            for arg in args:
+                if isinstance(arg, order_by):
+                    ord_for = arg.order.split('|')
+                    _o = mydal.db[self.table_name][ord_for[0]]
+                    if len(ord_for) > 1:
+                        for f in ord_for[1:]:
+                            _o |= mydal.db[self.table_name][f]
+                    if 'ascending' in arg.kwargs:
+                        if not arg.kwargs['ascending']:
+                            _o = ~_o
+                    orderby = {'orderby': _o}
+                else:
+                    self.query = self.add_to_query(None, arg)
+        # can only be one kwarg
         for key in kwargs:
-            self.add_to_query(key, kwargs[key])
-        return mydal.db(*self.query).select(**orderby)
+            self.query = self.add_to_query(key, kwargs[key])
+        return mydal.db(self.query).select(**orderby)
 
     def get(self, **kwargs) -> Optional[pydal.objects.Row]:
         return mydal.db[self.table_name](**kwargs)

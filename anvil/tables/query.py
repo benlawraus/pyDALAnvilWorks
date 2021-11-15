@@ -1,7 +1,3 @@
-def all_of(*args, **kwargs):
-    pass
-
-
 def any_of(*args, **kwargs):
     pass
 
@@ -37,3 +33,9 @@ class greater_than:
 class greater_than_or_equal_to:
     def __init__(self, *args):
         self.arg = args[0]
+
+
+class all_of:
+    def __init__(self, *args,**kwargs):
+        self.args = args
+        self.kwargs = kwargs
