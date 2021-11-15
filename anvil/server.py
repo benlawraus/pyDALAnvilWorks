@@ -14,8 +14,6 @@ def callable(_func=None, *, require_user=None):
     def decorator_callable(func):
         """Decorator of the function. """
         # register
-        module = importlib.import_module(func.__module__)
-        print(dir(module))
         PLUGINS[func.__name__] = func
 
         @wraps(func)
@@ -44,7 +42,6 @@ def call(*args):
     """arg[0] = function name, arg[1:] are the arguments of function."""
     if PLUGINS is None:
         importlib.import_module("server_code.server_code_functions")
-    a = PLUGINS
     if len(args) == 1:
         return PLUGINS[args[0]]()
     else:
