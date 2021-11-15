@@ -84,23 +84,23 @@ class TestSearch:
         ######################################
         db_rows = app_tables.contact.search(q.all_of(created_by=user, created_on=created_on))
         ######################################
-        for ix,contact in enumerate(db_rows):
+        for ix, contact in enumerate(db_rows):
             assert created_on.replace(microsecond=0) == db_rows[ix]['created_on']
             assert user == contact['created_by']
         ######################################
         a_contact = app_tables.contact.search(
             tables.order_by('age', ascending=False),
-            q.all_of(name="B name", created_by=user,created_on=created_on))
+            q.all_of(name="B name", created_by=user, created_on=created_on))
         contacts = app_tables.contact.search(
-            tables.order_by('age', ascending=False), q.all_of(created_by=user,created_on=created_on))
+            tables.order_by('age', ascending=False), q.all_of(created_by=user, created_on=created_on))
         ######################################
-        assert 1==len(a_contact)
-        assert "B name"==a_contact[0]['name']
+        assert 1 == len(a_contact)
+        assert "B name" == a_contact[0]['name']
         assert len(self.variations) == len(contacts)
         date_time_expected = created_on.replace(microsecond=0)
-        for ix,contact in enumerate(contacts):
+        for ix, contact in enumerate(contacts):
             if ix != 0:
-                assert contact['age'] <= contacts[ix-1]['age']
+                assert contact['age'] <= contacts[ix - 1]['age']
             assert date_time_expected == contact['created_on']
             assert user == contact['created_by']
         return user
@@ -136,6 +136,16 @@ class TestSearch:
         assert 0 < len(rows)
         for row in rows:
             assert 33 != row['age']
+
+    def test_search_any_of(self):
+        # generate new user
+        TestUser().test_get_user()
+        # generate some new records with this user
+        user = TestSearch().test_search()
+        rows = app_tables.contact.search(q.all_of(q.any_of(age=45, name="N name"), created_by=user))
+        assert 2 == len(rows)
+        for row in rows:
+            assert 45 == row['age'] or "N name" == row['name']
 
 
 class TestUser:

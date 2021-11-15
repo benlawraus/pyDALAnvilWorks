@@ -1,7 +1,3 @@
-def any_of(*args, **kwargs):
-    pass
-
-
 def ilike(*args):
     pass
 
@@ -36,6 +32,12 @@ class greater_than_or_equal_to:
 
 
 class all_of:
-    def __init__(self, *args,**kwargs):
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+
+class any_of:
+    def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
