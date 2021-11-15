@@ -41,7 +41,8 @@ Examples
 ---------
 This will run in your terminal (good for python 3.7+). Before doing, make sure you
 create a copy of the example app in your `anvil.works` account. The link is
-`clone example <https://anvil.works/build#clone:NX66PIIAF3ECPA55=JEYUW7CMGRTSBFXCKYRVXSI4>`_::
+`clone example <https://anvil.works/build#clone:NX66PIIAF3ECPA55=JEYUW7CMGRTSBFXCKYRVXSI4>`_
+You need to then substitute your clone example for `myAnvilGit` in the following script::
 
     mkdir "work"
     cd work
