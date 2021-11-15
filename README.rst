@@ -92,7 +92,7 @@ See real tests in the `tests` directory.
 
 Done
 ----
-The following will run on your laptop (without internet) with a database table `contact`::
+The following will run on your laptop (without internet) with a sqlite database::
 
     user = anvil.users.get_user()
     user = anvil.users.get_by_id(user_ref)
