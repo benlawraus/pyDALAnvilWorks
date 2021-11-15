@@ -32,21 +32,33 @@ class BaseFunction:
     def get_by_id(self, uid) -> Optional[pydal.objects.Row]:
         return mydal.db[self.table_name](uid)
 
+    def _pick_apart(self, key, val, _q):
+        if len(val.args) > 0:
+            for arg in val.args:
+                # there must be a key
+                _q.append(mydal.db[self.table_name][key] == self.add_to_query(None, arg))
+        else:
+            for _key in val.kwargs:
+                # there must be no key
+                _q.append(self.add_to_query(_key, val.kwargs[_key]))
+        return
+
     def add_to_query(self, key, val):
         if isinstance(val, all_of):
             _q = []
-            if len(val.args) > 0:
-                for arg in val.args:
-                    # there must be a key
-                    _q.append(mydal.db[self.table_name][key] == self.add_to_query(None, arg))
-            else:
-                for _key in val.kwargs:
-                    # there must be no key
-                    _q.append(self.add_to_query(_key, val.kwargs[_key]))
+            self._pick_apart(key, val, _q)
             _query = _q[0]
             if len(_q) > 1:
                 for ix in range(1, len(_q)):
                     _query &= _q[ix]
+            return _query
+        elif isinstance(val, any_of):
+            _q = []
+            self._pick_apart(key, val, _q)
+            _query = _q[0]
+            if len(_q) > 1:
+                for ix in range(1, len(_q)):
+                    _query |= _q[ix]
             return _query
         elif isinstance(val, not_):
             return mydal.db[self.table_name][key] != val.arg
