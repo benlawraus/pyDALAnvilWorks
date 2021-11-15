@@ -82,6 +82,7 @@ The following will run on your laptop (without internet) with a database table `
     dict(row)  # will produce extra pyDAL attributes so needs filtering
     @anvil.server.callable
     @anvil.server.callable(require_user=True) # or some_function)
+    @anvil.server.call("server_function")
 
 to be continued....
 
