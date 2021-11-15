@@ -36,11 +36,10 @@ class BaseFunction:
         if len(val.args) > 0:
             for arg in val.args:
                 # there must be a key
-                _q.append(mydal.db[self.table_name][key] == self.add_to_query(None, arg))
-        else:
-            for _key in val.kwargs:
-                # there must be no key
-                _q.append(self.add_to_query(_key, val.kwargs[_key]))
+                _q.append(self.add_to_query(key,arg))
+        for _key in val.kwargs:
+            # there must be no key
+            _q.append(self.add_to_query(_key, val.kwargs[_key]))
         return
 
     def add_to_query(self, key, val):
@@ -50,7 +49,7 @@ class BaseFunction:
             _query = _q[0]
             if len(_q) > 1:
                 for ix in range(1, len(_q)):
-                    _query &= _q[ix]
+                    _query &= (_q[ix])
             return _query
         elif isinstance(val, any_of):
             _q = []
@@ -58,7 +57,7 @@ class BaseFunction:
             _query = _q[0]
             if len(_q) > 1:
                 for ix in range(1, len(_q)):
-                    _query |= _q[ix]
+                    _query |= (_q[ix])
             return _query
         elif isinstance(val, not_):
             return mydal.db[self.table_name][key] != val.arg
