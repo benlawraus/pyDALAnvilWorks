@@ -36,5 +36,7 @@ mv temp/output/pydal_def.py tests
 # copy our server and client files
 cp ../$myAnvilApp/server_code/*.py server_code
 cp ../$myAnvilApp/client_code/*.py client_code
+pip3 install pyDAL
 pip3 install pytest
+pip3 install pytest-tornasync
 python3 -m pytest
