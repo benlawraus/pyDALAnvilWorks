@@ -84,17 +84,25 @@ class TestSearch:
         ######################################
         db_rows = app_tables.contact.search(q.all_of(created_by=user, created_on=created_on))
         ######################################
-        assert created_on.replace(microsecond=0) == db_rows[0]['created_on']
+        for ix,contact in enumerate(db_rows):
+            assert created_on.replace(microsecond=0) == db_rows[ix]['created_on']
+            assert user == contact['created_by']
         ######################################
+        a_contact = app_tables.contact.search(
+            tables.order_by('age', ascending=False),
+            q.all_of(name="B name", created_by=user,created_on=created_on))
         contacts = app_tables.contact.search(
-            tables.order_by('name', ascending=False), q.all_of(created_by=user,created_on=created_on))
+            tables.order_by('age', ascending=False), q.all_of(created_by=user,created_on=created_on))
         ######################################
+        assert 1==len(a_contact)
+        assert "B name"==a_contact[0]['name']
         assert len(self.variations) == len(contacts)
         date_time_expected = created_on.replace(microsecond=0)
-        assert all([date_time_expected == contact['created_on'] for contact in contacts])
-        assert all(['Z name' == contacts[0]['name'],
-                    'Y name' == contacts[1]['name'],
-                    'X name' == contacts[2]['name']])
+        for ix,contact in enumerate(contacts):
+            if ix != 0:
+                assert contact['age'] <= contacts[ix-1]['age']
+            assert date_time_expected == contact['created_on']
+            assert user == contact['created_by']
         return user
 
     def test_search_operators(self):
