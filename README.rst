@@ -79,6 +79,9 @@ The following will run on your laptop (without internet) with a database table `
     rows = app_tables.contact.search(age=q.less_than_or_equal_to(33))
     rows = app_tables.contact.search(age=q.not_(33))
     app_tables.contact.list_columns()
+    dict(row)  # will produce extra pyDAL attributes so needs filtering
+    @anvil.server.callable
+    @anvil.server.callable(require_user=True) # or some_function)
 
 to be continued....
 
