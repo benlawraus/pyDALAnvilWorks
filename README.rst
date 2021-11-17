@@ -37,6 +37,22 @@ Your directory structure on your laptop will then look like this::
         - test1.py
     - anvil.yaml (git-cloned from anvil.works)
 
+
+It should be mentioned that the top directory containing all of the above should be marked as the **sources root**.
+
+Also depending on your project structure, you might need to do something like::
+
+    try:
+        # when running on anvil.works
+        OWN_COMPUTER = False
+        from portable_classes import Phone, Email, Contact
+    except ImportError:
+        # when running on your laptop
+        from server_code.DEBUG import OWN_COMPUTER
+        from client_code.portable_classes import Phone, Email, Contact
+
+Yes, this is annoying. Maybe there is a better way...
+
 Examples
 ---------
 This will run in your terminal (good for python 3.7+). Before doing, make sure you
