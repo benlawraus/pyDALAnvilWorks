@@ -62,7 +62,8 @@ You need to then substitute your clone example for `myAnvilGit` in the following
 
     mkdir "work"
     cd work
-    setopt interactivecomments  # allow comments for zsh
+    # if running in mac's zsh terminal, delete this line and uncomment the next line
+    # setopt interactivecomments
     # create a virtualenv
     python3 -m venv ./venv
     source venv/bin/activate
