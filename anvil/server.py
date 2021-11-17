@@ -40,8 +40,8 @@ def callable(_func=None, *, require_user=None):
 def call(*args):
     # register
     """arg[0] = function name, arg[1:] are the arguments of function."""
-    if PLUGINS is None:
-        importlib.import_module("server_code.server_code_functions")
+    if len(PLUGINS) == 0:
+        importlib.import_module("server_code")
     if len(args) == 1:
         return PLUGINS[args[0]]()
     else:
