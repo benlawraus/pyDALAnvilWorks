@@ -9,7 +9,7 @@ pip3 install datamodel-code-generator
 pip3 install strictyaml
 # clone anvil demo app
 myAnvilApp="pyDALAnvilWorksApp"
-myAnvilGit="ssh://ben.lawrence%40east-elec.com@anvil.works:2222/NX66PIIAF3ECPA55.git"
+myAnvilGit="ssh://ben.yyyy@yyy.com@anvil.works:2222/xxxxxxxxxxx.git"
 git clone $myAnvilGit $myAnvilApp
 # clone yaml2schema
 git clone https://github.com/benlawraus/yaml2schema.git
