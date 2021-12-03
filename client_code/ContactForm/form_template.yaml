@@ -1,0 +1,48 @@
+is_package: true
+container:
+  type: HtmlTemplate
+  properties: {tooltip: '', background: '', foreground: '', border: '', visible: true,
+    role: null, html: ''}
+components:
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: content_panel
+  layout_properties: {slot: default}
+  components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Name, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_name
+    layout_properties: {grid_position: 'IKNKON,VTOZJQ'}
+  - type: TextBox
+    properties: {}
+    name: text_box_name
+    layout_properties: {grid_position: 'IKNKON,AFABHL'}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Telephone Number, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_phone
+    layout_properties: {grid_position: 'YDQREO,GCUDDB'}
+  - type: TextBox
+    properties: {}
+    name: text_box_phone
+    layout_properties: {grid_position: 'YDQREO,MEHHNP'}
+  - type: RepeatingPanel
+    properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
+      visible: true, spacing_above: small, spacing_below: small, item_template: EmailItemForm,
+      background: ''}
+    name: repeating_panel_email
+    layout_properties: {grid_position: 'ZGOFJU,GZCYTD'}
+    data_bindings: []
+  - type: Button
+    properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
+      foreground: '', visible: true, text: Save Contact, font_size: null, font: '',
+      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false, icon: ''}
+    name: button_save
+    layout_properties: {grid_position: 'CGZUDR,BWNQSN'}
+    event_bindings: {click: button_save_click}

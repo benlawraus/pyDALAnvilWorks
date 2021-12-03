@@ -21,5 +21,6 @@ class TestContactForm:
         assert contact['name'] == c_form.text_box_name.text
         assert contact['phone']['number'] == c_form.text_box_phone.text
         assert len(c_form.repeating_panel_email.items) == 1
+        assert contact['email_list'][0]['address'] == c_form.repeating_panel_email.items[0]['email']
 
 

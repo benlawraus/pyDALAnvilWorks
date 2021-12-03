@@ -1,0 +1,54 @@
+container:
+  type: ColumnPanel
+  properties: {col_widths: '{"YJNYWB":10,"IAETOV":50}'}
+  data_bindings: []
+components:
+- type: Label
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true,
+    text: Email, font_size: null, font: '', spacing_above: small, icon_align: left,
+    spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    icon: ''}
+  name: label_email
+  layout_properties: {grid_position: 'CZVRHX,YJNYWB'}
+- type: TextBox
+  properties: {}
+  name: text_box_email
+  layout_properties: {grid_position: 'CZVRHX,IAETOV'}
+  data_bindings:
+  - {property: text, code: 'self.item[''text'']', writeback: true}
+- type: Button
+  properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+    foreground: '', visible: false, text: '', font_size: null, font: '', spacing_above: small,
+    icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+    underline: false, icon: 'fa:plus'}
+  name: button_1
+  layout_properties: {grid_position: 'LFQCAA,HHPKBM'}
+  event_bindings: {click: button_1_click}
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: column_panel_1
+  layout_properties: {grid_position: 'LFQCAA,DFYQHI'}
+  components:
+  - type: RadioButton
+    properties: {role: null, selected: false, align: left, tooltip: '', border: '',
+      enabled: true, foreground: '', value: '1', visible: true, text: 'Work ', font_size: null,
+      font: '', spacing_above: small, spacing_below: small, italic: false, background: '',
+      bold: false, group_name: radioGroup1, underline: false}
+    name: radio_btn_work
+    layout_properties: {grid_position: 'PLRNWW,MJIEID'}
+  - type: RadioButton
+    properties: {role: null, selected: false, align: left, tooltip: '', border: '',
+      enabled: true, foreground: '', value: '2', visible: true, text: Home, font_size: null,
+      font: '', spacing_above: small, spacing_below: small, italic: false, background: '',
+      bold: false, group_name: radioGroup1, underline: false}
+    name: radio_button_2
+    layout_properties: {grid_position: 'PLRNWW,XAPXYS'}
+    data_bindings: []
+  - type: RadioButton
+    properties: {role: null, selected: false, align: left, tooltip: '', border: '',
+      enabled: true, foreground: '', value: '4', visible: true, text: Other, font_size: null,
+      font: '', spacing_above: small, spacing_below: small, italic: false, background: '',
+      bold: false, group_name: radioGroup1, underline: false}
+    name: radio_button_3
+    layout_properties: {grid_position: 'PLRNWW,AVGVIP'}
+is_package: true
