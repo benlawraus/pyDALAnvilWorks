@@ -14,6 +14,7 @@ def generate_contact(user=None):
                       created_by=user,
                       created_on=right_now)
     email_dict = dict(address="rex@exopotamia.com",
+                      place=1,
                       created_by=user,
                       created_on=right_now)
     contact_dict = dict(

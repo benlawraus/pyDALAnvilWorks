@@ -1,6 +1,5 @@
-import anvil.server
 from server_code.server_code_functions import example_1
-from client_code.client_code_functions import example_A, save_contact, generate_contact
+from tests.client_code_functions import example_A, save_contact, generate_contact
 import tests.pydal_def as mydal
 
 class TestServer:

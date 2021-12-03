@@ -1,6 +1,6 @@
 """File containing pytest tests"""
-import time
 from collections import namedtuple
+import pydal
 
 import anvil.users
 from anvil import tables
