@@ -1,4 +1,4 @@
-from _anvil_designer.generate_class import yaml_from_file, build_path, convert_yaml_file_to_dict, write_a_std_class, \
+from _anvil_designer.generate_class import yaml_from_file, build_path, convert_yaml_file_to_dict, write_a_class, \
     Class_Bookkeeping
 import pathlib
 import importlib
@@ -16,7 +16,7 @@ def __getattr__(name: str):
         # read in the yaml
         form_name = name.split('Template')[0]
         all_components = convert_yaml_file_to_dict(form_name, bookkeeping)
-        bookkeeping.dict_str += write_a_std_class(
+        bookkeeping.dict_str += write_a_class(
             name,
             all_components,
             bookkeeping.dict_list,

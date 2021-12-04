@@ -12,10 +12,9 @@ class Class_Bookkeeping:
         """
 class GenericTemplate:
     def init_components(self, **kwargs):
-        # TODO
+        super().__init__()        
         pass
 """
-
     dict_list = []
 
 
@@ -126,7 +125,7 @@ def to_camel_case(snake_str):
     return ''.join(x.title() for x in components)
 
 
-def write_a_std_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class=''):
+def deprecated_write_a_std_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class=''):
     if dict_name[0].islower():
         class_name = to_camel_case(dict_name)
     else:
@@ -146,15 +145,46 @@ def write_a_std_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_
             else:
                 value = f"'{value}'"
         elif isinstance(value, dict) or value in dict_list:
-            value = to_camel_case(key) + f"({base_class})"
+            value = to_camel_case(key) + f"()"
         else:
             pass
         kwargs_string += kwargs_template.substitute(key=key, value=value)
         init_string += init_template.substitute(key=key)
     return f"""
-class {class_name}:
+class {class_name}({base_class}):
     def __init__(self, {kwargs_string}):
 {init_string}
+"""
+
+
+def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class=''):
+    if dict_name[0].islower():
+        class_name = to_camel_case(dict_name)
+    else:
+        class_name = dict_name
+
+    kwargs_template = Template("    $key=$value")
+    kwargs_string = ""
+    init_string = ""
+    init_template = Template("        self.$key = $key")
+    for key, value in of_dict.items():
+        if len(kwargs_string) > 0:
+            kwargs_string += "\n"
+            init_string += '\n'
+        if isinstance(value, str):
+            if len(value) > 0 and value in dict_list:
+                value = value + f"()"
+            else:
+                value = f"'{value}'"
+        elif isinstance(value, dict) or value in dict_list:
+            value = to_camel_case(key) + f"()"
+        else:
+            pass
+        kwargs_string += kwargs_template.substitute(key=key, value=value)
+        init_string += init_template.substitute(key=key)
+    return f"""
+class {class_name}({base_class}):
+{kwargs_string}
 """
 
 
@@ -165,7 +195,7 @@ def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
         else:
             validate(value)
             attrs = value['properties'].data
-        bookkeeping.dict_str += write_a_std_class(value['name'].text, attrs, bookkeeping.dict_list)
+        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list)
         # add to list
         bookkeeping.dict_list.append(to_camel_case(value['name'].text))
         return attrs
@@ -175,7 +205,7 @@ def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
         for _y in value['components']:
             instance_dict[_y['name'].text] = derive_dict(_y, bookkeeping)
             str_dict[_y['name'].text] = to_camel_case(_y['name'].text)
-        bookkeeping.dict_str += write_a_std_class(value['name'].text, str_dict, bookkeeping.dict_list)
+        bookkeeping.dict_str += write_a_class(value['name'].text, str_dict, bookkeeping.dict_list)
         return instance_dict
 
 
@@ -189,7 +219,7 @@ def convert_yaml_file_to_dict(form_name: str, bookkeeping: Class_Bookkeeping):
         if parsed['components'][0]['name'] == "content_panel":
             value = parsed['components'][0]['components']
             all_comp["content_panel"] = ColumnPanel
-    bookkeeping.dict_str += write_a_std_class("content_panel", ColumnPanel, bookkeeping.dict_list)
+    bookkeeping.dict_str += write_a_class("content_panel", ColumnPanel, bookkeeping.dict_list)
     for p in value:
         _dict = derive_dict(p, bookkeeping)
         all_comp[p['name'].text] = to_camel_case(p['name'].text)  # _dict
