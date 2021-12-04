@@ -1,6 +1,22 @@
 import pathlib
-from typing import Tuple, List
+from dataclasses import dataclass
+from typing import Tuple, List, Dict
 import strictyaml as sy
+
+from string import Template
+
+
+@dataclass
+class Class_Bookkeeping:
+    dict_str = \
+        """
+class GenericTemplate:
+    def init_components(self, **kwargs):
+        # TODO
+        pass
+"""
+
+    dict_list = []
 
 
 def anvil_yaml_schema() -> sy.MapPattern:
@@ -16,12 +32,12 @@ def anvil_yaml_schema() -> sy.MapPattern:
     return schema
 
 
-def build_path(filename, directory='source') -> pathlib.Path:
+def build_path(filename, directory) -> pathlib.Path:
     root = pathlib.Path.cwd() / directory / filename
     return root
 
 
-def readfile(filename: str, directory: str = 'source') -> Tuple[str, List[str]]:
+def readfile(filename: str, directory: pathlib.Path) -> Tuple[str, List[str]]:
     """Reads a file and outputs the text and an array of newline characters
     used at the end of each line.
 
@@ -46,20 +62,135 @@ def readfile(filename: str, directory: str = 'source') -> Tuple[str, List[str]]:
         n.extend(f.newlines)
     return text, n
 
-def work():
-    pass
-"""
-import strictyaml as sy
-from prodict import Prodict
-from _anvil_designer.generate_class import readfile, anvil_yaml_schema
-input_yaml = "client_code/Form1/form_template.yaml"
-# if there is anvil.yaml, converts to openapi.yaml
-anvil_yaml_str, newline_list = readfile(input_yaml, "")
-parsed_yaml = sy.dirty_load(yaml_string=anvil_yaml_str, schema=anvil_yaml_schema(), allow_flow_style=True)
 
-"""
-
-def yaml_from_file(input_yaml:str, folder:str)->sy.YAML:
+def yaml_from_file(input_yaml: str, folder: pathlib.Path) -> sy.YAML:
     # if there is anvil.yaml, converts to openapi.yaml
     anvil_yaml_str, newline_list = readfile(input_yaml, folder)
     return sy.dirty_load(yaml_string=anvil_yaml_str, schema=anvil_yaml_schema(), allow_flow_style=True)
+
+
+TextBox = dict(
+    enabled=True,
+    text="",
+    visible=True,
+    align="left",
+    background="#ff0000",
+    bold=False,
+    border="1px solid #888888",
+    font="Arial",
+    font_size=16,
+    foreground="#ff0000",
+    hide_text=False,
+    italic=False,
+    placeholder="Enter text here",
+    role="default",
+    spacing_above="small",
+    spacing_below="small",
+    tag='',
+    tooltip="",
+    type="text",
+    underline=False)
+
+ColumnPanel = dict(
+    visible=True,
+    wrap_on="mobile",
+    background="#ff0000",
+    bold=False,
+    border="1px solid #888888",
+    col_spacing="medium",
+    col_widths='',
+    foreground="#ff0000",
+    role="default",
+    spacing_above="small",
+    spacing_below="small",
+    tag="",
+    tooltip=""
+)
+
+
+def validate(value):
+    for key in value['properties']:
+        if value['properties'][key].text in {'true', 'false'}:
+            value['properties'][key].revalidate(sy.Bool())
+        elif value['properties'][key].text in {'null'}:
+            value['properties'][key].revalidate(sy.NullNone())
+        elif value['properties'][key].text in {''}:
+            value['properties'][key].revalidate(sy.Str())
+        elif set(value['properties'][key].text) <= set('0123456789.'):
+            value['properties'][key].revalidate(sy.Float())
+    return
+
+
+def to_camel_case(snake_str):
+    components = snake_str.split('_')
+    return ''.join(x.title() for x in components)
+
+
+def write_a_std_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class=''):
+    if dict_name[0].islower():
+        class_name = to_camel_case(dict_name)
+    else:
+        class_name = dict_name
+
+    kwargs_template = Template("$key=$value")
+    kwargs_string = ""
+    init_string = ""
+    init_template = Template("        self.$key = $key")
+    for key, value in of_dict.items():
+        if len(kwargs_string) > 0:
+            kwargs_string += ", "
+            init_string += '\n'
+        if isinstance(value, str):
+            if len(value) > 0 and value in dict_list:
+                value = value + f"({base_class})"
+            else:
+                value = f"'{value}'"
+        elif isinstance(value, dict) or value in dict_list:
+            value = to_camel_case(key) + f"({base_class})"
+        else:
+            pass
+        kwargs_string += kwargs_template.substitute(key=key, value=value)
+        init_string += init_template.substitute(key=key)
+    return f"""
+class {class_name}:
+    def __init__(self, {kwargs_string}):
+{init_string}
+"""
+
+
+def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
+    if 'components' not in value:
+        if value['type'].text == "TextBox":
+            attrs = TextBox
+        else:
+            validate(value)
+            attrs = value['properties'].data
+        bookkeeping.dict_str += write_a_std_class(value['name'].text, attrs, bookkeeping.dict_list)
+        # add to list
+        bookkeeping.dict_list.append(to_camel_case(value['name'].text))
+        return attrs
+    else:
+        instance_dict = dict()
+        str_dict = dict()
+        for _y in value['components']:
+            instance_dict[_y['name'].text] = derive_dict(_y, bookkeeping)
+            str_dict[_y['name'].text] = to_camel_case(_y['name'].text)
+        bookkeeping.dict_str += write_a_std_class(value['name'].text, str_dict, bookkeeping.dict_list)
+        return instance_dict
+
+
+def convert_yaml_file_to_dict(form_name: str, bookkeeping: Class_Bookkeeping):
+    file_name = 'form_template.yaml'
+    folder = pathlib.Path(__file__).parent.parent / 'client_code' / form_name
+    parsed = yaml_from_file(file_name, folder)
+    value = parsed['components']
+    all_comp = dict()
+    if len(parsed['components']) == 1:
+        if parsed['components'][0]['name'] == "content_panel":
+            value = parsed['components'][0]['components']
+            all_comp["content_panel"] = ColumnPanel
+    bookkeeping.dict_str += write_a_std_class("content_panel", ColumnPanel, bookkeeping.dict_list)
+    for p in value:
+        _dict = derive_dict(p, bookkeeping)
+        all_comp[p['name'].text] = to_camel_case(p['name'].text)  # _dict
+    return all_comp
