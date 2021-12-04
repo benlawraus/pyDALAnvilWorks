@@ -125,38 +125,6 @@ def to_camel_case(snake_str):
     return ''.join(x.title() for x in components)
 
 
-def deprecated_write_a_std_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class=''):
-    if dict_name[0].islower():
-        class_name = to_camel_case(dict_name)
-    else:
-        class_name = dict_name
-
-    kwargs_template = Template("$key=$value")
-    kwargs_string = ""
-    init_string = ""
-    init_template = Template("        self.$key = $key")
-    for key, value in of_dict.items():
-        if len(kwargs_string) > 0:
-            kwargs_string += ", "
-            init_string += '\n'
-        if isinstance(value, str):
-            if len(value) > 0 and value in dict_list:
-                value = value + f"({base_class})"
-            else:
-                value = f"'{value}'"
-        elif isinstance(value, dict) or value in dict_list:
-            value = to_camel_case(key) + f"()"
-        else:
-            pass
-        kwargs_string += kwargs_template.substitute(key=key, value=value)
-        init_string += init_template.substitute(key=key)
-    return f"""
-class {class_name}({base_class}):
-    def __init__(self, {kwargs_string}):
-{init_string}
-"""
-
-
 def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class=''):
     if dict_name[0].islower():
         class_name = to_camel_case(dict_name)
@@ -165,12 +133,9 @@ def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_clas
 
     kwargs_template = Template("    $key=$value")
     kwargs_string = ""
-    init_string = ""
-    init_template = Template("        self.$key = $key")
     for key, value in of_dict.items():
         if len(kwargs_string) > 0:
             kwargs_string += "\n"
-            init_string += '\n'
         if isinstance(value, str):
             if len(value) > 0 and value in dict_list:
                 value = value + f"()"
@@ -181,7 +146,6 @@ def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_clas
         else:
             pass
         kwargs_string += kwargs_template.substitute(key=key, value=value)
-        init_string += init_template.substitute(key=key)
     return f"""
 class {class_name}({base_class}):
 {kwargs_string}
