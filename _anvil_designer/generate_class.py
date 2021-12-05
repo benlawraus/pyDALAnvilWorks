@@ -152,6 +152,40 @@ class {class_name}({base_class}):
 """
 
 
+def write_a_child_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class=''):
+    if dict_name[0].islower():
+        class_name = to_camel_case(dict_name)
+    else:
+        class_name = dict_name
+
+    kwargs_template = Template("    $key=$value")
+    kwargs_string = ""
+    for key, value in of_dict.items():
+        write_this_to_base_class = False
+        if isinstance(value, str):
+            if len(value) > 0 and value in dict_list:
+                value = value + f"()"
+            else:
+                value = f"'{value}'"
+        elif isinstance(value, dict) or value in dict_list:
+            value = to_camel_case(key) + "()"
+            write_this_to_base_class = True
+        else:
+            pass
+        if write_this_to_base_class:
+            if len(base_class) > 0:
+                base_class += ', '
+            base_class += value.replace("()", "")
+        else:
+            if len(kwargs_string) > 0:
+                kwargs_string += "\n"
+            kwargs_string += kwargs_template.substitute(key=key, value=value)
+    return f"""
+class {class_name}({base_class}):
+{kwargs_string}
+"""
+
+
 def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
     if 'components' not in value:
         if value['type'].text == "TextBox":
@@ -162,15 +196,25 @@ def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
         bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list)
         # add to list
         bookkeeping.dict_list.append(to_camel_case(value['name'].text))
-        return attrs
+        return attrs, dict()
     else:
         instance_dict = dict()
         str_dict = dict()
         for _y in value['components']:
-            instance_dict[_y['name'].text] = derive_dict(_y, bookkeeping)
+            inst_dict,s_dict = derive_dict(_y, bookkeeping)
+            instance_dict[_y['name'].text] = inst_dict
             str_dict[_y['name'].text] = to_camel_case(_y['name'].text)
-        bookkeeping.dict_str += write_a_class(value['name'].text, str_dict, bookkeeping.dict_list)
-        return instance_dict
+            if len(s_dict)>0:
+                str_dict.update(s_dict)
+        if value['type'].text == "ColumnPanel":
+            instance_dict[value['name'].text] = ColumnPanel
+            bookkeeping.dict_str += write_a_class(value['name'].text, ColumnPanel, bookkeeping.dict_list)
+        else:
+            # TODO
+            raise(UserWarning("Haven't done this yet!"))
+        str_dict[value['name'].text] = to_camel_case(value['name'].text)
+        bookkeeping.dict_list.append(to_camel_case(value['name'].text))
+        return instance_dict,str_dict
 
 
 def convert_yaml_file_to_dict(form_name: str, bookkeeping: Class_Bookkeeping):
@@ -185,6 +229,8 @@ def convert_yaml_file_to_dict(form_name: str, bookkeeping: Class_Bookkeeping):
             all_comp["content_panel"] = ColumnPanel
     bookkeeping.dict_str += write_a_class("content_panel", ColumnPanel, bookkeeping.dict_list)
     for p in value:
-        _dict = derive_dict(p, bookkeeping)
+        _dict,_str_dict = derive_dict(p, bookkeeping)
         all_comp[p['name'].text] = to_camel_case(p['name'].text)  # _dict
+        if len(_str_dict)>0:
+            all_comp.update(_str_dict)
     return all_comp

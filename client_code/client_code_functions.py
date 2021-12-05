@@ -27,7 +27,7 @@ def generate_contact(user=None):
     return contact_dict
 
 
-def save_contact():
+def save_contact_from_client():
     user = anvil.users.get_user()
     contact_dict = generate_contact(user)
     contact_dict['id'] = anvil.server.call("save_contact", contact_dict)

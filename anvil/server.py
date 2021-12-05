@@ -4,6 +4,7 @@ import importlib
 from functools import wraps
 import anvil.users
 import tests.pydal_def as mydal
+import pathlib
 
 PLUGINS = dict()
 
@@ -40,8 +41,11 @@ def callable(_func=None, *, require_user=None):
 def call(*args):
     # register
     """arg[0] = function name, arg[1:] are the arguments of function."""
-    if len(PLUGINS) == 0:
-        importlib.import_module("server_code")
+    if  args[0] not in PLUGINS:
+        pth = pathlib.Path(__file__).parent.parent / 'server_code'
+        for p in pth.iterdir():
+            if p.is_file():
+                module_obj = importlib.import_module("server_code."+p.stem)
     if len(args) == 1:
         return PLUGINS[args[0]]()
     else:

@@ -4,7 +4,7 @@ from anvil.tables import app_tables
 import anvil.tables.query as q
 import tests.pydal_def as mydal
 from client_code.ContactForm import ContactForm
-from tests.client_code_functions import generate_contact
+from client_code.client_code_functions import generate_contact
 
 
 class TestContactForm:
@@ -22,5 +22,8 @@ class TestContactForm:
         assert contact['phone']['number'] == c_form.text_box_phone.text
         assert len(c_form.repeating_panel_email.items) == 1
         assert contact['email_list'][0]['address'] == c_form.repeating_panel_email.items[0]['email']
-
-
+        # lets test the save contact
+        c_form.button_save_click()
+        # get last contact
+        contact_row = app_tables.contact.get(name=contact['name'])
+        assert contact_row is not None

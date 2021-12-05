@@ -1,5 +1,5 @@
 from server_code.server_code_functions import example_1
-from tests.client_code_functions import example_A, save_contact, generate_contact
+from client_code.client_code_functions import example_A, save_contact_from_client, generate_contact
 import tests.pydal_def as mydal
 
 class TestServer:
@@ -11,7 +11,7 @@ class TestServer:
 
     def test_client_save_contact(self):
         mydal.define_tables_of_db()
-        user, contact_id = save_contact()
+        user, contact_id = save_contact_from_client()
         # get from database
         contact_row = mydal.db.contact(contact_id)
         assert contact_row

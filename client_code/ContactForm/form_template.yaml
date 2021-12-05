@@ -9,28 +9,33 @@ components:
   name: content_panel
   layout_properties: {slot: default}
   components:
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Name, font_size: null, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-      underline: false, icon: ''}
-    name: label_name
-    layout_properties: {grid_position: 'IKNKON,VTOZJQ'}
-  - type: TextBox
-    properties: {}
-    name: text_box_name
-    layout_properties: {grid_position: 'IKNKON,AFABHL'}
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Telephone Number, font_size: null, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-      underline: false, icon: ''}
-    name: label_phone
-    layout_properties: {grid_position: 'YDQREO,GCUDDB'}
-  - type: TextBox
-    properties: {}
-    name: text_box_phone
-    layout_properties: {grid_position: 'YDQREO,MEHHNP'}
+  - type: ColumnPanel
+    properties: {col_widths: '{"NWGMBY":15,"VPHMVV":45,"MDNMFP":15,"LOBHDT":45}'}
+    name: column_panel_1
+    layout_properties: {grid_position: 'IDOKRJ,LSOLWE'}
+    components:
+    - type: Label
+      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+        visible: true, text: Name, font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: ''}
+      name: label_name
+      layout_properties: {grid_position: 'SOHFWI,MDNMFP', slot: default}
+    - type: TextBox
+      properties: {}
+      name: text_box_name
+      layout_properties: {grid_position: 'SOHFWI,LOBHDT'}
+    - type: Label
+      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+        visible: true, text: Telephone Number, font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: ''}
+      name: label_phone
+      layout_properties: {grid_position: 'JWMKOV,NWGMBY'}
+    - type: TextBox
+      properties: {}
+      name: text_box_phone
+      layout_properties: {grid_position: 'JWMKOV,VPHMVV'}
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
       visible: true, spacing_above: small, spacing_below: small, item_template: EmailItemForm,
