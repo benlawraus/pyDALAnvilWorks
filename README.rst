@@ -77,6 +77,9 @@ Examples
 ---------
 This will run in your terminal (good for python 3.7+). Before doing, make sure you
 create a copy of the example app in your `anvil.works` account.
+
+`CLONE ME <https://anvil.works/build#clone:NX66PIIAF3ECPA55=T3AK5Y37HCJGQKKOERAR5PX7>`_
+
 You need to then substitute your clone example for `myAnvilGit` in the following script::
 
     mkdir "work"
