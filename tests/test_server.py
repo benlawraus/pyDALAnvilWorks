@@ -11,12 +11,12 @@ class TestServer:
 
     def test_client_save_contact(self):
         mydal.define_tables_of_db()
-        user, contact_id = save_contact_from_client()
+        user, contact_dict = save_contact_from_client()
         # get from database
-        contact_row = mydal.db.contact(contact_id)
+        contact_row = mydal.db.contact(contact_dict['id'])
         assert contact_row
         # get initial dict
-        contact_dict = generate_contact(user)
+        #contact_dict = generate_contact(user)
         for attr in {'name', 'age', 'created_on', 'created_by'}:
             assert contact_dict[attr] == contact_row[attr]
         for attr in {'number', 'created_on', 'created_by'}:

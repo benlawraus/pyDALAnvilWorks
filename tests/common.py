@@ -67,6 +67,7 @@ def generate_phone_instance(user):
 def generate_email_instance(user):
     return dict(
         address=email_generator(),
+        place=1,
         created_by=user,
         created_on=datetime.now()
     )

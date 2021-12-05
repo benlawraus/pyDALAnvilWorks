@@ -15,7 +15,7 @@ components:
   name: text_box_email
   layout_properties: {grid_position: 'CZVRHX,IAETOV'}
   data_bindings:
-  - {property: text, code: 'self.item[''text'']', writeback: true}
+  - {property: text, code: 'self.item[''email'']', writeback: true}
 - type: Button
   properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
     foreground: '', visible: false, text: '', font_size: null, font: '', spacing_above: small,

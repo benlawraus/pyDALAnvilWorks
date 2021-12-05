@@ -21,8 +21,8 @@ def test_order_by():
     assert True
 
 
-def insert_email_record(created_by, address: str, created_on: datetime) -> pydal.helpers.classes.Reference:
-    db_row_ref = mydal.db.email.insert(address=address, created_by=created_by, created_on=created_on)
+def insert_email_record(created_by, address: str, created_on: datetime, place:int) -> pydal.helpers.classes.Reference:
+    db_row_ref = mydal.db.email.insert(address=address, created_by=created_by, created_on=created_on, place=place)
     mydal.db.commit()
     return db_row_ref
 
@@ -218,7 +218,7 @@ class TestRow:
         # get user (run test_get_user at least once)
         user = anvil.users.get_user()
         created_on = datetime.now()
-        email_list = [insert_email_record(user, email_generator(), created_on=created_on)
+        email_list = [insert_email_record(user, email_generator(), created_on=created_on, place=1)
                       for _ in range(2)]
         assert all(email_list)
         phone_row = insert_phone_record(user, phone_generator(), created_on)
