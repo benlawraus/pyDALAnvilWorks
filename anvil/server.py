@@ -2,6 +2,8 @@
 """
 import importlib
 from functools import wraps
+from types import NoneType
+
 import anvil.users
 import tests.pydal_def as mydal
 import pathlib
@@ -39,13 +41,26 @@ def callable(_func=None, *, require_user=None):
 
 
 def call(*args):
+    def import_source_file(file_path, module_name):
+        """From https://docs.python.org/3/library/importlib.html#importing-programmatically"""
+        import importlib.util
+        import sys
+
+        # For illustrative purposes.
+        import tokenize
+        spec = importlib.util.spec_from_file_location(module_name, file_path)
+        if not isinstance(spec,NoneType):
+            module = importlib.util.module_from_spec(spec)
+            sys.modules[module_name] = module
+            spec.loader.exec_module(module)
+        return
     # register
     """arg[0] = function name, arg[1:] are the arguments of function."""
     if  args[0] not in PLUGINS:
         pth = pathlib.Path(__file__).parent.parent / 'server_code'
         for p in pth.iterdir():
             if p.is_file():
-                module_obj = importlib.import_module("server_code."+p.stem)
+                import_source_file(p,p.stem)
     if len(args) == 1:
         return PLUGINS[args[0]]()
     else:
