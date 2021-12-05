@@ -29,6 +29,7 @@ But really, you should generate dummy data during your tests anyway.
 Your directory structure on your laptop will then look like this::
 
     - anvil  (from this repo)
+    - _anvil_designer (from this repo)
     - client_code  (git-cloned from anvil.works)
     - server_code  (git-cloned from anvil.works)
     - tests (your tests you run on your laptop)
@@ -53,10 +54,29 @@ Also depending on your project structure, you might need to do something like::
 
 Yes, this is annoying. Maybe there is a better way...
 
+ For client code tests, similarly in your *Form* code::
+
+    try:
+        from ._anvil_designer import ContactFormTemplate
+    except ImportError:
+        from _anvil_designer import ContactFormTemplate
+
+    import anvil.server
+    import anvil.users
+
+    class ContactForm(ContactFormTemplate):
+        etc
+
+The ``_anvil_designer`` directory allows *PyCharm* to auto-complete some code for you on form components.
+
+It also allows testing on code on the client side. (See ``test_ContactForm.py`` for some pytests)
+
+This project is in its infancy...
+
 Examples
 ---------
 This will run in your terminal (good for python 3.7+). Before doing, make sure you
-create a copy of the example app in your `anvil.works` account. WORK IN PROGRESS
+create a copy of the example app in your `anvil.works` account.
 You need to then substitute your clone example for `myAnvilGit` in the following script::
 
     mkdir "work"
@@ -132,6 +152,12 @@ The following will run on your laptop (without internet) with a sqlite database:
     @anvil.server.callable
     @anvil.server.callable(require_user=True) # or some_function)
     @anvil.server.call("server_function")
+
+In your client tests::
+
+    c_form = ContactForm(contact=contact)
+    assert x == c_form.text_box_name.text
+    assert x == c_form.repeating_panel_1.items[0]['text']
 
 to be continued....
 
