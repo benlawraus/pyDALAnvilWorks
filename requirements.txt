@@ -2,4 +2,3 @@ pydal~=20210626.3
 pytest~=6.2.5
 pytest-tornasync
 strictyaml>=1.6.1
-datamodel-code-generator
