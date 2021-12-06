@@ -17,7 +17,11 @@ def get_by_id(id):
 
 
 def get_user() -> pydal.helpers.classes.Reference:
-    """Retrieves the last user added to the database."""
+    """Retrieves the last user added to the database.
+
+    Why is there an extra table ``logged_in_users`` ?!?
+
+    So that the returned user is a reference and not a row (pyDAL). Sorry!"""
     if mydal.db is None:
         raise ConnectionError("Database not connected")
     if 'logged_in_users' not in mydal.db.tables:
