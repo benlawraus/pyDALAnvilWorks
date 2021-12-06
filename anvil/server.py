@@ -40,20 +40,19 @@ def callable(_func=None, *, require_user=None):
         return decorator_callable(_func)
 
 
-def call(*args):
-    def import_source_file(file_path, module_name):
-        """From https://docs.python.org/3/library/importlib.html#importing-programmatically"""
-        import importlib.util
-        import sys
+def import_source_file(file_path, module_name):
+    """From https://docs.python.org/3/library/importlib.html#importing-programmatically"""
+    import importlib.util
+    import sys
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    if not isinstance(spec,NoneType):
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module
+        spec.loader.exec_module(module)
+    return
 
-        # For illustrative purposes.
-        import tokenize
-        spec = importlib.util.spec_from_file_location(module_name, file_path)
-        if not isinstance(spec,NoneType):
-            module = importlib.util.module_from_spec(spec)
-            sys.modules[module_name] = module
-            spec.loader.exec_module(module)
-        return
+
+def call(*args):
     # register
     """arg[0] = function name, arg[1:] are the arguments of function."""
     if  args[0] not in PLUGINS:
