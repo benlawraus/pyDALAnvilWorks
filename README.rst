@@ -57,7 +57,7 @@ Also depending on your project structure, you might need to do something like::
 
 Yes, this is annoying. Maybe there is a better way...
 
- For client code tests, similarly in your *Form* code::
+For client code tests, similarly in your *Form* code::
 
     try:
         from ._anvil_designer import ContactFormTemplate
