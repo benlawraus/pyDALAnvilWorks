@@ -1,6 +1,9 @@
 What is it?
 ------------
-To allow you to use any database while testing your `anvil.works <https://anvil.works>`_ app.
+To allow you to:
+    * Use any database while testing your `anvil.works <https://anvil.works>`_ app.
+    * Create and run tests using pytest. These tests would be for client_side forms, as well as server_side python.
+    * Most importantly: use **PyCharm** to write server_side and client_side code!!
 
 How is it done?
 ---------------
