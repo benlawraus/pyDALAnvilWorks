@@ -75,7 +75,28 @@ This project is in its infancy...
 
 Examples
 ---------
-This will run in your terminal (good for python 3.7+). Before doing, make sure you
+
+Simple
+^^^^^^
+This repo has a copy of an anvil.works app already there. So, you can download this repo and run these few commands in your terminal::
+
+    mkdir "work"
+    cd work
+    python3 -m venv ./venv
+    source venv/bin/activate
+    pip3 install pydal
+    pip3 install pytest
+    pip3 install pytest-tornasync
+    pip3 install strictyaml
+    git clone https://github.com/benlawraus/pyDALAnvilWorks.git
+    python3 -m pytest
+
+
+Complicated
+^^^^^^^^^^^
+But if you want to see how to use your own anvil.works app here, try to understand this script.
+
+It will run in your terminal (good for python 3.7+). Before doing, make sure you
 create a copy of the example app in your `anvil.works` account.
 
 `CLONE ME <https://anvil.works/build#clone:NX66PIIAF3ECPA55=T3AK5Y37HCJGQKKOERAR5PX7>`_
