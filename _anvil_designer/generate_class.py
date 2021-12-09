@@ -209,9 +209,13 @@ def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
         if value['type'].text == "ColumnPanel":
             instance_dict[value['name'].text] = ColumnPanel
             bookkeeping.dict_str += write_a_class(value['name'].text, ColumnPanel, bookkeeping.dict_list)
+        elif value['type'].text == "DataGrid":
+            inst_dict,s_dict = derive_dict(_y, bookkeeping)
+            instance_dict[value['name'].text] = inst_dict
+            bookkeeping.dict_str += write_a_class(value['name'].text, ColumnPanel, bookkeeping.dict_list)
         else:
             # TODO
-            raise(UserWarning("Haven't done this yet!"))
+            raise(UserWarning(f"Haven't implemented {value['type']} types yet! Component:{value['name']}"))
         str_dict[value['name'].text] = to_camel_case(value['name'].text)
         bookkeeping.dict_list.append(to_camel_case(value['name'].text))
         return instance_dict,str_dict
