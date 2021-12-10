@@ -1,12 +1,15 @@
+import anvil.users
 try:
     from ._anvil_designer import ContactFormTemplate
 except ImportError:
     from _anvil_designer import ContactFormTemplate
 
 import anvil.server
-import anvil.users
+from anvil import *
+from anvil_extras import navigation
 
 
+@navigation.register(name="addcontact")
 class ContactForm(ContactFormTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.

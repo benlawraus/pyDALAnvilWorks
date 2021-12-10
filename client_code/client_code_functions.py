@@ -1,3 +1,4 @@
+import anvil.users
 """Used for pyDALAnvilWorks tests only. Delete."""
 import random
 import string
@@ -37,3 +38,4 @@ def save_contact_from_client():
     contact_dict_client = generate_contact(user)
     contact_dict_client['id'] = anvil.server.call("save_contact", contact_dict_client)
     return user, contact_dict_client
+

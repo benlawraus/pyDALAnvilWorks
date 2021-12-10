@@ -35,3 +35,11 @@ def get_user() -> pydal.helpers.classes.Reference:
     mydal.db.commit()
     mydal.logged_in_user = new_log.user_ref
     return mydal.logged_in_user
+
+
+def signup_with_form(allow_cancel=False):
+    return None
+
+
+def login_with_form(allow_cancel=False, show_signup_option=False):
+    return None

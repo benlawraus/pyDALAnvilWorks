@@ -24,10 +24,14 @@ app, there is a file called `anvil.yaml`. This file contains a description of yo
 database schema. The `converter <https://github.com/benlawraus/yaml2schema>`_ will read
 the `anvil.yaml` and generate a `pyDAL <https://py4web.com/_documentation/static/en/chapter-07.html>`_
 definition file (`pydal_def.py`) that you can use to run your tests. Place `pydal_def.py` into your
-`tests` directory. Also create a `database` directory there to put all your database files.
+`tests` directory.
 
-A csv file can be exported from your anvil.works database and imported into your sqlite using  `pyDAL`.
-But really, you should generate dummy data during your tests anyway.
+Also create a `database` directory there to put all your database files. And! a `template` directory
+containing the class definitions of the client form components. The class definitions are written during the first run
+(see ``_anvil_designer``).
+
+A csv file can be exported from your anvil.works database and imported into your sqlite using  `pyDal <http://www.web2py.com/books/default/chapter/29/06/the-database-abstraction-layer#Exporting-and-importing-data>`_,
+but really, you should generate dummy data during your tests anyway.
 
 Your directory structure on your laptop will then look like this::
 
@@ -37,6 +41,7 @@ Your directory structure on your laptop will then look like this::
     - server_code  (git-cloned from anvil.works)
     - tests (your tests you run on your laptop)
         - database  (your sqlite and pydal files to run your database on your laptop)
+        - templates (contains the class definitions used in client forms. These templates are written on the first run, so delete them after you update your forms on anvil.works.)
         - pydal_def.py  # generated from anvil.yaml using yaml2schema
         - test1.py
     - anvil.yaml (git-cloned from anvil.works)
@@ -70,9 +75,7 @@ For client code tests, similarly in your *Form* code::
     class ContactForm(ContactFormTemplate):
         etc
 
-The ``_anvil_designer`` directory allows *PyCharm* to auto-complete some code for you on form components.
-
-It also allows testing on code on the client side. (See ``test_ContactForm.py`` for some pytests)
+``_anvil_designer`` also allows testing on code on the client side. (See ``test_ContactForm.py`` for some pytests)
 
 This project is in its infancy...
 
@@ -81,7 +84,8 @@ Examples
 
 Simple
 ^^^^^^
-This repo has a copy of an anvil.works app already there. So, you can download this repo and run these few commands in your terminal::
+This repo has a copy of an anvil.works app already there. So, you can download this repo and run these few commands in your terminal.
+The files in the ``tests/templates`` directory are generated on the first run, so delete those files before this::
 
     mkdir "work"
     cd work
@@ -102,14 +106,14 @@ But if you want to see how to use your own anvil.works app here, try to understa
 It will run in your terminal (good for python 3.7+). Before doing, make sure you
 create a copy of the example app in your `anvil.works` account.
 
-`CLONE ME <https://anvil.works/build#clone:NX66PIIAF3ECPA55=T3AK5Y37HCJGQKKOERAR5PX7>`_
+`CLONE ME <https://anvil.works/build#clone:XWM5WQ66ONSRYYXL=WJUZGODLYP2JSYWR3XU2Y2XD>`_
 
 You need to then substitute your clone example for `myAnvilGit` in the following script::
 
-    mkdir "work"
-    cd work
-    # if running in mac's zsh terminal, delete this line and uncomment the next line
-    # setopt interactivecomments
+    mkdir work
+    cd work || exit
+    setopt interactivecomments
+    # allow comments for zsh
     # create a virtualenv
     python3 -m venv ./venv
     source venv/bin/activate
@@ -118,33 +122,40 @@ You need to then substitute your clone example for `myAnvilGit` in the following
     pip3 install strictyaml
     # clone anvil demo app
     myAnvilApp="pyDALAnvilWorksApp"
-    myAnvilGit="ssh://xxxxxxxxxxxxxxxxxxx@anvil.works:2222/xxxxxxxxxxxxxxxx.git"
+    myAnvilGit="ssh://youranvilworksusername@anvil.works:2222/yourprojectcode.git"
     git clone $myAnvilGit $myAnvilApp
     # clone yaml2schema
     git clone https://github.com/benlawraus/yaml2schema.git
     # clone the anvil adapter
     git clone https://github.com/benlawraus/pyDALAnvilWorks.git
     # rename it to something else so we can use it to work there
-    myworkdir="mywork"
-    mv pyDALAnvilWorks $myworkdir
+    my_work_dir="mywork"
+    mv pyDALAnvilWorks $my_work_dir
     ###################################################
     # create the pydal definitions file in our work directory so we can save our tests on github
-    mkdir $myworkdir/temp
-    mkdir $myworkdir/temp/input
-    mkdir $myworkdir/temp/output
-    cp  $myAnvilApp/anvil.yaml $myworkdir/temp/input
+    mkdir $my_work_dir/yaml2schema
+    mkdir $my_work_dir/yaml2schema/input
+    mkdir $my_work_dir/yaml2schema/output
+    cp  $myAnvilApp/anvil.yaml $my_work_dir/yaml2schema/input
     # anvil yaml too broad for what we need, so refine it with anvil_refined.yaml.
     # For your project, you may want to also refine the anvil.yaml schema
-    cp yaml2schema/src/yaml2schema/input/anvil_refined.yaml $myworkdir/temp/input
+    cp yaml2schema/src/yaml2schema/input/anvil_refined.yaml $my_work_dir/yaml2schema/input
     # finally! create the database schema
-    cd $myworkdir/temp
+    cd $my_work_dir/yaml2schema || exit
     python3 ../../yaml2schema/src/yaml2schema/main.py
     # take it and use it in our test directory
     cd ..
-    mv temp/output/pydal_def.py tests
+    mv yaml2schema/output/pydal_def.py tests
     # copy our server and client files
     cp ../$myAnvilApp/server_code/*.py server_code
     cp ../$myAnvilApp/client_code/*.py client_code
+    # install anvil_extras (optional, only if you use that awesome project)
+    git clone https://github.com/anvilistas/anvil-extras.git
+    # why the hyphen when we need the underscore ?!?
+    mv anvil-extras anvil_extras
+    # but we don't want to run anvil_extras tests...
+    rm -rf ./anvil_extras/tests
+    # install the giant dependencies
     pip3 install pyDAL
     pip3 install pytest
     pip3 install pytest-tornasync

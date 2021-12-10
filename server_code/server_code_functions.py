@@ -1,3 +1,4 @@
+import anvil.users
 """Used for pyDALAnvilWorks tests only. Delete."""
 from _datetime import datetime, timezone
 from itertools import chain
@@ -30,3 +31,9 @@ def save_contact(contact_dict):
 
     contact_row = app_tables.contact.add_row(**contact_dict)
     return contact_row.get_id()
+
+@anvil.server.callable
+def get_emails():
+  user= anvil.users.get_user()
+  email_rows = app_tables.email.search(created_by=user)
+  return email_rows

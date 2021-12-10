@@ -1,41 +1,21 @@
+dependencies:
+- app_id: C6ZZPAPN4YYF5NVJ
+  version: {dev: false}
 services:
 - source: /runtime/services/tables.yml
   client_config: {}
-  server_config: {auto_create_missing_columns: true}
+  server_config: {}
 - source: /runtime/services/anvil/users.yml
   client_config: {allow_signup: true, enable_automatically: true, use_email: true,
-    confirm_email: true, allow_remember_me: true, remember_me_days: 30}
-  server_config:
-    user_table: users
-    email_content:
-      confirm_address: {html: '<p>Thanks for registering your account with us. Please
-          click the following link to confirm that this is your account:
-
-
-          </p><p>{{confirm_link}}
-
-
-          </p><p>Thanks,
-
-          </p><p>The team</p>'}
-      reset_password: {html: '<p>Hi there,
-
-
-          </p><p>You have requested a password reset for your account {{email}}. To
-          reset your password, click the link below:
-
-
-          </p><p>{{reset_link}}
-
-
-          </p><p>This link will expire in ten minutes.</p>'}
-startup: {type: form, module: HomeForm}
+    confirm_email: false, require_secure_passwords: false, use_token: true, allow_remember_me: true,
+    remember_me_days: 30}
+  server_config: {user_table: users}
+startup: {type: module, module: startup}
 package_name: pyDALAnvilWorksApp
 allow_embedding: false
-name: pyDALAnvilWorksApp
+name: Clone of pyDALAnvilWorksApp
 runtime_options: {version: 2, client_version: '3', server_version: python3-full}
-metadata: {}
-startup_form: null
+metadata: {title: pyDALAnvilWorksApp, description: This is a test app for pyDALAnvilWorks on GitHub.}
 db_schema:
   users:
     title: Users

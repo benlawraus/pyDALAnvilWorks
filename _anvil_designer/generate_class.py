@@ -1,6 +1,6 @@
 import pathlib
 from dataclasses import dataclass
-from typing import Tuple, List, Dict
+from typing import Tuple, List, Dict, Union
 import strictyaml as sy
 
 from string import Template
@@ -107,16 +107,29 @@ ColumnPanel = dict(
 )
 
 
-def validate(value):
-    for key in value['properties']:
-        if value['properties'][key].text in {'true', 'false'}:
-            value['properties'][key].revalidate(sy.Bool())
-        elif value['properties'][key].text in {'null'}:
-            value['properties'][key].revalidate(sy.NullNone())
-        elif value['properties'][key].text in {''}:
-            value['properties'][key].revalidate(sy.Str())
-        elif set(value['properties'][key].text) <= set('0123456789.'):
-            value['properties'][key].revalidate(sy.Float())
+def validate_text(value: sy.YAML) -> None:
+    if value.text in {'true', 'false'}:
+        value.revalidate(sy.Bool())
+    elif value.text in {'null'}:
+        value.revalidate(sy.NullNone())
+    elif value.text in {''}:
+        value.revalidate(sy.Str())
+    elif set(value.text) <= set('0123456789.'):
+        value.revalidate(sy.Float())
+    return
+
+
+def validate_yaml(value: sy.YAML, sequence_key: Union[str, int]) -> None:
+    if value[sequence_key].is_mapping():
+        for key in value[sequence_key]:
+            validate_yaml(value[sequence_key], key)
+    elif value[sequence_key].is_sequence():
+        for ix in range(len(value[sequence_key])):
+            validate_yaml(value[sequence_key], ix)
+    elif value[sequence_key].is_scalar():
+        validate_text(value[sequence_key])
+    else:
+        raise TypeError(f"{value[sequence_key]} is not a sequence, mapping or a scalar.")
     return
 
 
@@ -125,7 +138,8 @@ def to_camel_case(snake_str):
     return ''.join(x.title() for x in components)
 
 
-def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class=''):
+def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class='') -> str:
+    """Converts the ``of_dict`` into a string describing a class."""
     if dict_name[0].islower():
         class_name = to_camel_case(dict_name)
     else:
@@ -152,38 +166,35 @@ class {class_name}({base_class}):
 """
 
 
-def write_a_child_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class=''):
-    if dict_name[0].islower():
-        class_name = to_camel_case(dict_name)
-    else:
-        class_name = dict_name
+def same_level_in_hierarchy(value: sy.YAML, instance_dict: Dict[str, Dict], str_dict: Dict[str, str],
+                            bookkeeping: Class_Bookkeeping):
+    """Places the item at the same level in the hierarchy as its components.
 
-    kwargs_template = Template("    $key=$value")
-    kwargs_string = ""
-    for key, value in of_dict.items():
-        write_this_to_base_class = False
-        if isinstance(value, str):
-            if len(value) > 0 and value in dict_list:
-                value = value + f"()"
-            else:
-                value = f"'{value}'"
-        elif isinstance(value, dict) or value in dict_list:
-            value = to_camel_case(key) + "()"
-            write_this_to_base_class = True
-        else:
-            pass
-        if write_this_to_base_class:
-            if len(base_class) > 0:
-                base_class += ', '
-            base_class += value.replace("()", "")
-        else:
-            if len(kwargs_string) > 0:
-                kwargs_string += "\n"
-            kwargs_string += kwargs_template.substitute(key=key, value=value)
-    return f"""
-class {class_name}({base_class}):
-{kwargs_string}
-"""
+    Parameters
+    ----------
+    value :
+        The item that needs to be converted to a string and dictionary
+    instance_dict :
+        YAML converted to a dictionary
+    str_dict :
+        The name of the class
+    bookkeeping :
+        Holds the string describing all the classes. It will be written to a file.
+    """
+    if value['type'].text == "ColumnPanel":
+        instance_dict[value['name'].text] = ColumnPanel
+        bookkeeping.dict_str += write_a_class(value['name'].text, ColumnPanel, bookkeeping.dict_list)
+    elif value['type'].text == "DataGrid":
+        # get the rest of DataGrid's attributes:
+        validate_yaml(value, 'properties')
+        attrs = value['properties'].data
+        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list)
+    else:
+        # TODO
+        raise (UserWarning(f"Haven't implemented {value['type']} types yet! Component:{value['name']}"))
+    str_dict[value['name'].text] = to_camel_case(value['name'].text)
+    bookkeeping.dict_list.append(to_camel_case(value['name'].text))
+    return
 
 
 def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
@@ -191,7 +202,7 @@ def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
         if value['type'].text == "TextBox":
             attrs = TextBox
         else:
-            validate(value)
+            validate_yaml(value, 'properties')
             attrs = value['properties'].data
         bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list)
         # add to list
@@ -201,24 +212,15 @@ def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
         instance_dict = dict()
         str_dict = dict()
         for _y in value['components']:
-            inst_dict,s_dict = derive_dict(_y, bookkeeping)
+            # create a dict from each in the component list
+            inst_dict, s_dict = derive_dict(_y, bookkeeping)
+            # instead of making a list of these dicts, make a dict of dict
             instance_dict[_y['name'].text] = inst_dict
             str_dict[_y['name'].text] = to_camel_case(_y['name'].text)
-            if len(s_dict)>0:
+            if len(s_dict) > 0:
                 str_dict.update(s_dict)
-        if value['type'].text == "ColumnPanel":
-            instance_dict[value['name'].text] = ColumnPanel
-            bookkeeping.dict_str += write_a_class(value['name'].text, ColumnPanel, bookkeeping.dict_list)
-        elif value['type'].text == "DataGrid":
-            inst_dict,s_dict = derive_dict(_y, bookkeeping)
-            instance_dict[value['name'].text] = inst_dict
-            bookkeeping.dict_str += write_a_class(value['name'].text, ColumnPanel, bookkeeping.dict_list)
-        else:
-            # TODO
-            raise(UserWarning(f"Haven't implemented {value['type']} types yet! Component:{value['name']}"))
-        str_dict[value['name'].text] = to_camel_case(value['name'].text)
-        bookkeeping.dict_list.append(to_camel_case(value['name'].text))
-        return instance_dict,str_dict
+        same_level_in_hierarchy(value, instance_dict, str_dict, bookkeeping)
+        return instance_dict, str_dict
 
 
 def convert_yaml_file_to_dict(form_name: str, bookkeeping: Class_Bookkeeping):
@@ -233,8 +235,8 @@ def convert_yaml_file_to_dict(form_name: str, bookkeeping: Class_Bookkeeping):
             all_comp["content_panel"] = ColumnPanel
     bookkeeping.dict_str += write_a_class("content_panel", ColumnPanel, bookkeeping.dict_list)
     for p in value:
-        _dict,_str_dict = derive_dict(p, bookkeeping)
+        _dict, _str_dict = derive_dict(p, bookkeeping)
         all_comp[p['name'].text] = to_camel_case(p['name'].text)  # _dict
-        if len(_str_dict)>0:
+        if len(_str_dict) > 0:
             all_comp.update(_str_dict)
     return all_comp

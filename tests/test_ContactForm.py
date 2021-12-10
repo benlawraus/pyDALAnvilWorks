@@ -1,10 +1,7 @@
 import anvil.users
-from anvil import tables
 from anvil.tables import app_tables
-import anvil.tables.query as q
 import tests.pydal_def as mydal
 from client_code.ContactForm import ContactForm
-from client_code.client_code_functions import generate_contact
 from tests.common import generate_contact_instance
 
 
@@ -32,3 +29,4 @@ class TestContactForm:
         # get email record
         email_row = app_tables.email.get(address=contact['email_list'][0]['address'])
         assert c_form.repeating_panel_email.items[0]['email']==email_row['address']
+        return user, email_row
