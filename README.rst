@@ -3,7 +3,7 @@ What is it?
 To allow you to:
     * Use any database while testing your `anvil.works <https://anvil.works>`_ app.
     * Create and run tests using pytest. These tests would be for client_side forms, as well as server_side python.
-    * Most importantly: use **PyCharm** to write server_side and client_side code!!
+    * Most importantly: use **PyCharm** more.
 
 How is it done?
 ---------------
@@ -33,7 +33,7 @@ containing the class definitions of the client form components. The class defini
 A csv file can be exported from your anvil.works database and imported into your sqlite using  `pyDal <http://www.web2py.com/books/default/chapter/29/06/the-database-abstraction-layer#Exporting-and-importing-data>`_,
 but really, you should generate dummy data during your tests anyway.
 
-Your directory structure on your laptop will then look like this::
+Your directory structure on your laptop will then look like this:
 
     - anvil  (from this repo)
     - _anvil_designer (from this repo)
