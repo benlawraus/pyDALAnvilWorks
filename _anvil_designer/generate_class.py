@@ -6,17 +6,24 @@ import strictyaml as sy
 from string import Template
 
 
+
+GENERICPANEL="""
+class GenericPanel:
+    def add_component(self, *args, **kwargs):
+        return
+"""
+
 @dataclass
 class Class_Bookkeeping:
     dict_str = \
-        """
+        f"""{GENERICPANEL}
+        
 class GenericTemplate:
     def init_components(self, **kwargs):
         super().__init__()        
         pass
 """
     dict_list = []
-
 
 def anvil_yaml_schema() -> sy.MapPattern:
     """
@@ -90,6 +97,7 @@ TextBox = dict(
     type="text",
     underline=False)
 
+
 ColumnPanel = dict(
     visible=True,
     wrap_on="mobile",
@@ -103,9 +111,9 @@ ColumnPanel = dict(
     spacing_above="small",
     spacing_below="small",
     tag="",
-    tooltip=""
+    tooltip="",
 )
-
+FUNCTIONS={"add_component"}
 
 def validate_text(value: sy.YAML) -> None:
     if value.text in {'true', 'false'}:
@@ -114,6 +122,8 @@ def validate_text(value: sy.YAML) -> None:
         value.revalidate(sy.NullNone())
     elif value.text in {''}:
         value.revalidate(sy.Str())
+    elif value.text in FUNCTIONS:
+        value.revalidate(sy.ScalarValidator)
     elif set(value.text) <= set('0123456789.'):
         value.revalidate(sy.Float())
     return
@@ -183,12 +193,12 @@ def same_level_in_hierarchy(value: sy.YAML, instance_dict: Dict[str, Dict], str_
     """
     if value['type'].text == "ColumnPanel":
         instance_dict[value['name'].text] = ColumnPanel
-        bookkeeping.dict_str += write_a_class(value['name'].text, ColumnPanel, bookkeeping.dict_list)
+        bookkeeping.dict_str += write_a_class(value['name'].text, ColumnPanel, bookkeeping.dict_list, base_class="GenericPanel")
     elif value['type'].text == "DataGrid":
         # get the rest of DataGrid's attributes:
         validate_yaml(value, 'properties')
         attrs = value['properties'].data
-        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list)
+        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list, base_class="GenericPanel")
     else:
         # TODO
         raise (UserWarning(f"Haven't implemented {value['type']} types yet! Component:{value['name']}"))
@@ -201,10 +211,14 @@ def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
     if 'components' not in value:
         if value['type'].text == "TextBox":
             attrs = TextBox
+            bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list)
+        elif value['type'].text == "ColumnPanel":
+            attrs = ColumnPanel
+            bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list, base_class="GenericPanel")
         else:
             validate_yaml(value, 'properties')
             attrs = value['properties'].data
-        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list)
+            bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list)
         # add to list
         bookkeeping.dict_list.append(to_camel_case(value['name'].text))
         return attrs, dict()

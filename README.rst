@@ -200,5 +200,15 @@ In your client tests::
     assert x == c_form.text_box_name.text
     assert x == c_form.repeating_panel_1.items[0]['text']
 
+Gotchas
+-------
+*anvil.works* allows you update your database using::
+
+    row['name']="Rex Eagle"
+
+This is allowed in this wrapper, with the allowance that no sqlite row will be update, only the object ``row`` will be
+update.
+
+
 to be continued....
 
