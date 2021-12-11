@@ -8,7 +8,7 @@ __all__ = dict()
 
 
 def __getattr__(name: str):
-    if name not in __all__:
+    if True:
         bookkeeping = Class_Bookkeeping()
 
         # get the yaml
@@ -20,12 +20,12 @@ def __getattr__(name: str):
             name,
             all_components,
             bookkeeping.dict_list,
-            base_class="GenericTemplate")
-        # write the models out to /tests/templates/.
-        build_path(name + '.py', pathlib.Path(__file__).parent.parent / 'tests' / 'templates') \
-            .write_text(bookkeeping.dict_str)
+            base_class="GenericTemplate, GenericPanel")
+        # write the models out to the local folder.
+        _anvil_designer_path = build_path('_anvil_designer.py', pathlib.Path(__file__).parent.parent / 'client_code' / form_name)
+        _anvil_designer_path.write_text(bookkeeping.dict_str)
         # add the class to __all__
-        module_obj = importlib.import_module('tests.templates.' + name)
+        module_obj = importlib.import_module(f"client_code.{form_name}._anvil_designer")
         __all__.update({name: getattr(module_obj, name)})
         # return the class
     if name in __all__:

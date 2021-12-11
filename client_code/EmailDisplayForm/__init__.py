@@ -1,7 +1,10 @@
+
 try:
   from ._anvil_designer import EmailDisplayFormTemplate
 except ImportError:
   from _anvil_designer import EmailDisplayFormTemplate
+  from ._anvil_designer import EmailDisplayFormTemplate
+
 
 import anvil.server
 import anvil.users
@@ -15,5 +18,5 @@ class EmailDisplayForm(EmailDisplayFormTemplate):
     self.init_components(**properties)
     emails=anvil.server.call('get_emails')
     self.repeating_panel_1.items = emails
+    self.add_component()
     # Any code you write here will run when the form opens.
-    

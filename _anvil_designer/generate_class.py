@@ -5,18 +5,27 @@ import strictyaml as sy
 
 from string import Template
 
-
+GENERIC_COMPONENT="""
+class GenericComponent:
+    def scroll_into_view(self):
+        return
+"""
 
 GENERICPANEL="""
 class GenericPanel:
     def add_component(self, *args, **kwargs):
+        return
+        
+    def clear(self):
         return
 """
 
 @dataclass
 class Class_Bookkeeping:
     dict_str = \
-        f"""{GENERICPANEL}
+        f"""{GENERIC_COMPONENT}
+
+{GENERICPANEL}
         
 class GenericTemplate:
     def init_components(self, **kwargs):
@@ -211,14 +220,14 @@ def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
     if 'components' not in value:
         if value['type'].text == "TextBox":
             attrs = TextBox
-            bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list)
+            bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list, base_class="GenericComponent")
         elif value['type'].text == "ColumnPanel":
             attrs = ColumnPanel
             bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list, base_class="GenericPanel")
         else:
             validate_yaml(value, 'properties')
             attrs = value['properties'].data
-            bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list)
+            bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list, base_class="GenericComponent")
         # add to list
         bookkeeping.dict_list.append(to_camel_case(value['name'].text))
         return attrs, dict()
@@ -247,7 +256,7 @@ def convert_yaml_file_to_dict(form_name: str, bookkeeping: Class_Bookkeeping):
         if parsed['components'][0]['name'] == "content_panel":
             value = parsed['components'][0]['components']
             all_comp["content_panel"] = ColumnPanel
-    bookkeeping.dict_str += write_a_class("content_panel", ColumnPanel, bookkeeping.dict_list)
+    bookkeeping.dict_str += write_a_class("content_panel", ColumnPanel, bookkeeping.dict_list, base_class="GenericPanel")
     for p in value:
         _dict, _str_dict = derive_dict(p, bookkeeping)
         all_comp[p['name'].text] = to_camel_case(p['name'].text)  # _dict

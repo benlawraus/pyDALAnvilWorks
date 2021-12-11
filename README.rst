@@ -3,7 +3,7 @@ What is it?
 To allow you to:
     * Use any database while testing your `anvil.works <https://anvil.works>`_ app.
     * Create and run tests using pytest. These tests would be for client_side forms, as well as server_side python.
-    * Most importantly: use **PyCharm** more.
+    * Most importantly: use **PyCharm** more with auto-complete on forms.
 
 How is it done?
 ---------------
@@ -41,7 +41,6 @@ Your directory structure on your laptop will then look like this:
     - server_code  (git-cloned from anvil.works)
     - tests (your tests you run on your laptop)
         - database  (your sqlite and pydal files to run your database on your laptop)
-        - templates (contains the class definitions used in client forms. These templates are written on the first run, so delete them after you update your forms on anvil.works.)
         - pydal_def.py  # generated from anvil.yaml using yaml2schema
         - test1.py
     - anvil.yaml (git-cloned from anvil.works)
@@ -62,7 +61,8 @@ Also depending on your project structure, you might need to do something like::
 
 Yes, this is annoying. Maybe there is a better way...
 
-For client code tests, similarly in your *Form* code::
+For client code tests, if there is no ``_anvil_designer.py` in the form directory, it will be generated after the first run.
+So, similarly in your *Form* code::
 
     try:
         from ._anvil_designer import ContactFormTemplate
@@ -75,7 +75,7 @@ For client code tests, similarly in your *Form* code::
     class ContactForm(ContactFormTemplate):
         etc
 
-``_anvil_designer`` also allows testing on code on the client side. (See ``test_ContactForm.py`` for some pytests)
+``_anvil_designer`` allows testing on code on the client side. (See ``test_ContactForm.py`` for some pytests) and auto-complete on form components.
 
 This project is in its infancy...
 
