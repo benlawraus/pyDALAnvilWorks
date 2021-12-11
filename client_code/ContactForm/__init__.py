@@ -5,7 +5,6 @@ except ImportError:
     from _anvil_designer import ContactFormTemplate
 
 import anvil.server
-from anvil import *
 from anvil_extras import navigation
 
 

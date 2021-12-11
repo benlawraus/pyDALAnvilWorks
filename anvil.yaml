@@ -13,7 +13,7 @@ services:
 startup: {type: module, module: startup}
 package_name: pyDALAnvilWorksApp
 allow_embedding: false
-name: Clone of pyDALAnvilWorksApp
+name: pyDALAnvilWorksApp_01
 runtime_options: {version: 2, client_version: '3', server_version: python3-full}
 metadata: {title: pyDALAnvilWorksApp, description: This is a test app for pyDALAnvilWorks on GitHub.}
 db_schema:

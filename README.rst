@@ -2,7 +2,7 @@ What is it?
 ------------
 To allow you to:
     * Use any database while testing your `anvil.works <https://anvil.works>`_ app.
-    * Create and run tests using pytest. These tests would be for client_side forms, as well as server_side python.
+    * Create and run tests using pytest. These tests would be for the python in client_side forms, as well as server_side python. No testing of javascript UI can be done here.
     * Most importantly: use **PyCharm** more with auto-complete on forms.
 
 How is it done?
@@ -62,7 +62,7 @@ Also depending on your project structure, you might need to do something like::
 Yes, this is annoying. Maybe there is a better way...
 
 For client code tests, if there is no ``_anvil_designer.py` in the form directory, it will be generated after the first run.
-So, similarly in your *Form* code::
+So, similarly in your *Form* code, (after first run, you will see a ``._anvil_designer.py``)::
 
     try:
         from ._anvil_designer import ContactFormTemplate
@@ -76,6 +76,14 @@ So, similarly in your *Form* code::
         etc
 
 ``_anvil_designer`` allows testing on code on the client side. (See ``test_ContactForm.py`` for some pytests) and auto-complete on form components.
+
+
+Push Pull Scripts
+------------------
+In your average day, you will edit code and push and pull your changes to *anvil.works*.
+Two script are included here to make that easier : ``git_pull_from_anvil_works.zsh`` and ``git_push_to_anvil_works.zsh``.
+They assume you have your anvil app already git-cloned on your laptop.
+
 
 This project is in its infancy...
 
