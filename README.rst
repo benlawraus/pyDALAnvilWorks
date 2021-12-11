@@ -61,7 +61,7 @@ Also depending on your project structure, you might need to do something like::
 
 Yes, this is annoying. Maybe there is a better way...
 
-For client code tests, if there is no ``_anvil_designer.py` in the form directory, it will be generated after the first run.
+For client code tests, if there is no ``_anvil_designer.py`` in the form directory, it will be generated after the first run.
 So, similarly in your *Form* code, (after first run, you will see a ``._anvil_designer.py``)::
 
     try:
@@ -215,7 +215,7 @@ Gotchas
     row['name']="Rex Eagle"
 
 This is allowed in this wrapper, with the allowance that no sqlite row will be update, only the object ``row`` will be
-update.
+update. To update the database row, you have to use ``row.update()``
 
 
 to be continued....
