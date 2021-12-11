@@ -81,7 +81,7 @@ So, similarly in your *Form* code, (after first run, you will see a ``._anvil_de
 Push Pull Scripts
 ------------------
 In your average day, you will edit code and push and pull your changes to *anvil.works*.
-Two script are included here to make that easier : ``git_pull_from_anvil_works.zsh`` and ``git_push_to_anvil_works.zsh``.
+Two scriptd are included here to make that easier : ``git_pull_from_anvil_works.zsh`` and ``git_push_to_anvil_works.zsh``.
 They assume you have your anvil app already git-cloned on your laptop.
 
 
@@ -215,8 +215,12 @@ Gotchas
     row['name']="Rex Eagle"
 
 This is allowed in this wrapper, with the allowance that no sqlite row will be update, only the object ``row`` will be
-update. To update the database row, you have to use ``row.update()``
+updated. To update the database row, you have to use ``row.update()``
 
 
 to be continued....
+
+Thank You
+-----------
+This work is sponsored by `East Electronics <https://east-elec.com>`_.
 
