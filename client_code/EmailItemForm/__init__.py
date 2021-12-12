@@ -1,10 +1,4 @@
 from ._anvil_designer import EmailItemFormTemplate
-from anvil import *
-import anvil.users
-import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 
 class EmailItemForm(EmailItemFormTemplate):
     def __init__(self, **properties):
@@ -16,4 +10,3 @@ class EmailItemForm(EmailItemFormTemplate):
     def button_1_click(self, **event_args):
         """This method is called when the button is clicked"""
         pass
-

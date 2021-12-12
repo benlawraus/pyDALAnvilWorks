@@ -1,7 +1,4 @@
-try:
-  from ._anvil_designer import EmailDisplayFormTemplate
-except ImportError:
-  from _anvil_designer import EmailDisplayFormTemplate
+from ._anvil_designer import EmailDisplayFormTemplate
 
 
 import anvil.server

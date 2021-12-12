@@ -26,9 +26,7 @@ the `anvil.yaml` and generate a `pyDAL <https://py4web.com/_documentation/static
 definition file (`pydal_def.py`) that you can use to run your tests. Place `pydal_def.py` into your
 `tests` directory.
 
-Also create a `database` directory there to put all your database files. And! a `template` directory
-containing the class definitions of the client form components. The class definitions are written during the first run
-(see ``_anvil_designer``).
+Also create a `database` directory there to put all your database files.
 
 A csv file can be exported from your anvil.works database and imported into your sqlite using  `pyDal <http://www.web2py.com/books/default/chapter/29/06/the-database-abstraction-layer#Exporting-and-importing-data>`_,
 but really, you should generate dummy data during your tests anyway.
@@ -45,7 +43,8 @@ Your directory structure on your laptop will then look like this:
         - test1.py
     - anvil.yaml (git-cloned from anvil.works)
 
-
+server_code
+^^^^^^^^^^^^
 It should be mentioned that the top directory containing all of the above should be marked as the **sources root**.
 
 Also depending on your project structure, you might need to do something like::
@@ -61,28 +60,32 @@ Also depending on your project structure, you might need to do something like::
 
 Yes, this is annoying. Maybe there is a better way...
 
-For client code tests, if there is no ``_anvil_designer.py`` in the form directory, it will be generated after the first run.
-So, similarly in your *Form* code, (after first run, you will see a ``._anvil_designer.py``)::
+client_code
+^^^^^^^^^^^
+For client code tests, the ``_anvil_designer.py`` needs to generated in the form directory. Every form needs one.
+``_anvil_designer`` allows testing on code on the client side (see ``test_ContactForm.py`` for some pytests) and auto-complete on form components.
+To generate these, run::
 
-    try:
-        from ._anvil_designer import ContactFormTemplate
-    except ImportError:
-        from _anvil_designer import ContactFormTemplate
+    python -m _anvil_designer.generate_files
 
-    import anvil.server
-    import anvil.users
 
-    class ContactForm(ContactFormTemplate):
-        etc
+or in your test , call::
 
-``_anvil_designer`` allows testing on code on the client side. (See ``test_ContactForm.py`` for some pytests) and auto-complete on form components.
+    from _anvil_designer.generate_files import yaml2class
+    class TestYaml2Class:
+        def test_init(self):
+            yaml2class()
 
+
+If there is an error, what you have in your ``yaml`` has not been implemented yet...
 
 Push Pull Scripts
 ------------------
 In your average day, you will edit code and push and pull your changes to *anvil.works*.
 Two scripts are included here to make that easier : ``git_pull_from_anvil_works.zsh`` and ``git_push_to_anvil_works.zsh``.
 They assume you have your anvil app already git-cloned on your laptop.
+
+The files in the form directories ``_anvil_designer.py`` are (re)generated when you use ``git_pull_from_anvil_works.zsh``.
 
 Anvil-Extras
 --------------
@@ -99,7 +102,7 @@ Examples
 Simple
 ^^^^^^
 This repo has a copy of an anvil.works app already there. So, you can download this repo and run these few commands in your terminal.
-The files in the form directories ``_anvil_designer.py`` are generated on the first run, so delete those files if you update your forms UI::
+::
 
     mkdir work1
     cd work1 || exit
@@ -231,6 +234,14 @@ In the anvil.works, there are package forms and module forms. pyDALAnvilWorks wa
 
 
 to be continued....
+
+Recent Changes
+---------------
+
+..  csv-table::
+    :header: "Before","After"
+
+    "``_anvil_designer.py`` generated when you first call its Form","the files are all generated for all forms at once."
 
 Thank You
 -----------

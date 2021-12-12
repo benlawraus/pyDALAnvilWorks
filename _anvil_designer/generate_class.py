@@ -1,38 +1,67 @@
 import pathlib
+from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Tuple, List, Dict, Union
 import strictyaml as sy
 
 from string import Template
 
-GENERIC_COMPONENT="""
+GENERIC_COMPONENT = """
 class GenericComponent:
     def scroll_into_view(self):
         return
+
+    def add_event_handler(*args,**kwargs):
+        return
 """
 
-GENERICPANEL="""
+GENERIC_PANEL = """
+class GenericDict(dict):
+    def __getitem__(self, key):
+        return dict.get(self, key)
+                
 class GenericPanel:
+    item = GenericDict()
+    
     def add_component(self, *args, **kwargs):
         return
         
     def clear(self):
         return
+        
+    def add_event_handler(self, *args,**kwargs):
+        return
+
+    def set_event_handler(self, *args,**kwargs):
+        return
+
+    def get_event_handlers(self, *args,**kwargs):
+        return
+    
+    def parent(self, *args,**kwargs):
+        return
 """
+
+GENERIC_TEMPLATE = """
+class GenericTemplate:
+    def init_components(self, **kwargs):
+        super().__init__()        
+        pass
+"""
+
+TOP_LEVEL_NAME = "container"
+
 
 @dataclass
 class Class_Bookkeeping:
     dict_str = \
         f"""{GENERIC_COMPONENT}
 
-{GENERICPANEL}
+{GENERIC_PANEL}
         
-class GenericTemplate:
-    def init_components(self, **kwargs):
-        super().__init__()        
-        pass
-"""
+{GENERIC_TEMPLATE}"""
     dict_list = []
+
 
 def anvil_yaml_schema() -> sy.MapPattern:
     """
@@ -84,6 +113,21 @@ def yaml_from_file(input_yaml: str, folder: pathlib.Path) -> sy.YAML:
     return sy.dirty_load(yaml_string=anvil_yaml_str, schema=anvil_yaml_schema(), allow_flow_style=True)
 
 
+Link = dict(
+    url='',
+    text='',
+    align='left',
+    font_size=None,
+    font='Arial',
+    bold=False,
+    italic=False,
+    underline=False,
+    icon='',
+    icon_align='left',
+    tooltip='',
+    tag=None
+)
+
 TextBox = dict(
     enabled=True,
     text="",
@@ -106,7 +150,6 @@ TextBox = dict(
     type="text",
     underline=False)
 
-
 ColumnPanel = dict(
     visible=True,
     wrap_on="mobile",
@@ -120,9 +163,16 @@ ColumnPanel = dict(
     spacing_above="small",
     spacing_below="small",
     tag="",
-    tooltip="",
+    tooltip=""
 )
-FUNCTIONS={"add_component"}
+
+HtmlTemplate = ColumnPanel
+DataRowPanel = ColumnPanel
+DataGrid = ColumnPanel
+
+
+# FUNCTIONS = {"add_component"}
+
 
 def validate_text(value: sy.YAML) -> None:
     if value.text in {'true', 'false'}:
@@ -131,8 +181,8 @@ def validate_text(value: sy.YAML) -> None:
         value.revalidate(sy.NullNone())
     elif value.text in {''}:
         value.revalidate(sy.Str())
-    elif value.text in FUNCTIONS:
-        value.revalidate(sy.ScalarValidator)
+    # elif value.text in FUNCTIONS:
+    #     value.revalidate(sy.ScalarValidator)
     elif set(value.text) <= set('0123456789.'):
         value.revalidate(sy.Float())
     return
@@ -140,11 +190,17 @@ def validate_text(value: sy.YAML) -> None:
 
 def validate_yaml(value: sy.YAML, sequence_key: Union[str, int]) -> None:
     if value[sequence_key].is_mapping():
-        for key in value[sequence_key]:
-            validate_yaml(value[sequence_key], key)
+        if len(value[sequence_key]) == 0:
+            value.revalidate(sy.EmptyDict())
+        else:
+            for key in value[sequence_key]:
+                validate_yaml(value[sequence_key], key)
     elif value[sequence_key].is_sequence():
-        for ix in range(len(value[sequence_key])):
-            validate_yaml(value[sequence_key], ix)
+        if len(value[sequence_key]) == 0:
+            value.revalidate(sy.EmptyList())
+        else:
+            for ix in range(len(value[sequence_key])):
+                validate_yaml(value[sequence_key], ix)
     elif value[sequence_key].is_scalar():
         validate_text(value[sequence_key])
     else:
@@ -179,59 +235,52 @@ def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_clas
         else:
             pass
         kwargs_string += kwargs_template.substitute(key=key, value=value)
+    if kwargs_string == "":
+        kwargs_string="    pass"
     return f"""
 class {class_name}({base_class}):
 {kwargs_string}
 """
 
 
-def same_level_in_hierarchy(value: sy.YAML, instance_dict: Dict[str, Dict], str_dict: Dict[str, str],
-                            bookkeeping: Class_Bookkeeping):
-    """Places the item at the same level in the hierarchy as its components.
-
-    Parameters
-    ----------
-    value :
-        The item that needs to be converted to a string and dictionary
-    instance_dict :
-        YAML converted to a dictionary
-    str_dict :
-        The name of the class
-    bookkeeping :
-        Holds the string describing all the classes. It will be written to a file.
-    """
-    if value['type'].text == "ColumnPanel":
-        instance_dict[value['name'].text] = ColumnPanel
-        bookkeeping.dict_str += write_a_class(value['name'].text, ColumnPanel, bookkeeping.dict_list, base_class="GenericPanel")
-    elif value['type'].text == "DataGrid":
-        # get the rest of DataGrid's attributes:
-        validate_yaml(value, 'properties')
-        attrs = value['properties'].data
-        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list, base_class="GenericPanel")
+def lowest_level_component(value: sy.YAML, bookkeeping: Class_Bookkeeping):
+    if value['type'].text == "TextBox":
+        attrs = TextBox
+        if 'properties' in value and len(value['properties']) > 0:
+            validate_yaml(value, 'properties')
+            attrs.update(value['properties'].data)
+        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list,
+                                              base_class="GenericComponent")
+    elif value['type'].text in ("ColumnPanel", "HtmlTemplate", "Link", "DataGrid", "DataRowPanel"):
+        attrs = globals().get(value['type'].text)
+        if 'properties' in value and len(value['properties']) > 0:
+            validate_yaml(value, 'properties')
+            attrs.update(value['properties'].data)
+        if 'name' not in value:
+            value['name'] = sy.load(TOP_LEVEL_NAME, sy.Str())
+        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list,
+                                              base_class="GenericPanel")
     else:
-        # TODO
-        raise (UserWarning(f"Haven't implemented {value['type']} types yet! Component:{value['name']}"))
-    str_dict[value['name'].text] = to_camel_case(value['name'].text)
+        if 'properties' in value and len(value['properties']) > 0:
+            validate_yaml(value, 'properties')
+            attrs = value['properties'].data
+        else:
+            attrs = OrderedDict()
+        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list,
+                                              base_class="GenericComponent")
+    # add to list
     bookkeeping.dict_list.append(to_camel_case(value['name'].text))
-    return
+    return attrs, dict()
 
 
 def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
     if 'components' not in value:
-        if value['type'].text == "TextBox":
-            attrs = TextBox
-            bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list, base_class="GenericComponent")
-        elif value['type'].text == "ColumnPanel":
-            attrs = ColumnPanel
-            bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list, base_class="GenericPanel")
-        else:
-            validate_yaml(value, 'properties')
-            attrs = value['properties'].data
-            bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list, base_class="GenericComponent")
-        # add to list
-        bookkeeping.dict_list.append(to_camel_case(value['name'].text))
-        return attrs, dict()
+        if 'type' in value:
+            return lowest_level_component(value, bookkeeping)
+        if 'container' in value:
+            return lowest_level_component(value['container'], bookkeeping)
     else:
+        # go down into the hierarchy
         instance_dict = dict()
         str_dict = dict()
         for _y in value['components']:
@@ -242,24 +291,25 @@ def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
             str_dict[_y['name'].text] = to_camel_case(_y['name'].text)
             if len(s_dict) > 0:
                 str_dict.update(s_dict)
-        same_level_in_hierarchy(value, instance_dict, str_dict, bookkeeping)
+        value.__delitem__('components')
+        attrs, _ = lowest_level_component(value, bookkeeping)
+        instance_dict[value['name'].text] = attrs
+        str_dict[value['name'].text] = to_camel_case(value['name'].text)
         return instance_dict, str_dict
 
 
-def convert_yaml_file_to_dict(form_name: str, bookkeeping: Class_Bookkeeping):
-    file_name = 'form_template.yaml'
-    folder = pathlib.Path(__file__).parent.parent / 'client_code' / form_name
-    parsed = yaml_from_file(file_name, folder)
+def convert_yaml_file_to_dict(parsed: sy.YAML, bookkeeping: Class_Bookkeeping):
     value = parsed['components']
     all_comp = dict()
-    if len(parsed['components']) == 1:
-        if parsed['components'][0]['name'] == "content_panel":
-            value = parsed['components'][0]['components']
-            all_comp["content_panel"] = ColumnPanel
-    bookkeeping.dict_str += write_a_class("content_panel", ColumnPanel, bookkeeping.dict_list, base_class="GenericPanel")
     for p in value:
         _dict, _str_dict = derive_dict(p, bookkeeping)
         all_comp[p['name'].text] = to_camel_case(p['name'].text)  # _dict
         if len(_str_dict) > 0:
             all_comp.update(_str_dict)
+    # container without its components
+    parsed.__delitem__('components')
+    _dict, _str_dict = derive_dict(parsed, bookkeeping)
+    all_comp['top_level'] = to_camel_case(TOP_LEVEL_NAME)
+    if len(_str_dict) > 0:
+        all_comp.update(_str_dict)
     return all_comp

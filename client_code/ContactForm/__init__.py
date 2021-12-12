@@ -1,8 +1,5 @@
 import anvil.users
-try:
-    from ._anvil_designer import ContactFormTemplate
-except ImportError:
-    from _anvil_designer import ContactFormTemplate
+from ._anvil_designer import ContactFormTemplate
 
 import anvil.server
 from anvil_extras import navigation
