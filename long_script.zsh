@@ -47,4 +47,5 @@ rm -rf ./anvil_extras/tests
 pip3 install pyDAL
 pip3 install pytest
 pip3 install pytest-tornasync
+python3 -m _anvil_designer.generate_files
 python3 -m pytest

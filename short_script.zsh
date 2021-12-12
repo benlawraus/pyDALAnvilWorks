@@ -7,7 +7,9 @@ pip3 install pytest
 pip3 install pytest-tornasync
 pip3 install strictyaml
 git clone https://github.com/benlawraus/pyDALAnvilWorks.git
+cd pyDALAnvilWorks
 git clone https://github.com/anvilistas/anvil-extras.git
 mv anvil-extras anvil_extras
 rm -rf ./anvil_extras/tests
+python3 -m _anvil_designer.generate_files
 python3 -m pytest
