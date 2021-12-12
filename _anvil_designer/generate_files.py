@@ -6,8 +6,7 @@ import pathlib
 def yaml2class():
     """Derives `_anvil_designer.py` from the corresponding `form_template.yaml`
 
-    Called only when import fails."""
-    bookkeeping = Class_Bookkeeping()
+    """
 
     # get the yaml
     # using yaml create a class
@@ -16,6 +15,7 @@ def yaml2class():
     for yaml_file in client_code.rglob('*.yaml'):
         # if build_path('_anvil_designer.py', yaml_file.parent).exists():
         #     continue
+        bookkeeping = Class_Bookkeeping()
         form_name = yaml_file.parent.name
         parsed = yaml_from_file('form_template.yaml', yaml_file.parent)
         all_components = convert_yaml_file_to_dict(parsed, bookkeeping)
