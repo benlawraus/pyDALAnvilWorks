@@ -5,6 +5,17 @@ To allow you to:
     * Create and run tests using pytest. These tests would be for the python in client_side forms, as well as server_side python. No testing of javascript UI can be done here.
     * Most importantly: use **PyCharm** more with auto-complete on forms.
 
+
+Recent Changes
+---------------
+
+..  csv-table::
+    :header: "Before","After"
+
+    "``_anvil_designer.py`` generated when you first call its Form","the files are all generated for all forms at once."
+
+
+
 How is it done?
 ---------------
 The program uses `pyDAL <https://py4web.com/_documentation/static/en/chapter-07.html>`_ to substitute
@@ -235,13 +246,6 @@ In the anvil.works, there are package forms and module forms. pyDALAnvilWorks wa
 
 to be continued....
 
-Recent Changes
----------------
-
-..  csv-table::
-    :header: "Before","After"
-
-    "``_anvil_designer.py`` generated when you first call its Form","the files are all generated for all forms at once."
 
 Thank You
 -----------
