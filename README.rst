@@ -81,8 +81,14 @@ So, similarly in your *Form* code, (after first run, you will see a ``._anvil_de
 Push Pull Scripts
 ------------------
 In your average day, you will edit code and push and pull your changes to *anvil.works*.
-Two scriptd are included here to make that easier : ``git_pull_from_anvil_works.zsh`` and ``git_push_to_anvil_works.zsh``.
+Two scripts are included here to make that easier : ``git_pull_from_anvil_works.zsh`` and ``git_push_to_anvil_works.zsh``.
 They assume you have your anvil app already git-cloned on your laptop.
+
+Anvil-Extras
+--------------
+`Anvil-Extras <https://github.com/anvilistas/anvil-extras>`_ is really nice, especially its publish-subscribe module and its
+navigation module. So as to use it, there is an ``anvil_extras`` folder here too, but none of its tests or its functionality
+have been tested with pyDALAnvilWorks repo.
 
 
 This project is in its infancy...
@@ -93,7 +99,7 @@ Examples
 Simple
 ^^^^^^
 This repo has a copy of an anvil.works app already there. So, you can download this repo and run these few commands in your terminal.
-The files in the ``tests/templates`` directory are generated on the first run, so delete those files before this::
+The files in the form directories ``_anvil_designer.py`` are generated on the first run, so delete those files if you update your forms UI::
 
     mkdir work1
     cd work1 || exit
@@ -210,12 +216,18 @@ In your client tests::
 
 Gotchas
 -------
+Updating Rows
+^^^^^^^^^^^^^^
 *anvil.works* allows you update your database using::
 
     row['name']="Rex Eagle"
 
 This is allowed in this wrapper, with the allowance that no sqlite row will be update, only the object ``row`` will be
 updated. To update the database row, you have to use ``row.update()``
+
+Package and Module Forms
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In the anvil.works, there are package forms and module forms. pyDALAnvilWorks was built to handle package forms.
 
 
 to be continued....

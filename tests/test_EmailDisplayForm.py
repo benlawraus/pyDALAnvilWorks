@@ -20,3 +20,4 @@ class TestEmailDisplayForm:
             if contact_row.address == contact['address']:
                 assert contact_row.created_by == contact['created_by']
 
+
