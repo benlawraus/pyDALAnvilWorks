@@ -10,7 +10,7 @@ Recent Changes
 ---------------
 
 ..  csv-table::
-    :header: "Before","After"
+    :header: "Before","Now"
 
     "``_anvil_designer.py`` generated when you first call its Form","the files are all generated for all forms at once."
 
