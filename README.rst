@@ -114,7 +114,7 @@ Simple
 ^^^^^^
 
 This repo has a copy of an anvil.works app already there. So, you can download this repo and run a few commands in your terminal.
-Copy and paste ``short_script.zsh`` to do that.
+Copy and paste `short_script.zsh <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/short_script.zsh>`_ to do that.
 
 
 Complicated
@@ -126,7 +126,7 @@ create a copy of the example app in your `anvil.works` account.
 
 `CLONE ME <https://anvil.works/build#clone:XWM5WQ66ONSRYYXL=WJUZGODLYP2JSYWR3XU2Y2XD>`_
 
-You need to then substitute your clone example for `myAnvilGit` in the ``long_script.zsh``. Take a look.
+You need to then substitute your clone example for `myAnvilGit` in the `long_script.zsh <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/long_script.zsh>`_. Take a look.
 
 And see some tests in the `tests` directory.
 
