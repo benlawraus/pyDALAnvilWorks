@@ -1,6 +1,5 @@
 import pathlib
 from collections import OrderedDict
-from dataclasses import dataclass
 from typing import Tuple, List, Dict, Union
 import strictyaml as sy
 
@@ -52,7 +51,6 @@ class GenericTemplate:
 TOP_LEVEL_NAME = "container"
 
 
-@dataclass
 class Class_Bookkeeping:
     def __init__(self):
         self.dict_str = f"""{GENERIC_COMPONENT}
@@ -236,7 +234,7 @@ def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_clas
             pass
         kwargs_string += kwargs_template.substitute(key=key, value=value)
     if kwargs_string == "":
-        kwargs_string="    pass"
+        kwargs_string = "    pass"
     return f"""
 class {class_name}({base_class}):
 {kwargs_string}

@@ -21,7 +21,7 @@ def yaml2class():
         all_components = convert_yaml_file_to_dict(parsed, bookkeeping)
         container_class = all_components.pop('top_level')
         bookkeeping.dict_str += write_a_class(
-            form_name+"Template",
+            form_name + "Template",
             all_components,
             bookkeeping.dict_list,
             base_class=f"{container_class}, GenericTemplate")
@@ -30,6 +30,7 @@ def yaml2class():
                                           yaml_file.parent)
         _anvil_designer_path.write_text(bookkeeping.dict_str)
     return
+
 
 if __name__ == '__main__':
     yaml2class()
