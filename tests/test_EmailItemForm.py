@@ -5,5 +5,8 @@ class TestEmailDisplayForm:
     def test_init(self):
         # generate demo user
         form_under_test = EmailItemForm()
+        form_under_test.item = {'text':'hello!'}
+        form_under_test.parent = 4
+        form_under_test.button_1_click()
 
 

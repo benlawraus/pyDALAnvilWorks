@@ -5,22 +5,32 @@ import strictyaml as sy
 
 from string import Template
 
+IMPORTS = """
+from collections import defaultdict
+"""
 GENERIC_COMPONENT = """
 class GenericComponent:
+    parent = object
+    
     def scroll_into_view(self):
         return
 
     def add_event_handler(*args,**kwargs):
         return
-"""
-
-GENERIC_PANEL = """
-class GenericDict(dict):
-    def __getitem__(self, key):
-        return dict.get(self, key)
                 
+    def remove_from_parent(self, *args,**kwargs):
+        return
+"""
+GENERIC_ITEM = """
+def default_val(val):
+    return lambda: val
+
+class GenericItem:
+    item = defaultdict(default_val(None))
+"""
+GENERIC_PANEL = """
 class GenericPanel:
-    item = GenericDict()
+    parent = object
     
     def add_component(self, *args, **kwargs):
         return
@@ -37,26 +47,22 @@ class GenericPanel:
     def get_event_handlers(self, *args,**kwargs):
         return
     
-    def parent(self, *args,**kwargs):
-        return
 """
-
 GENERIC_TEMPLATE = """
 class GenericTemplate:
     def init_components(self, **kwargs):
         super().__init__()        
         pass
 """
-
 TOP_LEVEL_NAME = "container"
 
 
 class Class_Bookkeeping:
     def __init__(self):
-        self.dict_str = f"""{GENERIC_COMPONENT}
-
+        self.dict_str = f"""{IMPORTS}
+{GENERIC_ITEM}
+{GENERIC_COMPONENT}
 {GENERIC_PANEL}
-        
 {GENERIC_TEMPLATE}"""
         self.dict_list = []
 
@@ -75,7 +81,7 @@ def anvil_yaml_schema() -> sy.MapPattern:
 
 
 def build_path(filename, directory) -> pathlib.Path:
-    root = pathlib.Path.cwd() / directory / filename
+    root = directory / filename
     return root
 
 
@@ -254,10 +260,12 @@ def lowest_level_component(value: sy.YAML, bookkeeping: Class_Bookkeeping):
         if 'properties' in value and len(value['properties']) > 0:
             validate_yaml(value, 'properties')
             attrs.update(value['properties'].data)
+        base_class = "GenericPanel"
         if 'name' not in value:
             value['name'] = sy.load(TOP_LEVEL_NAME, sy.Str())
+            base_class += ", GenericItem"
         bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list,
-                                              base_class="GenericPanel")
+                                              base_class=base_class)
     else:
         if 'properties' in value and len(value['properties']) > 0:
             validate_yaml(value, 'properties')
