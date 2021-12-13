@@ -54,13 +54,13 @@ TOP_LEVEL_NAME = "container"
 
 @dataclass
 class Class_Bookkeeping:
-    dict_str = \
-        f"""{GENERIC_COMPONENT}
+    def __init__(self):
+        self.dict_str = f"""{GENERIC_COMPONENT}
 
 {GENERIC_PANEL}
         
 {GENERIC_TEMPLATE}"""
-    dict_list = []
+        self.dict_list = []
 
 
 def anvil_yaml_schema() -> sy.MapPattern:
