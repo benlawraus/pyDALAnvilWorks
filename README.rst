@@ -18,7 +18,7 @@ Recent Changes
 
 How is it done?
 ---------------
-The program uses `pyDAL <https://py4web.com/_documentation/static/en/chapter-07.html>`_ to substitute
+The program uses `pyDAL <https://github.com/web2py/pydal>`_ to substitute
 the database interactions. This means you can git clone your app on your laptop and run some tests on it without
 modifying your app or using the external server's database.
 
@@ -33,7 +33,7 @@ Of course, you will need a complete mirror of your anvil.works external database
 use this `converter <https://github.com/benlawraus/yaml2schema>`_. In your cloned anvil.works
 app, there is a file called `anvil.yaml`. This file contains a description of your
 database schema. The `converter <https://github.com/benlawraus/yaml2schema>`_ will read
-the `anvil.yaml` and generate a `pyDAL <https://py4web.com/_documentation/static/en/chapter-07.html>`_
+the `anvil.yaml` and generate a `pyDAL <https://github.com/web2py/pydal>`_
 definition file (`pydal_def.py`) that you can use to run your tests. Place `pydal_def.py` into your
 `tests` directory.
 
