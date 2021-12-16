@@ -53,3 +53,6 @@ def define_tables_of_db():
             , Field('father', type='reference contact', default=None, ondelete='NO ACTION')
         )
     return
+
+if __name__ == '__main__':
+    define_tables_of_db()

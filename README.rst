@@ -12,6 +12,8 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Now"
 
+    "dodgy long_script.zsh for install","Renovated long_script.zsh using other smaller scripts."
+    "hazy on how to update database from anvil.works","New script yaml2schema.zsh to regenerate laptop database schema."
     "``_anvil_designer.py`` generated when you first call its Form","the files are all generated for all forms at once."
 
 
@@ -97,6 +99,11 @@ Two scripts are included here to make that easier : ``git_pull_from_anvil_works.
 They assume you have your anvil app already git-cloned on your laptop.
 
 The files in the form directories ``_anvil_designer.py`` are (re)generated when you use ``git_pull_from_anvil_works.zsh``.
+
+`yaml2schema.zsh <https://github.com/benlawraus/pyDALAnvilWorks/blob/yaml2schema/yaml2schema.zsh>`_ is another script
+that syncs your laptop database schema from your anvil.works schema. To do this though, the old laptop database
+is erased.
+
 
 Anvil-Extras
 --------------

@@ -29,8 +29,10 @@ def yaml2class():
         _anvil_designer_path = build_path('_anvil_designer.py',
                                           yaml_file.parent)
         _anvil_designer_path.write_text(bookkeeping.dict_str)
-    return
+    return False
 
 
 if __name__ == '__main__':
-    yaml2class()
+    if yaml2class():
+        exit(1)
+    exit(0)
