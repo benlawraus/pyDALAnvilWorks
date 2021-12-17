@@ -127,6 +127,7 @@ Copy and paste `short_script.zsh <https://raw.githubusercontent.com/benlawraus/p
 Complicated
 ^^^^^^^^^^^
 But if you want to see how to use your own anvil.works app here, try to understand this `script <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/long_script.zsh>`_.
+Copy into your terminal. It will download everything, including this repo.
 
 It will run in your terminal (good for python 3.7+). Before doing, make sure you
 create a copy of the example app in your `anvil.works` account.

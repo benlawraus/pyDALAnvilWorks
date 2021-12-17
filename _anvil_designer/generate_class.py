@@ -1,121 +1,8 @@
 import pathlib
-from collections import OrderedDict
 from typing import Tuple, List, Dict, Union
 import strictyaml as sy
 
 from string import Template
-
-IMPORTS = """
-from collections import defaultdict
-"""
-GENERIC_COMPONENT = """
-class GenericComponent:
-    parent = object
-    
-    def scroll_into_view(self):
-        return
-
-    def add_event_handler(*args,**kwargs):
-        return
-                
-    def remove_from_parent(self, *args,**kwargs):
-        return
-"""
-GENERIC_ITEM = """
-def default_val(val):
-    return lambda: val
-
-class GenericItem:
-    item = defaultdict(default_val(None))
-"""
-GENERIC_PANEL = """
-class GenericPanel:
-    parent = object
-    
-    def add_component(self, *args, **kwargs):
-        return
-        
-    def clear(self):
-        return
-        
-    def add_event_handler(self, *args,**kwargs):
-        return
-
-    def set_event_handler(self, *args,**kwargs):
-        return
-
-    def get_event_handlers(self, *args,**kwargs):
-        return
-    
-"""
-GENERIC_TEMPLATE = """
-class GenericTemplate:
-    def init_components(self, **kwargs):
-        super().__init__()        
-        pass
-"""
-TOP_LEVEL_NAME = "container"
-
-
-class Class_Bookkeeping:
-    def __init__(self):
-        self.dict_str = f"""{IMPORTS}
-{GENERIC_ITEM}
-{GENERIC_COMPONENT}
-{GENERIC_PANEL}
-{GENERIC_TEMPLATE}"""
-        self.dict_list = []
-
-
-def anvil_yaml_schema() -> sy.MapPattern:
-    """
-    Generates a strictyaml schema
-
-    Returns
-    -------
-        Schema object
-    """
-    # schema used by strictyaml to parse the text
-    schema = sy.MapPattern(sy.Str(), sy.Any())
-    return schema
-
-
-def build_path(filename, directory) -> pathlib.Path:
-    root = directory / filename
-    return root
-
-
-def readfile(filename: str, directory: pathlib.Path) -> Tuple[str, List[str]]:
-    """Reads a file and outputs the text and an array of newline characters
-    used at the end of each line.
-
-    Parameters
-    ----------
-    filename : str
-    directory : str, optional
-        Directory of the file. The default is current directory.
-
-    Returns
-    -------
-    text :
-        File as a str
-    n : TYPE
-        List of strings that contain the types of new_line characters used in the file.
-    """
-    fn = build_path(filename, directory)
-    n = []
-    with fn.open("r") as f:
-        lines = f.readlines()
-        text = ''.join(lines)  # list(f))
-        n.extend(f.newlines)
-    return text, n
-
-
-def yaml_from_file(input_yaml: str, folder: pathlib.Path) -> sy.YAML:
-    # if there is anvil.yaml, converts to openapi.yaml
-    anvil_yaml_str, newline_list = readfile(input_yaml, folder)
-    return sy.dirty_load(yaml_string=anvil_yaml_str, schema=anvil_yaml_schema(), allow_flow_style=True)
-
 
 Link = dict(
     url='',
@@ -174,8 +61,119 @@ HtmlTemplate = ColumnPanel
 DataRowPanel = ColumnPanel
 DataGrid = ColumnPanel
 
+IMPORTS = """
+from collections import defaultdict
+"""
+GENERIC_EVENT = """
+class GenericEvent:
+    def add_event_handler(self, event_name, handler_func):
+        return
 
-# FUNCTIONS = {"add_component"}
+    def set_event_handler(self, *args, **kwargs):
+        return
+
+    def get_event_handlers(self, *args, **kwargs):
+        return
+        
+    def raise_event(self, event_name, **kwargs):
+        return
+"""
+GENERIC_COMPONENT = """
+class GenericComponent(GenericEvent):
+    def scroll_into_view(self):
+        return
+
+    def add_event_handler(*args, **kwargs):
+        return
+                
+    def remove_from_parent(self, *args, **kwargs):
+        return
+"""
+GENERIC_ITEM = """
+def default_val(val):
+    return lambda: val
+
+class GenericItem:
+    item = defaultdict(default_val(None))
+"""
+GENERIC_PANEL = """
+class GenericPanel(GenericEvent):
+    def add_component(self, *args, **kwargs):
+        return
+        
+    def clear(self):
+        return
+"""
+GENERIC_TEMPLATE = """
+class GenericTemplate:
+    def init_components(self, **kwargs):
+        super().__init__()        
+        pass
+"""
+TOP_LEVEL_NAME = "container"
+
+
+class Class_Bookkeeping:
+    def __init__(self):
+        self.dict_str = f"""{IMPORTS}
+
+{GENERIC_ITEM}
+{GENERIC_EVENT}
+{GENERIC_COMPONENT}
+{GENERIC_PANEL}
+{GENERIC_TEMPLATE}
+"""
+        self.dict_list = ['GenericPanel']
+
+
+def anvil_yaml_schema() -> sy.MapPattern:
+    """
+    Generates a strictyaml schema
+
+    Returns
+    -------
+        Schema object
+    """
+    # schema used by strictyaml to parse the text
+    schema = sy.MapPattern(sy.Str(), sy.Any())
+    return schema
+
+
+def build_path(filename, directory) -> pathlib.Path:
+    root = directory / filename
+    return root
+
+
+def readfile(filename: str, directory: pathlib.Path) -> Tuple[str, List[str]]:
+    """Reads a file and outputs the text and an array of newline characters
+    used at the end of each line.
+
+    Parameters
+    ----------
+    filename : str
+    directory : str, optional
+        Directory of the file. The default is current directory.
+
+    Returns
+    -------
+    text :
+        File as a str
+    n : TYPE
+        List of strings that contain the types of new_line characters used in the file.
+    """
+    fn = build_path(filename, directory)
+    n = []
+    with fn.open("r") as f:
+        lines = f.readlines()
+        text = ''.join(lines)  # list(f))
+        n.extend(f.newlines)
+    return text, n
+
+
+def yaml_from_file(input_yaml: str, folder: pathlib.Path) -> sy.YAML:
+    # if there is anvil.yaml, converts to openapi.yaml
+    anvil_yaml_str, newline_list = readfile(input_yaml, folder)
+    return sy.dirty_load(yaml_string=anvil_yaml_str, schema=anvil_yaml_schema(), allow_flow_style=True)
 
 
 def validate_text(value: sy.YAML) -> None:
@@ -224,7 +222,7 @@ def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_clas
     else:
         class_name = dict_name
 
-    kwargs_template = Template("    $key=$value")
+    kwargs_template = Template("    $key = $value")
     kwargs_string = ""
     for key, value in of_dict.items():
         if len(kwargs_string) > 0:
@@ -244,22 +242,30 @@ def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_clas
     return f"""
 class {class_name}({base_class}):
 {kwargs_string}
+
 """
 
 
-def lowest_level_component(value: sy.YAML, bookkeeping: Class_Bookkeeping):
+def add_properties(value: sy.YAML, attrs: Dict, parent: str):
+    if 'properties' in value and len(value['properties']) > 0:
+        validate_yaml(value, 'properties')
+        attrs.update(value['properties'].data)
+        if parent != '':
+            # add parent class
+            attrs.update({'parent': 'GenericPanel'})
+    return
+
+
+def lowest_level_component(value: sy.YAML, bookkeeping: Class_Bookkeeping, parent: str):
     if value['type'].text == "TextBox":
         attrs = TextBox
-        if 'properties' in value and len(value['properties']) > 0:
-            validate_yaml(value, 'properties')
-            attrs.update(value['properties'].data)
+        add_properties(value, attrs, parent)
         bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list,
                                               base_class="GenericComponent")
     elif value['type'].text in ("ColumnPanel", "HtmlTemplate", "Link", "DataGrid", "DataRowPanel"):
+        # this is for Column components
         attrs = globals().get(value['type'].text)
-        if 'properties' in value and len(value['properties']) > 0:
-            validate_yaml(value, 'properties')
-            attrs.update(value['properties'].data)
+        add_properties(value, attrs, parent)
         base_class = "GenericPanel"
         if 'name' not in value:
             value['name'] = sy.load(TOP_LEVEL_NAME, sy.Str())
@@ -267,54 +273,54 @@ def lowest_level_component(value: sy.YAML, bookkeeping: Class_Bookkeeping):
         bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list,
                                               base_class=base_class)
     else:
-        if 'properties' in value and len(value['properties']) > 0:
-            validate_yaml(value, 'properties')
-            attrs = value['properties'].data
-        else:
-            attrs = OrderedDict()
+        # Other components
+        attrs = dict()
+        add_properties(value, attrs, parent)
         bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list,
                                               base_class="GenericComponent")
     # add to list
     bookkeeping.dict_list.append(to_camel_case(value['name'].text))
-    return attrs, dict()
+    return attrs, dict(), parent
 
 
-def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping):
+def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping, parent: str):
     if 'components' not in value:
         if 'type' in value:
-            return lowest_level_component(value, bookkeeping)
+            return lowest_level_component(value, bookkeeping, parent)
         if 'container' in value:
-            return lowest_level_component(value['container'], bookkeeping)
+            return lowest_level_component(value['container'], bookkeeping, parent)
     else:
         # go down into the hierarchy
         instance_dict = dict()
         str_dict = dict()
+        parent = to_camel_case(value['name'].text)
         for _y in value['components']:
             # create a dict from each in the component list
-            inst_dict, s_dict = derive_dict(_y, bookkeeping)
+            inst_dict, s_dict, parent = derive_dict(_y, bookkeeping, parent)
             # instead of making a list of these dicts, make a dict of dict
             instance_dict[_y['name'].text] = inst_dict
             str_dict[_y['name'].text] = to_camel_case(_y['name'].text)
             if len(s_dict) > 0:
                 str_dict.update(s_dict)
         value.__delitem__('components')
-        attrs, _ = lowest_level_component(value, bookkeeping)
+        attrs, _, _ = lowest_level_component(value, bookkeeping, parent)
         instance_dict[value['name'].text] = attrs
         str_dict[value['name'].text] = to_camel_case(value['name'].text)
-        return instance_dict, str_dict
+        return instance_dict, str_dict, parent
 
 
 def convert_yaml_file_to_dict(parsed: sy.YAML, bookkeeping: Class_Bookkeeping):
     value = parsed['components']
     all_comp = dict()
+    parent = ''
     for p in value:
-        _dict, _str_dict = derive_dict(p, bookkeeping)
+        _dict, _str_dict, parent = derive_dict(p, bookkeeping, parent)
         all_comp[p['name'].text] = to_camel_case(p['name'].text)  # _dict
         if len(_str_dict) > 0:
             all_comp.update(_str_dict)
     # container without its components
     parsed.__delitem__('components')
-    _dict, _str_dict = derive_dict(parsed, bookkeeping)
+    _dict, _str_dict, _ = derive_dict(parsed, bookkeeping, parent='')
     all_comp['top_level'] = to_camel_case(TOP_LEVEL_NAME)
     if len(_str_dict) > 0:
         all_comp.update(_str_dict)

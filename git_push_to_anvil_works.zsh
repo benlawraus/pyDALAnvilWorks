@@ -12,13 +12,15 @@ rsync -rv $app_on_laptop/server_code/ $anvil_app/server_code
 if git commit -am "Edited on laptop"; then
     echo "git commit completed with no errors."
 else
-    echo "git commit errors initiated premature exit."
+    echo "git commit errors initiated premature exit.
+    Was trying to commit files at ${anvil_app}."
     exit 1
 fi
 if git push origin master; then
     echo "git push completed with no errors."
 else
-    echo "git push errors initiated premature exit."
+    echo "git push errors initiated premature exit.
+    Was trying to push to anvil.works."
     exit 1
 fi
 cd $app_on_laptop || exit 1
