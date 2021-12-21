@@ -1,5 +1,6 @@
 """Thanks to https://realpython.com/primer-on-python-decorators/
 """
+import pickle
 from functools import wraps
 from types import NoneType
 
@@ -33,6 +34,7 @@ def callable(_func=None, *, require_user=None):
             return return_value
 
         return wrapper
+
     if _func is None:
         return decorator_callable
     else:
@@ -44,7 +46,7 @@ def import_source_file(file_path, module_name):
     import importlib.util
     import sys
     spec = importlib.util.spec_from_file_location(module_name, file_path)
-    if not isinstance(spec,NoneType):
+    if not isinstance(spec, NoneType):
         module = importlib.util.module_from_spec(spec)
         sys.modules[module_name] = module
         spec.loader.exec_module(module)
@@ -52,18 +54,23 @@ def import_source_file(file_path, module_name):
 
 
 def call(*args):
+    """Simulates the call from the anvil client to the anvil server."""
     # register
     """arg[0] = function name, arg[1:] are the arguments of function."""
-    if  args[0] not in PLUGINS:
+    if args[0] not in PLUGINS:
         pth = pathlib.Path(__file__).parent.parent / 'server_code'
         for p in pth.iterdir():
             if p.is_file():
-                import_source_file(p,p.stem)
+                import_source_file(p, p.stem)
     if len(args) == 1:
         return PLUGINS[args[0]]()
     else:
-        return PLUGINS[args[0]](*args[1:])
-
+        """Need to pickle as a way to copy so that not sending reference."""
+        new_args = []
+        for arg in args[1:]:
+            temp = pickle.dumps(arg)
+            new_args.append(pickle.loads(temp))
+        return PLUGINS[args[0]](*new_args)
 
 
 def class_decor(_class):
