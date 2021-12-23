@@ -18,15 +18,15 @@ class ContactForm(ContactFormTemplate):
 
     def convert_to_items(self):
         self.text_box_name.text = self.contact.get('name', None)
-        em_items = []
-        for em in self.contact.get('email_list', []):
+        em_items = []  # type: list[dict]
+        for em in self.contact.get('email_list', []):  # type: dict
             em_items.append({'email': em['address'], 'place': em['place']})
         self.repeating_panel_email.items = em_items
         self.text_box_phone.text = self.contact.get('phone', dict()).get('number', None)
 
     def convert_from_items(self):
         self.contact['name'] = self.text_box_name.text
-        em_list = []
+        em_list = []  # type: list[dict]
         for em in self.repeating_panel_email.items:
             em_list.append({'address': em['email'], 'place': em['place']})
         self.contact['email_list'] = em_list
@@ -36,4 +36,3 @@ class ContactForm(ContactFormTemplate):
         """This method is called when the button is clicked"""
         self.convert_from_items()
         contact_id = anvil.server.call('save_contact', self.contact)
-

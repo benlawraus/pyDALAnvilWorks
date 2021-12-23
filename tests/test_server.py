@@ -24,3 +24,11 @@ class TestServer:
             assert contact_dict['phone'][attr] == contact_row.phone[attr]
         for attr in {'address', 'created_by'}:
             assert contact_dict['email_list'][0][attr] == contact_row.email_list[0][attr]
+
+    def test_context(self):
+        """This test is for pycharm's type checking feature using
+        Python 2 style comments.  Here, the context object is used to
+        ascertain whether code is running on laptop or not."""
+        from client_code.EmailDisplayForm import EmailDisplayForm
+        mydal.define_tables_of_db()
+        test_import_ok = EmailDisplayForm()

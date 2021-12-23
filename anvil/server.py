@@ -8,7 +8,13 @@ import anvil.users
 import tests.pydal_def as mydal
 import pathlib
 
+
+class Context:
+    type = 'laptop'
+
+
 PLUGINS = dict()
+context = Context()
 
 
 def callable(_func=None, *, require_user=None):

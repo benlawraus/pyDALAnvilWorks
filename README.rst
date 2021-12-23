@@ -109,6 +109,19 @@ Note that the included scripts do this for you.
 
 If there is an error, something in your ``yaml`` has not been implemented yet...
 
+Type Checking
+^^^^^^^^^^^^^
+It is possible to type check client code using Python 2 style comments and
+PyCharm. See `PyCharm type checking <https://www.jetbrains.com/help/pycharm/type-hinting-in-product.html>`_
+There is a ``anvil.server.context`` object that could help you with types such as ``Union`` and ``Any``.  Here,
+``anvil.server.context.type = "laptop"`` so in your client code (thanks,
+`Stefano <https://anvil.works/forum/t/detecting-whether-anvil-is-running-in-the-browser-typing/10975/2?u=ben.lawrence>`_) ::
+
+    if anvil.server.context.type != 'browser':
+        # running on server
+        from typing import List, Optional, Union, Tuple, Dict
+
+
 Push Pull Scripts
 ------------------
 In your average day, you will edit code and push and pull your changes to *anvil.works*.
