@@ -117,9 +117,9 @@ There is a ``anvil.server.context`` object that could help you with types such a
 ``anvil.server.context.type = "laptop"`` so in your client code (thanks,
 `Stefano <https://anvil.works/forum/t/detecting-whether-anvil-is-running-in-the-browser-typing/10975/2?u=ben.lawrence>`_) ::
 
-    if anvil.server.context.type != 'browser':
-        # running on server
-        from typing import List, Optional, Union, Tuple, Dict
+    if anvil.server.context.type == "laptop":  # for type checking
+        from typing import Union
+        from .portable_contact import Phone, Email, Location
 
 
 Push Pull Scripts
