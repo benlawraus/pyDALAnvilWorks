@@ -121,6 +121,9 @@ There is a ``anvil.server.context`` object that could help you with types such a
         from typing import Union
         from .portable_contact import Phone, Email, Location
 
+        texts_to_check = dict()  # type: dict[str, Union[Phone,Email,Location]]
+
+
 
 Push Pull Scripts
 ------------------
