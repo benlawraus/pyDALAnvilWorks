@@ -1,38 +1,21 @@
-from _anvil_designer.generate_class import build_path, convert_yaml_file_to_dict, write_a_class, \
-    Class_Bookkeeping, yaml_from_file
 import pathlib
+from _anvil_designer.generate_class import yaml2definition, yaml_from_file, build_path
 
 
-def yaml2class():
-    """Derives `_anvil_designer.py` from the corresponding `form_template.yaml`
-
-    """
-
-    # get the yaml
-    # using yaml create a class
-    # read in the yaml
+def yaml2classes():
     client_code = pathlib.Path(__file__).parent.parent / 'client_code'
     for yaml_file in client_code.rglob('*.yaml'):
-        # if build_path('_anvil_designer.py', yaml_file.parent).exists():
-        #     continue
-        bookkeeping = Class_Bookkeeping()
         form_name = yaml_file.parent.name
         parsed = yaml_from_file('form_template.yaml', yaml_file.parent)
-        all_components = convert_yaml_file_to_dict(parsed, bookkeeping)
-        container_class = all_components.pop('top_level')
-        bookkeeping.dict_str += write_a_class(
-            form_name + "Template",
-            all_components,
-            bookkeeping.dict_list,
-            base_class=f"{container_class}, GenericTemplate")
+        file_string = yaml2definition(parsed, form_name)
         # write the models out to the local folder.
         _anvil_designer_path = build_path('_anvil_designer.py',
                                           yaml_file.parent)
-        _anvil_designer_path.write_text(bookkeeping.dict_str)
+        _anvil_designer_path.write_text(file_string)
     return False
 
 
 if __name__ == '__main__':
-    if yaml2class():
+    if yaml2classes():
         exit(1)
     exit(0)

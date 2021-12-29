@@ -8,5 +8,6 @@ class TestEmailDisplayForm:
         form_under_test.item = {'text':'hello!'}
         form_under_test.parent = 4
         form_under_test.button_1_click()
+        form_under_test.raise_event(event_name="boo")
 
 

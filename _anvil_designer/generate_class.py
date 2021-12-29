@@ -1,129 +1,14 @@
 import pathlib
+from collections import OrderedDict
+from dataclasses import dataclass
 from typing import Tuple, List, Dict, Union
 import strictyaml as sy
-
 from string import Template
-
-Link = dict(
-    url='',
-    text='',
-    align='left',
-    font_size=None,
-    font='Arial',
-    bold=False,
-    italic=False,
-    underline=False,
-    icon='',
-    icon_align='left',
-    tooltip='',
-    tag=None
-)
-
-TextBox = dict(
-    enabled=True,
-    text="",
-    visible=True,
-    align="left",
-    background="#ff0000",
-    bold=False,
-    border="1px solid #888888",
-    font="Arial",
-    font_size=16,
-    foreground="#ff0000",
-    hide_text=False,
-    italic=False,
-    placeholder="Enter text here",
-    role="default",
-    spacing_above="small",
-    spacing_below="small",
-    tag='',
-    tooltip="",
-    type="text",
-    underline=False)
-
-ColumnPanel = dict(
-    visible=True,
-    wrap_on="mobile",
-    background="#ff0000",
-    bold=False,
-    border="1px solid #888888",
-    col_spacing="medium",
-    col_widths='',
-    foreground="#ff0000",
-    role="default",
-    spacing_above="small",
-    spacing_below="small",
-    tag="",
-    tooltip=""
-)
-
-HtmlTemplate = ColumnPanel
-DataRowPanel = ColumnPanel
-DataGrid = ColumnPanel
 
 IMPORTS = """
 from collections import defaultdict
 """
-GENERIC_EVENT = """
-class GenericEvent:
-    def add_event_handler(self, event_name, handler_func):
-        return
-
-    def set_event_handler(self, *args, **kwargs):
-        return
-
-    def get_event_handlers(self, *args, **kwargs):
-        return
-        
-    def raise_event(self, event_name, **kwargs):
-        return
-"""
-GENERIC_COMPONENT = """
-class GenericComponent(GenericEvent):
-    def scroll_into_view(self):
-        return
-
-    def add_event_handler(*args, **kwargs):
-        return
-                
-    def remove_from_parent(self, *args, **kwargs):
-        return
-"""
-GENERIC_ITEM = """
-def default_val(val):
-    return lambda: val
-
-class GenericItem:
-    item = defaultdict(default_val(None))
-"""
-GENERIC_PANEL = """
-class GenericPanel(GenericEvent):
-    def add_component(self, *args, **kwargs):
-        return
-        
-    def clear(self):
-        return
-"""
-GENERIC_TEMPLATE = """
-class GenericTemplate:
-    def init_components(self, **kwargs):
-        super().__init__()        
-        pass
-"""
 TOP_LEVEL_NAME = "container"
-
-
-class Class_Bookkeeping:
-    def __init__(self):
-        self.dict_str = f"""{IMPORTS}
-
-{GENERIC_ITEM}
-{GENERIC_EVENT}
-{GENERIC_COMPONENT}
-{GENERIC_PANEL}
-{GENERIC_TEMPLATE}
-"""
-        self.dict_list = ['GenericPanel']
 
 
 def anvil_yaml_schema() -> sy.MapPattern:
@@ -183,8 +68,6 @@ def validate_text(value: sy.YAML) -> None:
         value.revalidate(sy.NullNone())
     elif value.text in {''}:
         value.revalidate(sy.Str())
-    # elif value.text in FUNCTIONS:
-    #     value.revalidate(sy.ScalarValidator)
     elif set(value.text) <= set('0123456789.'):
         value.revalidate(sy.Float())
     return
@@ -215,113 +98,114 @@ def to_camel_case(snake_str):
     return ''.join(x.title() for x in components)
 
 
-def write_a_class(dict_name: str, of_dict: Dict, dict_list: List[str], base_class='') -> str:
-    """Converts the ``of_dict`` into a string describing a class."""
-    if dict_name[0].islower():
-        class_name = to_camel_case(dict_name)
-    else:
-        class_name = dict_name
-
-    kwargs_template = Template("    $key = $value")
+def dict2string(dict_name: str, of_dict: Dict) -> str:
+    """Converts the ``of_dict`` into a string describing a default conditions for a class."""
+    kwargs_template = Template("    $key = $value,\n")
     kwargs_string = ""
     for key, value in of_dict.items():
-        if len(kwargs_string) > 0:
-            kwargs_string += "\n"
         if isinstance(value, str):
-            if len(value) > 0 and value in dict_list:
-                value = value + f"()"
-            else:
+            if key != 'parent':
                 value = f"'{value}'"
-        elif isinstance(value, dict) or value in dict_list:
-            value = to_camel_case(key) + f"()"
-        else:
-            pass
         kwargs_string += kwargs_template.substitute(key=key, value=value)
-    if kwargs_string == "":
-        kwargs_string = "    pass"
-    return f"""
-class {class_name}({base_class}):
-{kwargs_string}
-
-"""
+    return kwargs_string
 
 
-def add_properties(value: sy.YAML, attrs: Dict, parent: str):
-    if 'properties' in value and len(value['properties']) > 0:
-        validate_yaml(value, 'properties')
-        attrs.update(value['properties'].data)
-        if parent != '':
-            # add parent class
-            attrs.update({'parent': 'GenericPanel'})
+def add_properties(value: sy.YAML, parent: str) -> Dict:
+    """Adds the YAML 'properties' to `attrs` as key:value pairs."""
+    attrs = dict() #getattr(defaults, value['type'].text, dict())
+    if len(value.get('properties', [])) == 0:
+        return attrs
+    validate_yaml(value, 'properties')
+    attrs.update(value['properties'].data)
+    # add parent class
+    attrs.update({'parent': 'Container()'})  # Container(**{parent}) ?
+    return attrs
+
+
+@dataclass
+class CatalogCard:
+    name: str
+    of_type: str
+    parent: str
+    as_string: str
+
+
+def lowest_level_component(value: sy.YAML, parent: str) -> CatalogCard:
+    """Derives dict from `value`. `value` has to have `type`
+
+    Parameters
+    ----------
+    value :
+    parent :
+    """
+    name = to_camel_case(value['name'].text)
+    of_type = value['type'].text  # raise attribute error if no `type`
+    attrs = add_properties(value, parent)
+    attrs_as_string = dict2string(value['name'].text, attrs)
+    return CatalogCard(name=name, of_type=of_type, parent=parent, as_string=attrs_as_string)
+
+
+def derive_dict(value: sy.YAML, catalog: OrderedDict, parent: str):
+    """
+
+    Parameters
+    ----------
+    value :
+    catalog :
+    parent :
+
+    Returns
+    -------
+
+    """
+    top_level = False
+    try:
+        name = value['name'].text
+    except KeyError:
+        # add top form name to the catalog too
+        name = parent
+        top_level = True
+    if 'components' in value:
+        # go down into the hierarchy
+        parent = name
+        for component in value['components']:
+            # create a dict from each in the component list
+            derive_dict(component, catalog, parent)
+    if top_level:
+        value = value.get('container')
+        value['name'] = sy.load(TOP_LEVEL_NAME, sy.Str())
+    catalog[name] = lowest_level_component(value, parent)
     return
 
 
-def lowest_level_component(value: sy.YAML, bookkeeping: Class_Bookkeeping, parent: str):
-    if value['type'].text == "TextBox":
-        attrs = TextBox
-        add_properties(value, attrs, parent)
-        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list,
-                                              base_class="GenericComponent")
-    elif value['type'].text in ("ColumnPanel", "HtmlTemplate", "Link", "DataGrid", "DataRowPanel"):
-        # this is for Column components
-        attrs = globals().get(value['type'].text)
-        add_properties(value, attrs, parent)
-        base_class = "GenericPanel"
-        if 'name' not in value:
-            value['name'] = sy.load(TOP_LEVEL_NAME, sy.Str())
-            base_class += ", GenericItem"
-        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list,
-                                              base_class=base_class)
-    else:
-        # Other components
-        attrs = dict()
-        add_properties(value, attrs, parent)
-        bookkeeping.dict_str += write_a_class(value['name'].text, attrs, bookkeeping.dict_list,
-                                              base_class="GenericComponent")
-    # add to list
-    bookkeeping.dict_list.append(to_camel_case(value['name'].text))
-    return attrs, dict(), parent
+def yaml2definition(parsed: sy.YAML, form_name):
+    """Organizes the YAML into a nested dict where the keys are the names of the components
+    and the YAML 'properties' are attributes.
 
+    Example
+    Before: dict('components':list({'type':ColumnPanel,'name':'column_panel1',properties:{'role':'blah','text':'My Form'} etc)
+    After: {'column_panel1':{'type':ColumnPanel, 'role':'blah', 'text':'My Form' etc}
+"""
+    catalog = OrderedDict()
+    TAB = '    '
+    derive_dict(parsed, catalog, form_name)
+    # create form class
+    attr_string = ""
+    default_string = ""
+    for key, item in catalog.items():
+        if key == form_name:
+            continue
+        default_string += f"{item.name} = dict(\n{item.as_string})\n"
+        attr_string += f"{TAB}{key} = {item.of_type}(**{item.name})\n"
+    class_string = """from _anvil_designer.componentsUI.anvil import *
 
-def derive_dict(value: sy.YAML, bookkeeping: Class_Bookkeeping, parent: str):
-    if 'components' not in value:
-        if 'type' in value:
-            return lowest_level_component(value, bookkeeping, parent)
-        if 'container' in value:
-            return lowest_level_component(value['container'], bookkeeping, parent)
-    else:
-        # go down into the hierarchy
-        instance_dict = dict()
-        str_dict = dict()
-        parent = to_camel_case(value['name'].text)
-        for _y in value['components']:
-            # create a dict from each in the component list
-            inst_dict, s_dict, parent = derive_dict(_y, bookkeeping, parent)
-            # instead of making a list of these dicts, make a dict of dict
-            instance_dict[_y['name'].text] = inst_dict
-            str_dict[_y['name'].text] = to_camel_case(_y['name'].text)
-            if len(s_dict) > 0:
-                str_dict.update(s_dict)
-        value.__delitem__('components')
-        attrs, _, _ = lowest_level_component(value, bookkeeping, parent)
-        instance_dict[value['name'].text] = attrs
-        str_dict[value['name'].text] = to_camel_case(value['name'].text)
-        return instance_dict, str_dict, parent
-
-
-def convert_yaml_file_to_dict(parsed: sy.YAML, bookkeeping: Class_Bookkeeping):
-    value = parsed['components']
-    all_comp = dict()
-    parent = ''
-    for p in value:
-        _dict, _str_dict, parent = derive_dict(p, bookkeeping, parent)
-        all_comp[p['name'].text] = to_camel_case(p['name'].text)  # _dict
-        if len(_str_dict) > 0:
-            all_comp.update(_str_dict)
-    # container without its components
-    parsed.__delitem__('components')
-    _dict, _str_dict, _ = derive_dict(parsed, bookkeeping, parent='')
-    all_comp['top_level'] = to_camel_case(TOP_LEVEL_NAME)
-    if len(_str_dict) > 0:
-        all_comp.update(_str_dict)
-    return all_comp
+"""\
+                   f"{default_string}"\
+                   f"class {form_name}Template({catalog[form_name].of_type}):\n"\
+                   f"{attr_string}"
+    class_string += """
+    def init_components(self, **kwargs):
+        super().__init__()        
+        pass
+"""
+    return class_string

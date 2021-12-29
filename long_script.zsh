@@ -46,6 +46,7 @@ fi
 pip3 install pyDAL
 pip3 install pytest
 pip3 install pytest-tornasync
+
 ####################### OPTIONAL ##########################
 # install anvil_extras (optional, only if you use that sweet project)
 cd "$app_on_laptop" || exit 1

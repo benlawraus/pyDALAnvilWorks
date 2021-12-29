@@ -1,9 +1,9 @@
 What is it?
 ------------
-To allow you to:
+This project is a homage to `PyCharm <https://www.jetbrains.com/pycharm/>`_ and will allow you to:
     * Use any database while testing your `anvil.works <https://anvil.works>`_ app.
     * Create and run tests using pytest. These tests would be for the python in client_side forms, as well as server_side python. No testing of javascript UI can be done here.
-    * Most importantly: use **PyCharm** more with auto-complete on forms.
+    * Most importantly: use **PyCharm** with auto-complete.
 
 
 Recent Changes
@@ -12,21 +12,23 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Now"
 
+    "crappy code (50% of it)","replaced by less crappy code that now contains almost the whole anvil api including GoogleMaps"
     "pass by reference between `call` and `callable`","pickle-unpickle the arguments to simulate the client-server connection"
     "dodgy long_script.zsh for install","Renovated long_script.zsh using other smaller scripts."
     "hazy on how to update database from anvil.works","New script yaml2schema.zsh to regenerate laptop database schema."
-    "``_anvil_designer.py`` generated when you first call its Form","the files are all generated for all forms at once."
 
 
 
 How is it done?
 ---------------
+Server-side
+^^^^^^^^^^^
 The program uses `pyDAL <https://github.com/web2py/pydal>`_ to substitute
 the database interactions. This means you can git clone your app on your laptop and run some tests on it without
 modifying your app or using the external server's database. The anvil.works commands have been turned into wrappers for
 `pyDAL <https://github.com/web2py/pydal>`_ commands to your sqlite database on your laptop.
 
-But how is the sqlite database set-up?
+**But how is the sqlite database set-up?**
 
 `Yaml2Schema <https://github.com/benlawraus/yaml2schema>`_ uses the
 file called `anvil.yaml`. This file contains a description of your
@@ -38,8 +40,13 @@ if you want to run any other kind of database (e.g. postgresql, mysql etc) inste
 you can do this by changing the adapter in `pydal_def.py`.
 Take a look at the pyDAL's `documentation <https://py4web.com/_documentation/static/en/chapter-07.html>`_ to know more.
 
+Client-side
+^^^^^^^^^^^
 For the client-side, `_anvil_designer.py` files are generated to mimic the UI on `anvil.works <anvil.works>`_. When your
 client_side code meets a component it uses a dummy class from that file instead.
+
+`_anvil_designer.py` will be referencing other dummy classes and functions in `_anvil_designer/componentsUI/`. If you want to
+flesh them out a bit, you can do that there. Otherwise, most likely functions will have a `def function(*args):pass` format.
 
 How to use it?
 ---------------
@@ -55,6 +62,18 @@ Your directory structure on your laptop will look like this:
         - test1.py # your test file
     - anvil.yaml (git-cloned from anvil.works)
 
+Kick the Tires
+^^^^^^^^^^^^^^
+Download the repo and open it in `PyCharm <https://www.jetbrains.com/pycharm/>`_. Open a form (`__init__.py` in a form directory)
+and test out the auto-complete.
+
+Run Some Tests
+^^^^^^^^^^^^^^
+Before downloading the repo, use `short_script <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/short_script.zsh>`_
+and run the tests.
+
+Try and Use It
+^^^^^^^^^^^^^^
 One way is to git-clone your anvil app to somewhere and then sync your anvil app's client- and server- code to
 the above working directory. You can then edit your code in the working directory, run some pytests etc
 and then sync your changes back to your cloned anvil app and push to anvil.works from there.
