@@ -1,0 +1,52 @@
+Link = dict(
+    url='',
+    text='',
+    align='left',
+    font_size=None,
+    font='Arial',
+    bold=False,
+    italic=False,
+    underline=False,
+    icon='',
+    icon_align='left',
+    tooltip='',
+    tag=None
+)
+
+TextBox = dict(
+    enabled=True,
+    text="",
+    visible=True,
+    align="left",
+    background="#ff0000",
+    bold=False,
+    border="1px solid #888888",
+    font="Arial",
+    font_size=16,
+    foreground="#ff0000",
+    hide_text=False,
+    italic=False,
+    placeholder="Enter text here",
+    role="default",
+    spacing_above="small",
+    spacing_below="small",
+    tag='',
+    tooltip="",
+    type="text",
+    underline=False)
+
+ColumnPanel = dict(
+    visible=True,
+    wrap_on="mobile",
+    background="#ff0000",
+    # bold=False,
+    border="1px solid #888888",
+    col_spacing="medium",
+    col_widths='',
+    foreground="#ff0000",
+    role="default",
+    spacing_above="small",
+    spacing_below="small",
+    tag="",
+    tooltip=""
+)
