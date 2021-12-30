@@ -3,13 +3,15 @@ import pathlib
 from _anvil_designer.definitions import ANVIL_TYPES
 from _anvil_designer.generate_class import yaml_from_file
 
+
 def get_tables(parsed):
     table_dict = dict()
     for table_yaml in parsed['db_schema']:
-        table_dict[table_yaml.text]={}
+        table_dict[table_yaml.text] = {}
         for column in parsed['db_schema'][table_yaml]['columns']:  # for later, not needed here
-            table_dict[table_yaml.text].update({column['name'] : ANVIL_TYPES[column['type']]})
+            table_dict[table_yaml.text].update({column['name']: ANVIL_TYPES[column['type']]})
     return table_dict
+
 
 def table_dict2string(table_dict):
     file_str = """from anvil.tables.basefunction import BaseFunction
@@ -29,10 +31,10 @@ app_tables = AppTables()
 """
     return file_str
 
-def string2AppTables(file_str, main_dir):
-    filep = pathlib.Path(main_dir / 'anvil'/'tables' / 'AppTables.py')
-    filep.write_text(file_str)
 
+def string2AppTables(file_str, main_dir):
+    filep = pathlib.Path(main_dir / 'anvil' / 'tables' / 'AppTables.py')
+    filep.write_text(file_str)
 
 
 def yaml2apptable():
@@ -42,8 +44,11 @@ def yaml2apptable():
     table_dict = get_tables(parsed)
     file_str = table_dict2string(table_dict)
     string2AppTables(file_str, main_dir)
-
     return False
+
 
 if __name__ == '__main__':
     yaml2apptable()
+    if yaml2apptable():
+        exit(1)
+    exit(0)

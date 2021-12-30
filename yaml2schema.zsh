@@ -61,9 +61,15 @@ rm -f "$app_on_laptop"/tests/database/*.log
 rm -f "$app_on_laptop"/tests/database/*.sqlite
 echo "Generating new database."
 if python3 tests/pydal_def.py; then
-    echo "git commit completed with no errors."
+    echo "New database generated with no errors."
 else
     echo "pydal_def not copied. git commit errors."
     exit 1
 fi
+# Generate AppTables
+if ! python3 -m _anvil_designer.generate_apptable; then
+  echo "Crashed while generating AppTable.py."
+    exit 1
+fi
+
 exit 0
