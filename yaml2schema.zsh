@@ -1,7 +1,7 @@
 echo "~  -  ~  -  ~  -  ~  -  ~  -  ~  -  ~  -  ~  -  ~  -  ~"
 anvil_app="theDirectory/OfYour/ClonedAnvilWorksApp"
 app_on_laptop="theDirectory/OfYour/pyDALAnvilWorks"
-yaml2schema="theDirectory/ofYour/yaml2schema"
+yaml2schema="theDirectory/of/yaml2schema (downloaded from https://github.com/benlawraus/yaml2schema)"
 if [ $# -eq 3 ]
   then
     anvil_app=$1
@@ -17,7 +17,13 @@ echo "Copies anvil.yaml from ${anvil_app} and generates a new pydal_def.py in ${
 # check that directories exists, exit otherwise
 if [ ! -d "$yaml2schema" ]; then
   echo "${yaml2schema} not there. Use https://github.com/benlawraus/yaml2schema"
-  exit 1
+  yaml2schema="${PWD}/yaml2schema"
+  # clone yaml2schema
+  git clone https://github.com/benlawraus/yaml2schema.git
+  if [ ! -d "$yaml2schema" ]; then
+    echo "${yaml2schema} not there."
+    exit 1
+  fi
 fi
 if [ ! -d "$app_on_laptop" ]; then
   echo "${app_on_laptop} not there.
