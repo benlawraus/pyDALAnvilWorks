@@ -95,7 +95,7 @@ server_code
 The `anvil.yaml` file is used to generate the database and the `AppTable` class. The `AppTable` class is needed
 to have auto-complete in your IDE for table names. The database and AppTable needs to be re-generated
 after every change to the database on anvil.works otherwise your code won't be synced.  This means your test
-database on your laptop will be deleted and re-schemed. `yaml2schema.zsh <https://github.com/benlawraus/pyDALAnvilWorks/blob/yaml2schema/yaml2schema.zsh>`_
+database on your laptop will be deleted and re-schemed. `yaml2schema.zsh <https://github.com/benlawraus/pyDALAnvilWorks/blob/master/yaml2schema.zsh>`_
 does this for you.
 
 FYI, to generate `anvil/tables/AppTables.py`::
@@ -162,7 +162,7 @@ They assume you have your anvil app already git-cloned on your laptop.
 
 The files in the form directories ``_anvil_designer.py`` are (re)generated when you use ``git_pull_from_anvil_works.zsh``.
 
-`yaml2schema.zsh <https://github.com/benlawraus/pyDALAnvilWorks/blob/yaml2schema/yaml2schema.zsh>`_ is another script
+`yaml2schema.zsh <https://github.com/benlawraus/pyDALAnvilWorks/blob/master/yaml2schema.zsh>`_ is another script
 that syncs your laptop database schema from your anvil.works schema. To do this though, the old laptop database
 is erased.
 
