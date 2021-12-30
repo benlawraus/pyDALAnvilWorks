@@ -12,10 +12,10 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Now"
 
+    "","added auto-complete for: **apptables.TABLE.**"
     "crappy code (50% of it)","replaced by less crappy code that now contains almost the whole anvil api including GoogleMaps"
     "pass by reference between `call` and `callable`","pickle-unpickle the arguments to simulate the client-server connection"
     "dodgy long_script.zsh for install","Renovated long_script.zsh using other smaller scripts."
-    "hazy on how to update database from anvil.works","New script yaml2schema.zsh to regenerate laptop database schema."
 
 
 
