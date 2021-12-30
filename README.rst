@@ -92,17 +92,25 @@ but really, you should generate dummy data during your tests anyway.
 
 server_code
 ^^^^^^^^^^^^
-It should be mentioned that the top directory containing all of the above should be marked as the **sources root**.
+The `anvil.yaml` file is used to generate the database and the `AppTable` class. The `AppTable` class is needed
+to have auto-complete in your IDE for table names. The database and AppTable needs to be re-generated
+after every change to the database on anvil.works otherwise your code won't be synced.  This means your test
+database on your laptop will be deleted and re-schemed. `yaml2schema.zsh <https://github.com/benlawraus/pyDALAnvilWorks/blob/yaml2schema/yaml2schema.zsh>`_
+does this for you.
+
+FYI, to generate `anvil/tables/AppTables.py`::
+
+    python -m _anvil_designer.generate_apptable
+
+
 
 Also depending on your project structure, you might need to do something like::
 
     try:
         # when running on anvil.works
-        OWN_COMPUTER = False
         from portable_classes import Phone, Email, Contact
     except ImportError:
         # when running on your laptop
-        from server_code.DEBUG import OWN_COMPUTER
         from client_code.portable_classes import Phone, Email, Contact
 
 Yes, this is annoying. Maybe there is a better way...
