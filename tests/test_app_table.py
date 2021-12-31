@@ -3,6 +3,7 @@ from collections import namedtuple
 import pydal
 
 import anvil.users
+from _anvil_designer.generate_apptable import yaml2apptable
 from anvil import tables
 from anvil.tables import app_tables
 import anvil.tables.query as q
@@ -11,6 +12,13 @@ from datetime import timedelta
 from tests.common import *
 from typing import Tuple
 
+def test_apptables():
+    yaml2apptable()
+    mydal.define_tables_of_db()
+    assert 0 < len(app_tables.contact.list_columns())
+    assert 0 < len(app_tables.users.list_columns())
+    assert 0 < len(app_tables.phone.list_columns())
+    assert 0 < len(app_tables.email.list_columns())
 
 def test_tables():
     assert tables

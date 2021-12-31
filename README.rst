@@ -1,9 +1,11 @@
 What is it?
 ------------
+
 This project is a homage to `PyCharm <https://www.jetbrains.com/pycharm/>`_ and will allow you to:
+
     * Use any database while testing your `anvil.works <https://anvil.works>`_ app.
     * Create and run tests using pytest. These tests would be for the python in client_side forms, as well as server_side python. No testing of javascript UI can be done here.
-    * Most importantly: use **PyCharm** with auto-complete.
+    * Most importantly: use `PyCharm <https://www.jetbrains.com/pycharm/>`_ with auto-complete.
 
 
 Recent Changes
@@ -13,7 +15,7 @@ Recent Changes
     :header: "Before","Now"
 
     "","added auto-complete for: **apptables.TABLE.**"
-    "crappy code (50% of it)","replaced by less crappy code that now contains almost the whole anvil api including GoogleMaps"
+    "poor quality code (50% of it)","replaced by less poor quality code that now contains almost the whole anvil api including GoogleMaps"
     "pass by reference between `call` and `callable`","pickle-unpickle the arguments to simulate the client-server connection"
     "dodgy long_script.zsh for install","Renovated long_script.zsh using other smaller scripts."
 

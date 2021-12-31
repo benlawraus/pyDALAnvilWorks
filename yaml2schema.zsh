@@ -43,6 +43,10 @@ if ! cp "$app_on_laptop"/anvil_refined.yaml "$yaml2schema"/src/yaml2schema/input
     echo "No anvil_refined.yaml. Continuing..."
 fi
 cd "$yaml2schema"/src/yaml2schema || exit 1
+if ! [[ $VIRTUAL_ENV = *"${app_on_laptop}"* ]]; then
+  echo "No virtual env is activated."
+  exit 1
+fi
 
 # check that everything went ok
 if python3 main.py; then
