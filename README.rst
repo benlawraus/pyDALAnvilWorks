@@ -14,10 +14,10 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Now"
 
+    "scanty users wrapper","Complete anvil.users with more rugged login system to prevent flaky (py)tests."
     "","added auto-complete for: **apptables.TABLE.**"
     "poor quality code (50% of it)","replaced by less poor quality code that now contains almost the whole anvil api including GoogleMaps"
     "pass by reference between `call` and `callable`","pickle-unpickle the arguments to simulate the client-server connection"
-    "dodgy long_script.zsh for install","Renovated long_script.zsh using other smaller scripts."
 
 
 
@@ -91,6 +91,8 @@ If you want to, it is possible to download your anvil.works database into your l
 A csv file can be exported from your anvil.works database and imported into your sqlite using  `pyDal <http://www.web2py.com/books/default/chapter/29/06/the-database-abstraction-layer#Exporting-and-importing-data>`_,
 but really, you should generate dummy data during your tests anyway.
 
+Laptop Testing an Anvil.Works app.
+----------------------------------
 
 server_code
 ^^^^^^^^^^^^
@@ -131,12 +133,27 @@ or in your test , call::
     from _anvil_designer.generate_files import yaml2class
     class TestYaml2Class:
         def test_init(self):
-            yaml2class()
+            yaml2classes()
 
 
 Note that the included scripts do this for you.
 
 If there is an error, something in your ``yaml`` has not been implemented yet...
+
+User Login/Logout
+^^^^^^^^^^^^^^^^^
+Tests may fail when run in parallel (pytest) but successfully complete when run individually. To prevent this, save
+a unique user in the db for each test and log this user in using::
+
+    anvil.users.force_login(user)
+
+`pyDALAnvilWorks` uses `pytest's env <https://docs.pytest.org/en/latest/example/simple.html#pytest-current-test-env>`_ to
+mark the user. At the end of the test, use::
+
+    anvil.users.logout()
+
+See `test_ContactForm.py <https://github.com/benlawraus/pyDALAnvilWorks/blob/master/tests/test_ContactForm.py>`_ for an
+example test.
 
 Type Checking
 ^^^^^^^^^^^^^

@@ -1,16 +1,18 @@
 """File containing pytest tests"""
 from collections import namedtuple
-import pydal
 
 import anvil.users
 from _anvil_designer.generate_apptable import yaml2apptable
+from _anvil_designer.set_up_user import new_user_in_db
 from anvil import tables
 from anvil.tables import app_tables
 import anvil.tables.query as q
 import tests.pydal_def as mydal
 from datetime import timedelta
+
 from tests.common import *
 from typing import Tuple
+
 
 def test_apptables():
     yaml2apptable()
@@ -19,6 +21,7 @@ def test_apptables():
     assert 0 < len(app_tables.users.list_columns())
     assert 0 < len(app_tables.phone.list_columns())
     assert 0 < len(app_tables.email.list_columns())
+
 
 def test_tables():
     assert tables
@@ -29,7 +32,7 @@ def test_order_by():
     assert True
 
 
-def insert_email_record(created_by, address: str, created_on: datetime, place:int) -> pydal.helpers.classes.Reference:
+def insert_email_record(created_by, address: str, created_on: datetime, place: int) -> pydal.helpers.classes.Reference:
     db_row_ref = mydal.db.email.insert(address=address, created_by=created_by, created_on=created_on, place=place)
     mydal.db.commit()
     return db_row_ref
@@ -56,12 +59,6 @@ def insert_contact_record(**kwargs) -> pydal.helpers.classes.Reference:
     return contact
 
 
-def get_user():
-    user_ref = mydal.db.users.insert(**user_generator())
-    mydal.db.commit()
-    return user_ref  # gets last inserted user
-
-
 class TestSearch:
     parameters = "name, age"
     variations = [
@@ -79,7 +76,8 @@ class TestSearch:
 
     def test_search(self):
         mydal.define_tables_of_db()
-        user = anvil.users.get_user()
+        user = new_user_in_db()
+        anvil.users.force_login(user)
         created_on = datetime.now() + timedelta(seconds=2)  # so as not to clash with previous tests
         # create records
         Parameter = namedtuple("Parameter", self.parameters)
@@ -111,11 +109,14 @@ class TestSearch:
                 assert contact['age'] <= contacts[ix - 1]['age']
             assert date_time_expected == contact['created_on']
             assert user == contact['created_by']
+        anvil.users.logout()
         return user
 
     def test_search_operators(self):
         # generate new user
-        TestUser().test_get_user()
+        mydal.define_tables_of_db()
+        user = new_user_in_db()
+        anvil.users.force_login(user)
         # generate some new records with this user
         user = TestSearch().test_search()
         #####################
@@ -144,16 +145,20 @@ class TestSearch:
         assert 0 < len(rows)
         for row in rows:
             assert 33 != row['age']
+        anvil.users.logout()
 
     def test_search_any_of(self):
-        # generate new user
-        TestUser().test_get_user()
+        # generate new user and login
+        mydal.define_tables_of_db()
+        user = new_user_in_db()
+        anvil.users.force_login(user)
         # generate some new records with this user
         user = TestSearch().test_search()
         rows = app_tables.contact.search(q.all_of(q.any_of(age=45, name="N name"), created_by=user))
         assert 2 == len(rows)
         for row in rows:
-            assert (45 == row['age'] or "N name" == row['name']) and (user==row['created_by'])
+            assert (45 == row['age'] or "N name" == row['name']) and (user == row['created_by'])
+        anvil.users.logout()
 
 
 class TestUser:
@@ -161,33 +166,44 @@ class TestUser:
         """Tests anvil.works  `anvil.users.get_user()`"""
         mydal.define_tables_of_db()
         # test anvil.users.get_by_id()
-        user_ref = get_user()  # create a new user
-        mydal.logged_in_user = None
+        user = new_user_in_db()
+        user_ref = anvil.users.force_login(user)
+
         ######################################
-        user = anvil.users.get_user()  # gets last user?
+        user = anvil.users.get_user()  # gets logged in user
         ######################################
         assert user_ref == user
-        return user
+        # logout user
+        anvil.users.logout()
+        user = anvil.users.get_user()  # gets logged in user
+        ######################################
+        assert None == user
+        return
 
     def test_user_get_by_id(self):
         """Tests anvil.works  `anvil.users.get_by_id(id)`"""
+        # generate new user and login
         mydal.define_tables_of_db()
-        # test anvil.users.get_by_id()
-        user_ref = get_user()
+        user = new_user_in_db()
+        user_ref =         anvil.users.force_login(user)
         ######################################
         user_act = anvil.users.get_by_id(user_ref)
         ######################################
         user_row = mydal.db.users(user_ref)
         assert user_row == user_act
+        anvil.users.logout()
 
 
 class TestID:
 
     def test_get_id(self):
         """Tests anvil.works `Row.get_id()` and `app_tables.table.get_by_id(id)`"""
+        # generate new user and login
         mydal.define_tables_of_db()
-        # test app_tables.contact.get_by_id
-        user = anvil.users.get_user()
+        user = new_user_in_db()
+        user_ref =         anvil.users.force_login(user)
+
+
         contact_ref = insert_contact_record(**generate_contact_instance(user))
         ######################################
         contact_row = app_tables.contact.get_by_id(contact_ref)
@@ -206,10 +222,10 @@ class TestID:
         # test for referenced field
         assert isinstance(contact_ref['phone'], pydal.helpers.classes.Reference)
         assert contact_ref['phone'] == contact_ref['phone'].get_id()
+        anvil.users.logout()
 
 
-def insert_get_contact_row_ref() -> Tuple[pydal.objects.Row, pydal.helpers.classes.Reference]:
-    user = anvil.users.get_user()  # gets last user
+def insert_get_contact_row_ref(user) -> Tuple[pydal.objects.Row, pydal.helpers.classes.Reference]:
     # insert a contact
     instance = generate_contact_instance(user)
     contact_ref = insert_contact_record(**instance)
@@ -222,9 +238,10 @@ def insert_get_contact_row_ref() -> Tuple[pydal.objects.Row, pydal.helpers.class
 class TestRow:
     def test_add_row(self):
         """Tests single_link and multi-link lists in record"""
+        # generate new user and login
         mydal.define_tables_of_db()
-        # get user (run test_get_user at least once)
-        user = anvil.users.get_user()
+        user = new_user_in_db()
+        anvil.users.force_login(user)
         created_on = datetime.now()
         email_list = [insert_email_record(user, email_generator(), created_on=created_on, place=1)
                       for _ in range(2)]
@@ -254,12 +271,15 @@ class TestRow:
         contact_row = mydal.db.contact(name=contact_ref.name)
         contact_row2 = mydal.db.contact(name=contact_ref2.name)
         assert contact_row.id != contact_row2.id
+        anvil.users.logout()
 
     def test_delete(self):
         """Tests anvil.works `row.delete()`"""
-        mydal.define_tables_of_db()
         created_on = datetime.now().replace(microsecond=0)
-        user = get_user()
+        # generate new user and login
+        mydal.define_tables_of_db()
+        user = new_user_in_db()
+        anvil.users.force_login(user)
         # Test Reference object
         number = phone_generator()
         phone_ref = insert_phone_record(user, number, created_on)
@@ -286,12 +306,15 @@ class TestRow:
         assert 0 == len(phone_rows)
         ph_rows = mydal.db(mydal.db.phone).select()
         assert nr_records_before_delete - 1 == len(ph_rows)
+        anvil.users.logout()
 
     def test_update(self):
         """Tests `Row.update(**kwargs)`"""
-        mydal.define_tables_of_db()
         created_on = datetime.now().replace(microsecond=0)
-        user = anvil.users.get_user()
+        # generate new user and login
+        mydal.define_tables_of_db()
+        user = new_user_in_db()
+        anvil.users.force_login(user)
         # Test Reference object
         phone_ref = insert_phone_record(user, phone_generator(), created_on)
         number = phone_generator()
@@ -309,10 +332,13 @@ class TestRow:
         ######################################
         phone_rows = mydal.db(mydal.db.phone.number == number).select()
         assert number == phone_rows[0].number
+        anvil.users.logout()
 
     def test_get(self):
+        # generate new user and login
         mydal.define_tables_of_db()
-        user = anvil.users.get_user()  # gets last user
+        user = new_user_in_db()
+        anvil.users.force_login(user)
         # insert a contact
         instance = generate_contact_instance(user)
         contact_ref = insert_contact_record(**instance)
@@ -321,9 +347,14 @@ class TestRow:
         ######################################
         assert instance['name'] == contact_row['name']
         assert contact_ref['id'] == contact_row('id')
+        anvil.users.logout()
 
     def test_dict_row(self):
+        # generate new user and login
         mydal.define_tables_of_db()
-        contact_row, contact_ref = insert_get_contact_row_ref()
+        user = new_user_in_db()
+        anvil.users.force_login(user)
+        contact_row, contact_ref = insert_get_contact_row_ref(user)
         assert dict(contact_row)
         assert contact_row.as_dict()
+        anvil.users.logout()

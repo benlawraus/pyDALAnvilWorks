@@ -16,6 +16,7 @@ class ContactForm(ContactFormTemplate):
         self.convert_to_items()
         # Any code you write here will run when the form opens.
 
+
     def convert_to_items(self):
         self.text_box_name.text = self.contact.get('name', None)
         em_items = []  # type: list[dict]
