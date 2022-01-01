@@ -219,38 +219,6 @@ You need to then substitute your clone example for `myAnvilGit` in the `long_scr
 
 And see some tests in the `tests` directory.
 
-Done
-----
-The following will run on your laptop (without internet) with a sqlite database::
-
-    user = anvil.users.get_user()
-    user = anvil.users.get_by_id(user_ref)
-    contact_row = app_tables.contact.get_by_id(contact_ref)
-    contact_id = contact_row.get_id()
-    contact_row = app_tables.contact.add_row(**contact_dict)
-    contact_row.delete()
-    contact_row.update(name="Rex Eagle", age=6)
-    contact_row = app_tables.contact.get(name="Rex Eagle", age=6)
-    rows = app_tables.contact.search(created_on=some_datetime)
-    rows = app_tables.contact.search(tables.order_by('name', ascending=False), created_on=created_on)
-    rows = app_tables.contact.search(age=q.greater_than(33))
-    rows = app_tables.contact.search(age=q.greater_than_or_equal_to(33))
-    rows = app_tables.contact.search(age=q.less_than(33))
-    rows = app_tables.contact.search(age=q.less_than_or_equal_to(33))
-    rows = app_tables.contact.search(age=q.less_than_or_equal_to(33))
-    rows = app_tables.contact.search(age=q.not_(33))
-    rows = app_tables.contact.search(q.all_of(q.any_of(age=45, name="Kevin"), created_by=user))
-    app_tables.contact.list_columns()
-    dict(row)  # will produce extra pyDAL attributes so needs filtering
-    @anvil.server.callable
-    @anvil.server.callable(require_user=True) # or some_function)
-    @anvil.server.call("server_function")
-
-In your client tests::
-
-    c_form = ContactForm(contact=contact)
-    assert x == c_form.text_box_name.text
-    assert x == c_form.repeating_panel_1.items[0]['text']
 
 Gotchas
 -------
