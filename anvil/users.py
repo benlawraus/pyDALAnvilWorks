@@ -18,8 +18,12 @@ def get_by_id(id):
     return mydal.db.users(id)
 
 
-def logout():
-    """Forget the current logged-in user"""
+def logout(user=None):
+    """Forget the current logged-in user (Not on anvil.works: user argument will log out that user)"""
+    if user:
+        query = mydal.db.logged_in_users.user_ref == user.id
+        mydal.db(query).delete()
+        return
     pid = os.getpid()
     current_test = os.getenv('PYTEST_CURRENT_TEST')
     query = (mydal.db.logged_in_users.pid == pid) \
@@ -37,11 +41,16 @@ def force_login(user_row, remember=False):
                               Field('pytest', 'string'))
     pid = os.getpid()
     current_test = os.getenv('PYTEST_CURRENT_TEST')
-    new_log = mydal.db.logged_in_users.insert(user_ref=user_row,
+    if current_test is None or len(current_test)==0:
+        raise ValueError("PYTEST_CURRENT_TEST is null")
+    login = mydal.db((mydal.db.logged_in_users.pid==pid)&(mydal.db.logged_in_users.pytest==current_test)).select()
+    if len(login)==0:
+        new_log = mydal.db.logged_in_users.insert(user_ref=user_row,
                                               pid=pid,
                                               pytest=current_test)
-    mydal.db.commit()
-    return new_log.user_ref
+        mydal.db.commit()
+    # else user already logged in
+    return
 
 
 def get_user(allow_remembered=True) -> pydal.helpers.classes.Reference:

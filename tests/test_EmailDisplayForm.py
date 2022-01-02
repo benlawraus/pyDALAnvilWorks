@@ -22,8 +22,7 @@ class TestEmailDisplayForm:
         form_under_test.user = user
         assert form_under_test.repeating_panel_1.items
         # make sure the contact created here is in this list
-        for contact in form_under_test.repeating_panel_1.items:
-            if contact_ref.address == contact['address']:
-                assert contact_ref.created_by == contact['created_by']
-
+        form_email_list = [email['address'] for email in form_under_test.repeating_panel_1.items]
+        for email in contact_ref['email_list']:
+            assert email.address in form_email_list
 

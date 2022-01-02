@@ -166,8 +166,8 @@ class TestUser:
         """Tests anvil.works  `anvil.users.get_user()`"""
         mydal.define_tables_of_db()
         # test anvil.users.get_by_id()
-        user = new_user_in_db()
-        user_ref = anvil.users.force_login(user)
+        user_ref = new_user_in_db()
+        anvil.users.force_login(user_ref)
 
         ######################################
         user = anvil.users.get_user()  # gets logged in user
