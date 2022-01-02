@@ -78,7 +78,7 @@ class TestSearch:
         mydal.define_tables_of_db()
         user = new_user_in_db()
         anvil.users.force_login(user)
-        created_on = datetime.now() + timedelta(seconds=2)  # so as not to clash with previous tests
+        created_on = datetime.now() # + timedelta(seconds=2)  # so as not to clash with previous tests
         # create records
         Parameter = namedtuple("Parameter", self.parameters)
         for _v in self.variations:

@@ -1,6 +1,5 @@
 """Functions here over-write functions defined in _anvil_designer/componentsUI/users/Users.py"""
 import os
-from datetime import datetime
 from warnings import warn
 
 import pydal.objects
@@ -21,9 +20,12 @@ def get_by_id(id):
 
 def logout():
     """Forget the current logged-in user"""
-    query = (mydal.db.logged_in_users.pid == os.getpid()) \
-            & (mydal.db.logged_in_users.pytest ==os.environ["PYTEST_CURRENT_TEST"])
+    pid = os.getpid()
+    current_test = os.getenv('PYTEST_CURRENT_TEST')
+    query = (mydal.db.logged_in_users.pid == pid) \
+            & (mydal.db.logged_in_users.pytest == current_test)
     mydal.db(query).delete()
+    mydal.db.commit()
     return
 
 
@@ -32,10 +34,12 @@ def force_login(user_row, remember=False):
     if 'logged_in_users' not in mydal.db.tables:
         mydal.db.define_table('logged_in_users', Field('user_ref', type='reference users'),
                               Field('pid', type='integer'),
-                              Field('pytest','string'))
+                              Field('pytest', 'string'))
+    pid = os.getpid()
+    current_test = os.getenv('PYTEST_CURRENT_TEST')
     new_log = mydal.db.logged_in_users.insert(user_ref=user_row,
-                                              pid=os.getpid(),
-                                              pytest=os.environ["PYTEST_CURRENT_TEST"])
+                                              pid=pid,
+                                              pytest=current_test)
     mydal.db.commit()
     return new_log.user_ref
 
@@ -51,8 +55,11 @@ def get_user(allow_remembered=True) -> pydal.helpers.classes.Reference:
     Tests can run in parallel, so the correct user is important."""
 
     def get_user_with_pid():
-        query = (mydal.db.logged_in_users.pid == os.getpid()) \
-                & (mydal.db.logged_in_users.pytest == os.environ["PYTEST_CURRENT_TEST"])
+        pid = os.getpid()
+        current_test = os.getenv('PYTEST_CURRENT_TEST')
+        assert current_test
+        query = (mydal.db.logged_in_users.pid == pid) & \
+                (mydal.db.logged_in_users.pytest == current_test)
         rows = mydal.db(query).select()
         if len(rows) == 1:
             return rows[0]
