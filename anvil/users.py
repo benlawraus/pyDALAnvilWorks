@@ -5,7 +5,7 @@ from warnings import warn
 import pydal.objects
 import tests.pydal_def as mydal
 from pydal import Field
-from _anvil_designer.componentsUI.users import *
+from _anvil_designer.componentsUI.anvilUsers import *
 
 
 def add_row(**kwargs):
