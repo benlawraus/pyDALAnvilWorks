@@ -14,9 +14,10 @@ class order_by:
 class BaseFunction:
     """Saving rows and getting rows to/from the database"""
 
-    def __init__(self, table_name):
+    def __init__(self, table_name: str, table_dict: Dict[str, str]):
         self.query: List = []  # list of pydal.objects.Query
         self.table_name: str = table_name
+        self.table_dict: Dict[str.str] = table_dict
 
     def add_row(self, **kwargs) -> pydal.helpers.classes.Reference:
         if self.table_name not in mydal.db.tables:
@@ -101,8 +102,8 @@ class BaseFunction:
 
     def list_columns(self) -> List[Dict[str, str]]:
         field_list = []
-        for field in mydal.db[self.table_name].fields:
+        for field in self.table_dict:
             if field == 'id':
                 continue
-            field_list.append({'name': field, 'type': mydal.db[self.table_name][field].type})
+            field_list.append({'name': field, 'type': self.table_dict[field]})
         return field_list

@@ -358,3 +358,23 @@ class TestRow:
         assert dict(contact_row)
         assert contact_row.as_dict()
         anvil.users.logout()
+
+class TestListColumns:
+    def test_list_columns(self):
+        col = app_tables.contact.list_columns()
+        contact_dict = dict(
+            name='string',
+            phone='link_single',
+            email_list='link_multiple',
+            age='number',
+            created_by='link_single',
+            created_on='datetime',
+            family='simpleObject',
+            uid='number',
+            father='link_single',
+        )
+        li_col = app_tables.contact.list_columns()
+        assert len(contact_dict) == len(li_col)
+        for item in li_col:
+            assert item['name'] in contact_dict.keys()
+            assert item['type'] in contact_dict.values()

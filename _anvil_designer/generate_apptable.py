@@ -1,6 +1,6 @@
 import pathlib
+from typing import Dict
 
-from _anvil_designer.definitions import ANVIL_TYPES
 from _anvil_designer.generate_class import yaml_from_file
 
 
@@ -9,20 +9,20 @@ def get_tables(parsed):
     for table_yaml in parsed['db_schema']:
         table_dict[table_yaml.text] = {}
         for column in parsed['db_schema'][table_yaml]['columns']:  # for later, not needed here
-            table_dict[table_yaml.text].update({column['name']: ANVIL_TYPES[column['type']]})
+            table_dict[table_yaml.text].update({column['name']: column['type']})
     return table_dict
 
 
+IMPORTS = "from anvil.tables.basefunction import BaseFunction\n\n"
+
+
 def table_dict2string(table_dict):
-    file_str = """from anvil.tables.basefunction import BaseFunction
-
-
-class AppTables:
+    file_str = """class AppTables:
     def __init__(self):
 """
     tab1 = "    "
     for table_name in table_dict.keys():
-        table_str = f"{tab1}{tab1}self.{table_name} = BaseFunction('{table_name}')\n"
+        table_str = f"{tab1}{tab1}self.{table_name} = BaseFunction('{table_name}', TABLES['{table_name}'])\n"
         file_str += table_str
 
     file_str += """
@@ -30,6 +30,20 @@ class AppTables:
 app_tables = AppTables()
 """
     return file_str
+
+
+def list_columns(table_dict: Dict[str, Dict[str, str]]):
+    """Outputs dictionaries of the column names and types. To be used in the app_tables.tbl.list_columns() function."""
+    tab1 = "    "
+    dicts_str = "TABLES = dict(\n"
+    for table_name in table_dict.keys():  # type: str
+        dict_str = f"{tab1}{table_name}=dict(\n"
+        for field_name in table_dict[table_name].keys():
+            dict_str += f"{tab1}{tab1}{field_name}='{table_dict[table_name][field_name]}',\n"
+        dict_str += f'{tab1}),\n'
+        dicts_str += dict_str
+    dicts_str += ')\n'
+    return dicts_str
 
 
 def string2AppTables(file_str, main_dir):
@@ -43,7 +57,8 @@ def yaml2apptable():
     parsed = yaml_from_file('anvil.yaml', main_dir)
     table_dict = get_tables(parsed)
     file_str = table_dict2string(table_dict)
-    string2AppTables(file_str, main_dir)
+    dicts_str = list_columns(table_dict)
+    string2AppTables(IMPORTS + dicts_str + '\n\n' + file_str, main_dir)
     return False
 
 
