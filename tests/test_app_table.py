@@ -78,7 +78,7 @@ class TestSearch:
         mydal.define_tables_of_db()
         user = new_user_in_db()
         anvil.users.force_login(user)
-        created_on = datetime.now() # + timedelta(seconds=2)  # so as not to clash with previous tests
+        created_on = datetime.now()  # + timedelta(seconds=2)  # so as not to clash with previous tests
         # create records
         Parameter = namedtuple("Parameter", self.parameters)
         for _v in self.variations:
@@ -185,7 +185,7 @@ class TestUser:
         # generate new user and login
         mydal.define_tables_of_db()
         user = new_user_in_db()
-        user_ref =         anvil.users.force_login(user)
+        user_ref = anvil.users.force_login(user)
         ######################################
         user_act = anvil.users.get_by_id(user_ref)
         ######################################
@@ -201,8 +201,7 @@ class TestID:
         # generate new user and login
         mydal.define_tables_of_db()
         user = new_user_in_db()
-        user_ref =         anvil.users.force_login(user)
-
+        user_ref = anvil.users.force_login(user)
 
         contact_ref = insert_contact_record(**generate_contact_instance(user))
         ######################################
@@ -358,6 +357,7 @@ class TestRow:
         assert dict(contact_row)
         assert contact_row.as_dict()
         anvil.users.logout()
+
 
 class TestListColumns:
     def test_list_columns(self):
