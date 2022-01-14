@@ -1,5 +1,4 @@
 # myAnvilGit="ssh://youranvilworksusername@anvil.works:2222/gobblygook.git"
-myAnvilGit="ssh://ben.lawrence%40east-elec.com@anvil.works:2222/XWM5WQ66ONSRYYXL.git"
 
 echo "What this script does:"
 echo "Clones the anvil app from anvil.works"
