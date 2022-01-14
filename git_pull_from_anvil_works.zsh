@@ -13,13 +13,13 @@ fi
 cd "$app_on_laptop" || exit 1
 git commit -am "Before a pull from anvil.works"
 cd "$anvil_app" || exit 1
-if git pull origin master; then
-    echo "git pull completed with no errors."
-else
+echo "Git pull the anvil.works app.."
+if ! git pull origin master; then
     echo "git pull errors initiated premature exit."
     exit 1
 fi
 if ! rsync -r "$anvil_app"/client_code/ "$app_on_laptop"/client_code; then
+    echo "An error while syncing the anvil.works app client code to the project."
     exit 1
 fi
 rsync -r "$anvil_app"/server_code/ "$app_on_laptop"/server_code
