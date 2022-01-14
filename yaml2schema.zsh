@@ -59,13 +59,17 @@ fi
 cd "$app_on_laptop" || exit 1
 echo "Git commit project .."
 if ! git commit -am "Before copying new pydal_def.py to project."; then
-    echo "Exiting."
-    exit 1
+    git add .
+    if ! git commit -am "Before copying new pydal_def.py to project."; then
+         echo "Exiting."
+         exit 1
+    fi
 fi
 # copy the pyDAL definition file to app
 if ! cp "$yaml2schema"/src/yaml2schema/output/pydal_def.py "$app_on_laptop"/tests/; then
-  echo "Create tests .."
+  echo "Create tests directory .."
   mkdir "$app_on_laptop"/tests || exit 1
+  mkdir "$app_on_laptop"/tests/database || exit 1
   cp "$yaml2schema"/src/yaml2schema/output/pydal_def.py "$app_on_laptop"/tests/ || exit 1
 fi
 echo "Erasing current database."
@@ -73,10 +77,9 @@ rm -f "$app_on_laptop"/tests/database/*.table
 rm -f "$app_on_laptop"/tests/database/*.log
 rm -f "$app_on_laptop"/tests/database/*.sqlite
 echo "Generating new pydal database schema (pydal_def.py)."
-if python3 tests/pydal_def.py; then
-    echo "New database generated with no errors."
-else
-    echo "pydal_def not copied. git commit errors."
+# check that directories are there and writable
+if ! python3 tests/pydal_def.py; then
+    echo "Error when generating database files. Exiting."
     exit 1
 fi
 # Generate AppTables

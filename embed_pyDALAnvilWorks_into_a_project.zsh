@@ -12,7 +12,7 @@ my_work=$(pwd)
 echo "my_work is $my_work"
 # what your anvil app is called
 app_on_laptop="$my_work/pyDALAnvilWorksDev"
-anvil_app="$app_on_laptop/pyDALAnvilWorksApp"
+anvil_app="$app_on_laptop/AnvilWorksApp"
 yaml2schema="$app_on_laptop/yaml2schema"
 pyDALAnvilWorks="$app_on_laptop/pyDALAnvilWorks"
 # setopt interactivecomments
@@ -24,19 +24,19 @@ git init
 git remote add origin https://github.com/benlawraus/pyDALAnvilWorksDev.git
 git pull origin master
 # Add anvil.works app as a submodule
-echo "git submodule to ${anvil_app} .."
-if ! git submodule add "$myAnvilGit" "$anvil_app"; then
+echo "git clone the Anvil App .."
+if ! git clone "$myAnvilGit" "$anvil_app"; then
     echo "Errors occurred. Exiting."
     exit 1
 fi
 # add yaml2schema as a submodule
-echo "git submodule to ${yaml2schema} .."
+echo "git submodule yaml2schema .."
 if ! git submodule add https://github.com/benlawraus/yaml2schema.git "$yaml2schema"; then
     echo "Errors occurred. Exiting."
     exit 1
 fi
 # add pyDALAnvilWorks as a submodule
-echo "git submodule to ${pyDALAnvilWorks} .."
+echo "git submodule pyDALAnvilWorks .."
 if ! git submodule add https://github.com/benlawraus/pyDALAnvilWorks.git "$pyDALAnvilWorks"; then
     echo "Errors occurred. Exiting."
     exit 1
