@@ -14,6 +14,7 @@ else
      ${yaml2schema}"
 fi
 echo "Copies anvil.yaml from ${anvil_app} and generates a new pydal_def.py in ${app_on_laptop}"
+echo "Also, updates AppTables.py to reflect correct table names with their column names and types."
 # check that directories exists, exit otherwise
 if [ ! -d "$yaml2schema" ]; then
   echo "${yaml2schema} not there. Use https://github.com/benlawraus/yaml2schema"
@@ -31,14 +32,15 @@ This is your development space and should contain all the tools such pyDALAnvilW
   exit 1
 fi
 if [ ! -d "$anvil_app" ]; then
-  echo "${anvil_app}  not there. git clone your app from anvil.works."
+  echo "${anvil_app}  not there. git your app from anvil.works."
   exit 1
 fi
 # copy anvil.yaml and anvil_refined.yaml (anvil_refined.yaml lives with your app_on_laptop)
 anvil_yaml=$anvil_app/anvil.yaml
 anvil_refined_yaml=$app_on_laptop/anvil_refined.yaml
-echo "Using ${anvil_yaml} and ${anvil_refined_yaml} to generate pydal_def.py"
+echo "Using anvil.yaml and ${anvil_refined_yaml} to generate pydal_def.py"
 cp "$anvil_app"/anvil.yaml "$yaml2schema"/src/yaml2schema/input/
+cp "pyDALAnvilWorks"/anvil
 if ! cp "$app_on_laptop"/anvil_refined.yaml "$yaml2schema"/src/yaml2schema/input/; then
     echo "No anvil_refined.yaml. Continuing..."
 fi
@@ -49,27 +51,29 @@ if ! [[ $VIRTUAL_ENV = *"${app_on_laptop}"* ]]; then
 fi
 
 # check that everything went ok
-if python3 main.py; then
-    echo "yaml2schema completed with no errors."
-else
+echo "Use yaml2schema .."
+if ! python3 main.py; then
     echo "pydal_def not generated. yaml2schema interrupted."
     exit 1
 fi
 # save before copying
 cd "$app_on_laptop" || exit 1
-if git commit -am "Before generating new pydal_def.py"; then
-    echo "git commit completed with no errors."
-else
-    echo "pydal_def not copied. git commit errors."
+echo "Git commit project .."
+if ! git commit -am "Before copying new pydal_def.py to project."; then
+    echo "Exiting."
     exit 1
 fi
 # copy the pyDAL definition file to app
-cp "$yaml2schema"/src/yaml2schema/output/pydal_def.py "$app_on_laptop"/tests/
+if ! cp "$yaml2schema"/src/yaml2schema/output/pydal_def.py "$app_on_laptop"/tests/; then
+  echo "Create tests .."
+  mkdir "$app_on_laptop"/tests || exit 1
+  cp "$yaml2schema"/src/yaml2schema/output/pydal_def.py "$app_on_laptop"/tests/ || exit 1
+fi
 echo "Erasing current database."
 rm -f "$app_on_laptop"/tests/database/*.table
 rm -f "$app_on_laptop"/tests/database/*.log
 rm -f "$app_on_laptop"/tests/database/*.sqlite
-echo "Generating new database."
+echo "Generating new pydal database schema (pydal_def.py)."
 if python3 tests/pydal_def.py; then
     echo "New database generated with no errors."
 else

@@ -1,5 +1,9 @@
 myAnvilGit="ssh://youranvilworksusername@anvil.works:2222/gobblygook.git"
-
+echo "What this script does:"
+echo "1. clones the anvil app from anvil.works"
+echo "2. downloads yaml2schema in order to retrieve database information from anvil.yaml"
+echo "3. Clones pyDALAnvilWorks"
+echo "4. Creates a "
 mkdir my_work
 cd my_work || exit 1
 my_work=$(pwd)
