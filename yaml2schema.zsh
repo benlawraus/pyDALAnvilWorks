@@ -40,9 +40,8 @@ anvil_yaml=$anvil_app/anvil.yaml
 anvil_refined_yaml=$app_on_laptop/anvil_refined.yaml
 echo "Using anvil.yaml and ${anvil_refined_yaml} to generate pydal_def.py"
 cp "$anvil_app"/anvil.yaml "$yaml2schema"/src/yaml2schema/input/
-cp "pyDALAnvilWorks"/anvil
-if ! cp "$app_on_laptop"/anvil_refined.yaml "$yaml2schema"/src/yaml2schema/input/; then
-    echo "No anvil_refined.yaml. Continuing..."
+if ! cp "$pyDalAnvilWorks"/anvil_refined.yaml "$yaml2schema"/src/yaml2schema/input/; then
+  echo "No anvil_refined.yaml. Continuing..."
 fi
 cd "$yaml2schema"/src/yaml2schema || exit 1
 if ! [[ $VIRTUAL_ENV = *"${app_on_laptop}"* ]]; then

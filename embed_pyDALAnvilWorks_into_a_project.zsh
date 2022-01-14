@@ -21,12 +21,9 @@ pyDALAnvilWorks="$app_on_laptop/pyDALAnvilWorks"
 # Create new rep
 mkdir "$app_on_laptop"
 cd "$app_on_laptop" || exit 1
-echo "# pyDALAnvilWorksDev" >> README.md
 git init
-git commit -m "first commit"
-git branch -M setup
 git remote add origin https://github.com/benlawraus/pyDALAnvilWorksDev.git
-git pull -u origin setup
+git pull origin master
 # Add anvil.works app as a submodule
 echo "git submodule to ${anvil_app} .."
 if ! git submodule add "$myAnvilGit" "$anvil_app"; then
