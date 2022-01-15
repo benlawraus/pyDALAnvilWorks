@@ -1,4 +1,4 @@
-# myAnvilGit="ssh://youranvilworksusername@anvil.works:2222/gobblygook.git"
+myAnvilGit="ssh://youranvilworksusername@anvil.works:2222/gobblygook.git"
 
 echo "What this script does:"
 echo "Installs the git submodules:"
@@ -13,6 +13,15 @@ echo "  Parallel pytest helper"
 echo "Uses yaml2schema to setup database."
 echo "Copies the files from the anvil app to the project directories"
 echo "Creates scripts for push and pull to anvil server."
+
+if [ $# -eq 1 ]
+  then
+    myAnvilGit=$1
+else
+    echo "myAnvilGit not an argument. Using:"
+    echo "${myAnvilGit}"
+fi
+
 mkdir my_work
 cd my_work || exit 1
 my_work=$(pwd)
@@ -53,8 +62,7 @@ fi
 echo "Soft link directories anvil and _anvil_designer and cp anvil.yaml"
 ln -s "$pyDALAnvilWorks"/anvil anvil
 ln -s "$pyDALAnvilWorks"/_anvil_designer _anvil_designer
-cp $anvil_app/anvil.yaml $app_on_laptop/
-
+cp "$anvil_app"/anvil.yaml "$app_on_laptop"/
 
 rm -rf "$app_on_laptop"/anvil_extras  # just in case there is one there...
 
