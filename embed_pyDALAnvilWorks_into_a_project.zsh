@@ -25,7 +25,9 @@ git remote add origin https://github.com/benlawraus/pyDALAnvilWorksDev.git
 git pull origin master
 # Add anvil.works app as a submodule
 echo "git clone the Anvil App .."
-if ! git clone "$myAnvilGit" "$anvil_app"; then
+if ! git submodule add "$myAnvilGit" "$anvil_app"; then
+    echo "$myAnvilGit"
+    echo "$anvil_app"
     echo "Errors occurred. Exiting."
     exit 1
 fi
@@ -41,6 +43,12 @@ if ! git submodule add https://github.com/benlawraus/pyDALAnvilWorks.git "$pyDAL
     echo "Errors occurred. Exiting."
     exit 1
 fi
+echo "Soft link directories anvil and _anvil_designer and cp anvil.yaml"
+ln -s "$pyDALAnvilWorks"/anvil anvil
+ln -s "$pyDALAnvilWorks"/_anvil_designer _anvil_designer
+cp $anvil_app/anvil.yaml $app_on_laptop/
+
+
 rm -rf "$app_on_laptop"/anvil_extras  # just in case there is one there...
 
 cd "$app_on_laptop" || exit 1
@@ -85,9 +93,37 @@ if ! "$pyDALAnvilWorks"/yaml2schema.zsh "$anvil_app" "$app_on_laptop" "$yaml2sch
 fi
 # copy our server and client files
 echo "Copy server and client files .."
-chmod +x "$app_on_laptop"/git_pull_from_anvil_works.zsh || exit 1
-if ! ./git_pull_from_anvil_works.zsh "$anvil_app" "$app_on_laptop"; then
+chmod +x "$pyDALAnvilWorks"/git_pull_from_anvil_works.zsh || exit 1
+if ! "$pyDALAnvilWorks"/git_pull_from_anvil_works.zsh "$anvil_app" "$app_on_laptop"; then
     echo "Errors occurred. Exiting."
     exit 1
 fi
 cd "$app_on_laptop" || exit 1
+echo "Create local scripts.."
+echo "anvil_app=${anvil_app}
+app_on_laptop=${app_on_laptop}
+pyDALAnvilWorks=${pyDALAnvilWorks}
+if ! \"\$pyDALAnvilWorks\"/git_pull_from_anvil_works.zsh \"\$anvil_app\" \"\$app_on_laptop\"; then
+  echo \"Errors\"
+  exit 1
+fi
+" > "$app_on_laptop"/git_pull_from_anvil_works.zsh
+
+echo "anvil_app=${anvil_app}
+app_on_laptop=${app_on_laptop}
+pyDALAnvilWorks=${pyDALAnvilWorks}
+if ! \"\$pyDALAnvilWorks\"/git_push_to_anvil_works.zsh \"\$anvil_app\" \"\$app_on_laptop\"; then
+  echo \"Errors\"
+  exit 1
+fi
+" > "$app_on_laptop"/git_push_to_anvil_works.zsh
+
+echo "anvil_app=${anvil_app}
+app_on_laptop=${app_on_laptop}
+pyDALAnvilWorks=${pyDALAnvilWorks}
+yaml2schema=${yaml2schema}
+if ! \"\$pyDALAnvilWorks\"/yaml2schema.zsh \"\$anvil_app\" \"\$app_on_laptop\" \"\$yaml2schema\"; then
+  echo \"Errors\"
+  exit 1
+fi
+" > "$app_on_laptop"/yaml2schema.zsh
