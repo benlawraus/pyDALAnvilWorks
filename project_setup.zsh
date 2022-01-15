@@ -1,8 +1,8 @@
 # myAnvilGit="ssh://youranvilworksusername@anvil.works:2222/gobblygook.git"
 
 echo "What this script does:"
-echo "Clones the anvil app from anvil.works"
-echo "Copies it to a work directory."
+echo "Installs the git submodules:"
+echo "  anvil.works app (using \$myAnvilGit)"
 echo "Git submodule yaml2schema in order to retrieve database information from anvil.yaml"
 echo "Git submodule pyDALAnvilWorks in order to insert anvil.works wrappers."
 echo "In work directory, create a virtualenv and pip install dependencies."
