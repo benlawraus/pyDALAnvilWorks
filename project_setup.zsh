@@ -3,9 +3,16 @@
 echo "What this script does:"
 echo "Installs the git submodules:"
 echo "  anvil.works app (using \$myAnvilGit)"
-echo "Git submodule yaml2schema in order to retrieve database information from anvil.yaml"
-echo "Git submodule pyDALAnvilWorks in order to insert anvil.works wrappers."
-echo "In work directory, create a virtualenv and pip install dependencies."
+echo "  yaml2schema (to setup database)"
+echo "  pyDALAnvilWorks (for testing client and server code.)"
+echo "Sets up a virtualenv. In the virtualenv it pip installs:"
+echo "  pyDAL  (the database abstraction layer)"
+echo "  stringyaml (to parse yaml files)"
+echo "  pytest"
+echo "  Parallel pytest helper"
+echo "Uses yaml2schema to setup database."
+echo "Copies the files from the anvil app to the project directories"
+echo "Creates scripts for push and pull to anvil server."
 mkdir my_work
 cd my_work || exit 1
 my_work=$(pwd)
@@ -91,6 +98,15 @@ if ! "$pyDALAnvilWorks"/yaml2schema.zsh "$anvil_app" "$app_on_laptop" "$yaml2sch
     echo "Errors occurred. Exiting."
     exit 1
 fi
+# Generate all the _anvil_designer.py files for every form.
+echo "Generate all the _anvil_designer.py files for every form."
+if ! python3 -m _anvil_designer.generate_files; then
+  echo "Crashed while regenerating the _anvil_designer.py files."
+    exit 1
+fi
+# Run PyTest
+python3 -m pytest
+
 # copy our server and client files
 echo "Copy server and client files .."
 chmod +x "$pyDALAnvilWorks"/git_pull_from_anvil_works.zsh || exit 1
