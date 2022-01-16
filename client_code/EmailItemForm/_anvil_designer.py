@@ -122,6 +122,9 @@ class EmailItemFormTemplate(ColumnPanel):
     radio_button_3 = RadioButton(**RadioButton3)
     column_panel_1 = ColumnPanel(**ColumnPanel1)
 
+    # not sure why, but item is not in the official api docs so must add here
+    item = dict()
+
     def init_components(self, **kwargs):
         super().__init__()        
         pass

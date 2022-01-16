@@ -15,6 +15,8 @@ class ContactForm(ContactFormTemplate):
             self.contact['email_list'] = [dict(address='', place=1)]
         self.convert_to_items()
         # Any code you write here will run when the form opens.
+        self.item['test_key'] = 'test value'
+
 
 
     def convert_to_items(self):
