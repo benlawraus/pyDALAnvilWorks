@@ -1,9 +1,40 @@
+Note
+====
+The best way to start is `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_.
+Basically it is an empty project. Clone it, change the directory name and then cd into the
+directory. From there run its script with the address of the anvil.works app.
+The script will:
+
+* Install the git submodules:
+
+    * your anvil.works app (using $myAnvilGit script argument)
+    * `yaml2Schema <https://github.com/benlawraus/yaml2schema>`_ (to setup database)
+    * `pyDALAnvilWorks <https://github.com/benlawraus/pyDALAnvilWorks>`_ (for testing client and server code.)
+    * (optional `anvil-extras <https://github.com/anvilistas/anvil-extras>`_)
+
+* Set up a virtualenv. In the virtualenv it pip-installs:
+
+    *   `pyDAL <https://github.com/web2py/pydal>`_  (the database abstraction layer)
+    *   `strictyaml <https://github.com/crdoconnor/strictyaml>`_ (to parse yaml files)
+    *   `pytest <https://github.com/pytest-dev/pytest>`_
+    *   `pytest-tornasync <https://github.com/eukaryote/pytest-tornasync>`_ (Parallel pytest helper for pyDAL)
+
+* Use yaml2schema to setup database.
+* Copy the files from the anvil app to the project directories
+* Generate the ``_anvil_designer.py`` files for IDE auto-completion.
+* Create scripts for push and pull to anvil server.
+
+
+pyDALAnvilWorks
+===============
+
 What is it?
 ------------
 
-This project is a homage to `PyCharm <https://www.jetbrains.com/pycharm/>`_ and will allow you to:
+This project exists in order to use `PyCharm <https://www.jetbrains.com/pycharm/>`_ (and other IDEs?) on
+`anvil.works <https://anvil.works>`_ apps. It allow you to:
 
-    * Use any database while testing your `anvil.works <https://anvil.works>`_ app.
+    * Use any local database while testing your `anvil.works <https://anvil.works>`_ app.
     * Create and run tests using pytest. These tests would be for the python in client_side forms, as well as server_side python. No testing of javascript UI can be done here.
     * Most importantly: use `PyCharm <https://www.jetbrains.com/pycharm/>`_ with auto-complete.
 
@@ -14,10 +45,10 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Now"
 
+    "git cloned dependencies","use git submodules. SEE `empty frame <https://github.com/benlawraus/pyDALAnvilWorksDev>`_"
     "scanty users wrapper","Complete anvil.users with more rugged login system to prevent flaky (py)tests."
     "","added auto-complete for: **apptables.TABLE.**"
     "poor quality code (50% of it)","replaced by less poor quality code that now contains almost the whole anvil api including GoogleMaps"
-    "pass by reference between `call` and `callable`","pickle-unpickle the arguments to simulate the client-server connection"
 
 
 
