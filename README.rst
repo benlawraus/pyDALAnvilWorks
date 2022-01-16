@@ -45,7 +45,7 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Now"
 
-    "git cloned dependencies","use git submodules. SEE `empty frame <https://github.com/benlawraus/pyDALAnvilWorksDev>`_"
+    "git cloned dependencies","use `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_"
     "scanty users wrapper","Complete anvil.users with more rugged login system to prevent flaky (py)tests."
     "","added auto-complete for: **apptables.TABLE.**"
     "poor quality code (50% of it)","replaced by less poor quality code that now contains almost the whole anvil api including GoogleMaps"
@@ -100,23 +100,13 @@ Kick the Tires
 Download the repo and open it in `PyCharm <https://www.jetbrains.com/pycharm/>`_. Open a form (`__init__.py` in a form directory)
 and test out the auto-complete.
 
-Run Some Tests
-^^^^^^^^^^^^^^
-Before downloading the repo, use `short_script <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/short_script.zsh>`_
-and run the tests.
-
 Try and Use It
 ^^^^^^^^^^^^^^
-One way is to git-clone your anvil app to somewhere and then sync your anvil app's client- and server- code to
-the above working directory. You can then edit your code in the working directory, run some pytests etc
-and then sync your changes back to your cloned anvil app and push to anvil.works from there.
-`long_script.zsh <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/long_script.zsh>`_ sets
-this up for you.
 
-Once this is set-up use the
-`push <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/git_push_to_anvil_works.zsh>`_ and
-`pull <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/git_pull_from_anvil_works.zsh>`_ scripts
-to upload/download from anvil.works and keep your anvil.works app and your working directory nicely synced.
+One way is to git clone `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_. After downloading,
+rename it and run the script with your anvil app link.
+
+Once this is set-up use the push and pull scripts generated, to sync to and from your anvil app.
 
 If you want to, it is possible to download your anvil.works database into your laptop's sqlite database.
 A csv file can be exported from your anvil.works database and imported into your sqlite using  `pyDal <http://www.web2py.com/books/default/chapter/29/06/the-database-abstraction-layer#Exporting-and-importing-data>`_,
