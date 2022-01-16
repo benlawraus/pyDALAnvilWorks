@@ -204,9 +204,6 @@ def yaml2definition(parsed: sy.YAML, form_name):
                    f"class {form_name}Template({catalog[form_name].of_type}):\n"\
                    f"{attr_string}"
     class_string += """
-    # not sure why, but item is not in the official api docs so must add here
-    item = dict()
-
     def init_components(self, **kwargs):
         super().__init__()        
         pass

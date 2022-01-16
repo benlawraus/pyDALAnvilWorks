@@ -103,9 +103,6 @@ class HomeFormTemplate(HtmlTemplate):
     content_panel = ColumnPanel(**ContentPanel)
     menu_panel = ColumnPanel(**MenuPanel)
 
-    # not sure why, but item is not in the official api docs so must add here
-    item = dict()
-
     def init_components(self, **kwargs):
         super().__init__()        
         pass
