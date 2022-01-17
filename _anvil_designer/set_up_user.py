@@ -17,4 +17,3 @@ def new_user_in_db():
         raise AttributeError("Database not defined. Did you forget 'mydal.define_tables_of_db()'?")
     mydal.db.commit()
     return user_ref  # gets last inserted user
-
