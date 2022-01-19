@@ -27,34 +27,37 @@ def logout(user=None):
     pid = os.getpid()
     current_test = os.getenv('PYTEST_CURRENT_TEST')
     query = (mydal.db.logged_in_users.pid == pid) \
-            & (mydal.db.logged_in_users.pytest == current_test)
+        & (mydal.db.logged_in_users.pytest == current_test)
     mydal.db(query).delete()
     mydal.db.commit()
     return
 
 
 def force_login(user_row, remember=False):
-    """Set the specified user object (a row from a Data Table) as the current logged-in user. It must be a row from the users table. By default, login status is not remembered between sessions."""
+    """Set the specified user object (a row from a Data Table) as the current logged-in user.
+    It must be a row from the users table. By default, login status is not remembered between sessions."""
     if 'logged_in_users' not in mydal.db.tables:
         mydal.db.define_table('logged_in_users', Field('user_ref', type='reference users'),
                               Field('pid', type='integer'),
                               Field('pytest', 'string'))
     pid = os.getpid()
     current_test = os.getenv('PYTEST_CURRENT_TEST')
-    if current_test is None or len(current_test)==0:
+    if current_test is None or len(current_test) == 0:
         raise ValueError("PYTEST_CURRENT_TEST is null")
-    login = mydal.db((mydal.db.logged_in_users.pid==pid)&(mydal.db.logged_in_users.pytest==current_test)).select()
-    if len(login)==0:
+    login = mydal.db((mydal.db.logged_in_users.pid == pid) & (mydal.db.logged_in_users.pytest == current_test)).select()
+    if len(login) == 0:
         new_log = mydal.db.logged_in_users.insert(user_ref=user_row,
-                                              pid=pid,
-                                              pytest=current_test)
+                                                  pid=pid,
+                                                  pytest=current_test)
         mydal.db.commit()
     # else user already logged in
     return
 
 
 def get_user(allow_remembered=True) -> pydal.helpers.classes.Reference:
-    """Get the row from the users table that corresponds to the currently logged-in user. If allow_remembered is true (the default), the user may have logged in in a previous session. Returns None if no user is logged in."""
+    """Get the row from the users table that corresponds to the currently logged-in user.
+    If allow_remembered is true (the default), the user may have logged in in a previous session.
+    Returns None if no user is logged in."""
     pass
     """Retrieves the user in database corresponding to pid
 

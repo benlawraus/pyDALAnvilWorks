@@ -2,8 +2,11 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import List, Dict
 
+
 def default_val(val):
     return lambda: val
+
+
 String = str
 Number = float
 Integer = int

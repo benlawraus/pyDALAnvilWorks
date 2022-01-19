@@ -51,3 +51,12 @@ components:
     name: button_save
     layout_properties: {grid_position: 'CGZUDR,BWNQSN'}
     event_bindings: {click: button_save_click}
+  - type: ColumnPanel
+    properties: {col_widths: '{}'}
+    name: column_panel_email_lists
+    layout_properties: {grid_position: 'VUCQZL,VHUSUX'}
+    components:
+    - type: form:EmailDisplayForm
+      properties: {}
+      name: email_display_form
+      layout_properties: {grid_position: 'XLDYHG,NRJYTI'}

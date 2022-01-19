@@ -1,4 +1,4 @@
-pydal~=20210626.3
+pydal==20220114.1
 pytest~=6.2.5
 pytest-tornasync
 strictyaml>=1.6.1

@@ -2,7 +2,6 @@ import tests.pydal_def as mydal
 from _anvil_designer.set_up_user import new_user_in_db
 from client_code.EmailDisplayForm import EmailDisplayForm
 from tests.common import generate_contact_instance
-from tests.test_ContactForm import TestContactForm
 import anvil.users
 from tests.test_app_table import insert_contact_record
 

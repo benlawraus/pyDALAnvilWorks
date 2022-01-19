@@ -14,7 +14,8 @@ class ContactForm(ContactFormTemplate):
         if self.contact.get('email_list', None) is None:
             self.contact['email_list'] = [dict(address='', place=1)]
         self.convert_to_items()
-        # Any code you write here will run when the form opens.
+        self.email_list = self.repeating_panel_email.items
+
 
 
     def convert_to_items(self):

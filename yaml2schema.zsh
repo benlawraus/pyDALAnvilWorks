@@ -36,11 +36,10 @@ if [ ! -d "$anvil_app" ]; then
   exit 1
 fi
 # copy anvil.yaml and anvil_refined.yaml (anvil_refined.yaml lives with your app_on_laptop)
-anvil_yaml=$anvil_app/anvil.yaml
 anvil_refined_yaml=$app_on_laptop/anvil_refined.yaml
 echo "Using anvil.yaml and ${anvil_refined_yaml} to generate pydal_def.py"
 cp "$anvil_app"/anvil.yaml "$yaml2schema"/src/yaml2schema/input/
-if ! cp "$pyDalAnvilWorks"/anvil_refined.yaml "$yaml2schema"/src/yaml2schema/input/; then
+if ! cp "$app_on_laptop"/anvil_refined.yaml "$yaml2schema"/src/yaml2schema/input/; then
   echo "No anvil_refined.yaml. Continuing..."
 fi
 cd "$yaml2schema"/src/yaml2schema || exit 1

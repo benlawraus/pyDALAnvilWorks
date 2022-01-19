@@ -7,6 +7,4 @@ class RowTemplate1(RowTemplate1Template):
         self.init_components(**properties)
         # Any code you write here will run when the form opens.
         # testing `item`
-        self.item['r']=5
-        self.tag['f']='test'
 

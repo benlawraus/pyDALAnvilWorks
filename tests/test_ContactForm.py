@@ -2,7 +2,6 @@ import anvil.users
 from _anvil_designer.set_up_user import new_user_in_db
 from anvil.tables import app_tables
 import tests.pydal_def as mydal
-from client_code.ContactForm import ContactForm
 from tests.common import generate_contact_instance
 
 
@@ -12,6 +11,7 @@ class TestContactForm:
         mydal.define_tables_of_db()
         user = new_user_in_db()
         anvil.users.force_login(user)
+        from client_code.ContactForm import ContactForm
 
         # generate a demo contact
         contact = generate_contact_instance(user=user)
@@ -22,7 +22,7 @@ class TestContactForm:
         assert contact['phone']['number'] == c_form.text_box_phone.text
         assert len(contact['email_list']) == len(c_form.repeating_panel_email.items)
         assert contact['email_list'][0]['address'] == c_form.repeating_panel_email.items[0]['email']
-        # lets test the save contact
+        # let's test the save contact
         ##########################
         c_form.button_save_click()
         ##########################
@@ -32,6 +32,6 @@ class TestContactForm:
         assert c_form.text_box_name.text == contact_row['name']
         # get email record
         email_row = app_tables.email.get(address=contact['email_list'][0]['address'])
-        assert c_form.repeating_panel_email.items[0]['email']==email_row['address']
+        assert c_form.repeating_panel_email.items[0]['email'] == email_row['address']
         anvil.users.logout()
         return user, email_row

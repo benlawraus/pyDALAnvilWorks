@@ -2,8 +2,11 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import List, Dict
 
+
 def default_val(val):
     return lambda: val
+
+
 String = str
 Number = float
 Integer = int
@@ -20,14 +23,17 @@ Html = str
 Icon = str
 Form = object
 
+
 @dataclass
 class tzlocal(tzoffset):
-	pass
+    pass
+
 
 @dataclass
 class tzoffset():
-	pass
+    pass
+
 
 @dataclass
 class tzutc(tzoffset):
-	pass
+    pass
