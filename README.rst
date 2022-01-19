@@ -45,6 +45,7 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Now"
 
+    "error for form dropped into container","If your UI has drag-n-dropped form component it will import ok"
     "git cloned dependencies","use `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_"
     "scanty users wrapper","Complete anvil.users with more rugged login system to prevent flaky (py)tests."
     "","added auto-complete for: **apptables.TABLE.**"
@@ -80,6 +81,11 @@ client_side code meets a component it uses a dummy class from that file instead.
 
 `_anvil_designer.py` will be referencing other dummy classes and functions in `_anvil_designer/componentsUI/`. If you want to
 flesh them out a bit, you can do that there. Otherwise, most likely functions will have a `def function(*args):pass` format.
+
+`_anvil_designer/componentsUI/` is basically the `anvil API docs <https://anvil.works/docs/api>`_ turned into python code.
+All the methods and functions in the api are in this directory.
+If your IDE is not auto-completing for a method, it probably is because an entry needs to be made in `anvil/__init__.py`
+to point to that method in `_anvil_designer/componentsUI`. PyCharm is smart enough to find it.
 
 How to use it?
 ---------------
