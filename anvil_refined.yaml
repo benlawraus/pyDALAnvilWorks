@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+servers:
+  - url: 'https'
+paths:
+  \:
+components:
+  schemas:
+    contact:
+      properties:
+        family:
+          type: array
+          items:
+            type: integer
+        age:
+          type: number
+          format: float
+        uid:
+          type: integer
+          format: int64
+    email:
+      properties:
+        place:
+          type: integer
+          format: int32
+
+  
