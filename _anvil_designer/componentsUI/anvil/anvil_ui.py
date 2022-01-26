@@ -271,10 +271,8 @@ class ColumnPanel(Container):
 
     def add_component(self, component, full_width_row=False, **layout_props):
         """Add a component to the bottom of this ColumnPanel. Useful layout properties:full_width_row = True|False row_background = [colour]		"""
-        pass
-
-    pass
-
+        super().add_component(component)
+        return
 
 @dataclass
 class DataGrid(Container):

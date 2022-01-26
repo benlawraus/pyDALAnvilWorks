@@ -59,17 +59,20 @@ class Component():
 
 @dataclass
 class Container(Component):
+    _components = []
+
     def add_component(self, component):
         """Add a component to this container.		"""
+        self._components.append(component)
         pass
 
     def clear(self):
         """Remove all components from this container		"""
-        pass
+        self._components = []
 
     def get_components(self):
         """Get a list of components in this container		"""
-        pass
+        return self._components
 
     def raise_event_on_children(self, event_name, **event_args):
         """Trigger the ‘event_name’ event on all children of this component. Any keyword arguments are passed to the handler function.		"""

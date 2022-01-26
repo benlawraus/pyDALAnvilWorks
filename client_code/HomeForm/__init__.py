@@ -19,6 +19,8 @@ class HomeForm(HomeFormTemplate):
         user = anvil.users.get_user(allow_remembered=True)
         if user is None:
             self.link_login_click()
+        self.content_panel.clear()
+        self.content_panel.add_component()
 
     def link_signin_click(self, **event_args):
         """This method is called when the link is clicked"""

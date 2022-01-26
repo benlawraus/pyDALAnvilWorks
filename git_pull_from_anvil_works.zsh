@@ -18,6 +18,7 @@ if ! git pull origin master; then
     echo "git pull errors initiated premature exit."
     exit 1
 fi
+echo "Copy anvil app code to project directories.."
 if ! rsync -r "$anvil_app"/client_code/ "$app_on_laptop"/client_code; then
     echo "An error while syncing the anvil.works app client code to the project."
     exit 1
