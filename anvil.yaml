@@ -13,9 +13,10 @@ services:
 startup: {type: module, module: startup}
 package_name: pyDALAnvilWorksApp
 allow_embedding: false
-name: pyDALAnvilWorksApp_01
+name: pyDALAnvilWorksApp_02
 runtime_options: {version: 2, client_version: '3', server_version: python3-full}
 metadata: {title: pyDALAnvilWorksApp, description: This is a test app for pyDALAnvilWorks on GitHub.}
+startup_form: ContactDisplayForm
 db_schema:
   users:
     title: Users

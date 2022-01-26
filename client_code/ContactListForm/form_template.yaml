@@ -1,0 +1,31 @@
+container:
+  type: ColumnPanel
+  properties: {col_widths: '{}'}
+components:
+- type: DataGrid
+  properties:
+    role: null
+    columns:
+    - {id: IZKCYB, title: Name, data_key: name}
+    - {id: VBCVHP, title: Phone, data_key: phone}
+    auto_header: true
+    tooltip: ''
+    border: ''
+    foreground: ''
+    rows_per_page: 20
+    visible: true
+    wrap_on: never
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    background: ''
+  name: data_grid_1
+  layout_properties: {grid_position: 'UECGFU,UCQHEA'}
+  components:
+  - type: RepeatingPanel
+    properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
+      visible: true, spacing_above: none, spacing_below: none, item_template: ContactDisplayForm,
+      background: ''}
+    name: repeating_panel_2
+    layout_properties: {}
+is_package: true

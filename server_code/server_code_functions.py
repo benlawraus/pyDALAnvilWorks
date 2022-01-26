@@ -12,7 +12,12 @@ from anvil.tables import app_tables
 def example_1() -> str:
     return "Returned string from function example_1."
 
-
+@anvil.server.callable
+def get_contacts():
+  user= anvil.users.get_user()
+  contact_rows = app_tables.contact.search(created_by=user)
+  return contact_rows
+  
 @anvil.server.callable
 def save_contact(contact_dict):
     # add user and time to contact, email and phone records

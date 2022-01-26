@@ -10,12 +10,13 @@ class ContactForm(ContactFormTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
-        self.contact = properties.get('contact', dict())
-        if self.contact.get('email_list', None) is None:
-            self.contact['email_list'] = [dict(address='', place=1)]
+        self.contact = properties.get('contact',
+                        dict(name='',
+                              phone=dict(number=''),
+                              email_list=[dict(address='', place=1)]))
         self.convert_to_items()
         self.email_list = self.repeating_panel_email.items
-
+        
 
 
     def convert_to_items(self):
