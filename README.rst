@@ -45,11 +45,11 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Now"
 
+    "No event handling","Can test for a .raise_event()"
     "error for form dropped into container","If your UI has drag-n-dropped form component it will import ok"
     "git cloned dependencies","use `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_"
     "scanty users wrapper","Complete anvil.users with more rugged login system to prevent flaky (py)tests."
     "","added auto-complete for: **apptables.TABLE.**"
-    "poor quality code (50% of it)","replaced by less poor quality code that now contains almost the whole anvil api including GoogleMaps"
 
 
 
