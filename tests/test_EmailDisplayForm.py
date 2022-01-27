@@ -24,4 +24,3 @@ class TestEmailDisplayForm:
         form_email_list = [email['address'] for email in form_under_test.repeating_panel_1.items]
         for email in contact_ref['email_list']:
             assert email.address in form_email_list
-

@@ -6,6 +6,8 @@ from ..anvilGoogleMap import anvilGoogleMap
 from .component import Component, Container, Media
 from math import pi as PI
 
+from ...common_structures import ClassDict
+
 
 def default_val(val):
     return lambda: val
@@ -50,7 +52,7 @@ class Button(Component):
     role: Themerole = None  # Choose how this component can appear, based on your app’s visual theme.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     text: String = None  # The text displayed on this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     underline: Boolean = None  # Display this component’s text underlined
@@ -82,7 +84,7 @@ class Canvas(Component):
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
     stroke_style: String = None  # The color or gradient to use when drawing outlines.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     text_align: String = None  # Text alignment, relative to the drawing point.
     text_baseline: String = None  # Text baseline, relative to the drawing point.
     tooltip: String = None  # Text to display when you hover the mouse over this component
@@ -237,7 +239,7 @@ class CheckBox(Component):
     role: Themerole = None  # Choose how this component can appear, based on your app’s visual theme.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     text: String = None  # The text displayed on this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     underline: Boolean = None  # Display this component’s text underlined
@@ -288,7 +290,7 @@ class DataGrid(Container):
     show_page_controls: Boolean = None  # Whether to display the next/previous page buttons.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this DataGrid, or “default” to have the width set by the container.
@@ -342,7 +344,7 @@ class DataRowPanel(Container):
     row_spacing: Pixels = None  # The spacing between rows of components in this container, in pixels.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     underline: Boolean = None  # Display this component’s text underlined
     visible: Boolean = None  # Should this component be displayed?
@@ -376,7 +378,7 @@ class DatePicker(Component):
     role: Themerole = None  # Choose how this component can appear, based on your app’s visual theme.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     underline: Boolean = None  # Display this component’s text underlined
     visible: Boolean = None  # Should this component be displayed?
@@ -403,7 +405,7 @@ class DropDown(Component):
     selected_value: Object = None  # The value of the currently selected item. Can only be set at runtime.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     underline: Boolean = None  # Display this component’s text underlined
     visible: Boolean = None  # Should this component be displayed?
@@ -438,7 +440,7 @@ class FileLoader(Component):
     show_state: Boolean = None  # If True, display a message describing selected files.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     text: String = None  # The text displayed on this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     underline: Boolean = None  # Display this component’s text underlined
@@ -467,7 +469,7 @@ class FlowPanel(Container):
     spacing: String = None  # Space between components
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this FlowPanel, or “default” to have the width set by the container.
@@ -511,7 +513,7 @@ class GoogleMap(Container):
     spacing_below: String = None  # The vertical space below this component.
     street_view_control: Boolean = None  # The enabled/disabled state of the street view control.
     street_view_control_options: anvilGoogleMap.StreetViewControlOptions = None  # The display options for the street view control.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this GoogleMap, or “default” to have the width set by the container.
     zoom: Number = None  # The map zoom level.
@@ -539,7 +541,7 @@ class GridPanel(Container):
     row_spacing: Pixels = None  # The spacing between rows of components in this container, in pixels.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this GridPanel, or “default” to have the width set by the container.
@@ -559,7 +561,7 @@ class HtmlTemplate(Container):
     html: Html = None  # The HTML from which this panel is defined
     parent: Container = Container()  #
     role: Themerole = None  # Choose how this component can appear, based on your app’s visual theme.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
 
@@ -591,7 +593,7 @@ class Image(Component):
     source: Uri = None  # The image source - set a string for a URL or a Media object in code
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     vertical_align: String = None  # Position the image vertically within this component
     visible: Boolean = None  # Should this component be displayed?
@@ -615,7 +617,7 @@ class Label(Component):
     role: Themerole = None  # Choose how this component can appear, based on your app’s visual theme.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     text: String = None  # The text displayed on this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     underline: Boolean = None  # Display this component’s text underlined
@@ -634,7 +636,7 @@ class LinearPanel(Container):
     row_spacing: Pixels = None  # The spacing between rows of components in this container, in pixels.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this LinearPanel, or “default” to have the width set by the container.
@@ -656,7 +658,7 @@ class Link(ColumnPanel):
     icon_align: String = "left"  # The alignment of the icon on this component. Set to ‘top’ for a centred icon on a component with no text.
     italic: Boolean = False  # Display this component’s text in italics
     parent: Container = Container()  #
-    tag = None  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     text: String = ""  # The text displayed on this component
     tooltip: String = ""  # Text to display when you hover the mouse over this component
     underline: Boolean = False  # Display this component’s text underlined
@@ -696,7 +698,7 @@ class Plot(Component):
     parent: Container = Container()  #
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this Plot, or “default” to have the width set by the container.
@@ -745,7 +747,7 @@ class RadioButton(Component):
     selected: Boolean = None  # The status of the radio button
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     text: String = None  # The text displayed on this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     underline: Boolean = None  # Display this component’s text underlined
@@ -771,7 +773,7 @@ class RepeatingPanel(Component):
     role: Themerole = None  # Choose how this component can appear, based on your app’s visual theme.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this RepeatingPanel, or “default” to have the width set by the container.
@@ -803,7 +805,7 @@ class RichText(Container):
     role: Themerole = None  # Choose how this component can appear, based on your app’s visual theme.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this RichText, or “default” to have the width set by the container.
@@ -825,7 +827,7 @@ class Spacer(Component):
     parent: Container = Container()  #
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this Spacer, or “default” to have the width set by the container.
@@ -850,7 +852,7 @@ class TextArea(Component):
     role: Themerole = None  # Choose how this component can appear, based on your app’s visual theme.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     text: String = None  # The text displayed on this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     underline: Boolean = None  # Display this component’s text underlined
@@ -927,7 +929,7 @@ class XYPanel(Container):
     role: Themerole = None  # Choose how this component can appear, based on your app’s visual theme.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this XYPanel, or “default” to have the width set by the container.
@@ -959,7 +961,7 @@ class YouTubeVideo(Component):
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
     state: Object = None  # Get the current playback state of the video as a string. E.g. PLAYING
-    tag = defaultdict(default_val(None))  # Use this property to store any extra information about this component
+    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
     visible: Boolean = None  # Should this component be displayed?
     volume: Object = None  # Get or set the current volume, from 0 - 100.
     width: String = None  # The width of this YouTubeVideo, or “default” to have the width set by the container.
