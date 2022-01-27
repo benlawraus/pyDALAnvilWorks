@@ -1,7 +1,10 @@
 from ._anvil_designer import ContactListFormTemplate
-
+from anvil import *
 import anvil.server
 import anvil.users
+import anvil.tables as tables
+import anvil.tables.query as q
+from anvil.tables import app_tables
 from ..ContactForm import ContactForm
 
 class ContactListForm(ContactListFormTemplate):
@@ -24,7 +27,11 @@ class ContactListForm(ContactListFormTemplate):
     contact_one = [cont for cont in self.contacts if cont.get_id()==uid]
     # convert row into dict
     contact = dict(contact_one[0])
-    contact['email_list']=[dict(em) for em in contact['email_list']]
+    em_list = contact.get('email_list',[])
+    contact['email_list'] = []
+    if len(em_list)>0:
+      for em in em_list:
+        contact['email_list'].append(dict(em))
     contact['phone'] = dict(contact['phone'])
     if uid:
       contact_form = ContactForm(contact=contact)

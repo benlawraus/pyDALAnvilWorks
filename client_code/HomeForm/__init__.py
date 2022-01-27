@@ -20,7 +20,16 @@ class HomeForm(HomeFormTemplate):
         user = anvil.users.get_user(allow_remembered=True)
         if user is None:
           self.link_login_click()
-        self.content_panel.add_component(ContactListForm(),full_width_row=True)
+        self.contact_form = ContactListForm()
+  
+        self.content_panel.add_component(self.contact_form,full_width_row=True)
+        if len(self.contact_form.contacts)==0:
+          self.contact_form.repeating_panel_2.items = [{'name':'hello, you have no contacts.',
+                           'uid':6, 
+                           'phone':''}]
+
+
+
 
     def link_signin_click(self, **event_args):
         """This method is called when the link is clicked"""

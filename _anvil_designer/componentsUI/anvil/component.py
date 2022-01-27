@@ -26,7 +26,7 @@ Form = object
 
 @dataclass
 class Component():
-    _events: Dict[str, List] = {}
+    _events=defaultdict(lambda: [])
     def add_event_handler(self, event_name, handler_func):
         """Add an event handler function to be called when the event happens on this component. Event handlers will be called in the order they are added. Adding the same event handler multiple times will mean it gets called multiple times.		"""
         ev = self._events.get(event_name,[])
