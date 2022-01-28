@@ -249,6 +249,7 @@ And see some tests in the `tests` directory.
 
 Gotchas
 -------
+
 Updating Rows
 ^^^^^^^^^^^^^^
 *anvil.works* allows you update your database using::
@@ -257,6 +258,13 @@ Updating Rows
 
 This is allowed in this wrapper, with the allowance that no sqlite row will be updated, only the object ``row`` will be
 updated. To update the database row, you have to use ``row.update()``
+
+Pytest Fixtures and User login
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+When running a test, this project uses the process id (PID) of the test to keep track of the user that is logged in.
+Logging a user in and out using *PyTest* fixtures may cause the user log in process to use a different PID than
+the test, so the test may act as if there is no user logged in. To prevent this, log in the user within the test
+and not within a fixture.
 
 Errors during *from client_code.HomeForm import HomeForm*
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
