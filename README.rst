@@ -258,11 +258,11 @@ Updating Rows
 This is allowed in this wrapper, with the allowance that no sqlite row will be updated, only the object ``row`` will be
 updated. To update the database row, you have to use ``row.update()``
 
-Errors during `from client_code.HomeForm import HomeForm`
+Errors during *from client_code.HomeForm import HomeForm*
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 During import, python may run the __init__ of every class. If the class of a form uses an `anvil.users.get_user()`, then
 an error will occur because there is no connection to the database. To overcome this, the import has to
-occur after the users tables has been initialized. An example is from `test_HomeForm`::
+occur after the users tables has been initialized. An example is from `test_HomeForm <https://github.com/benlawraus/pyDALAnvilWorks/blob/master/tests/test_HomeForm.py>`_::
 
     import tests.pydal_def as mydal
     from _anvil_designer.set_up_user import new_user_in_db
