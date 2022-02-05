@@ -2,11 +2,11 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import List, Dict
 
+from ...common_structures import ClassDict
+
 
 def default_val(val):
     return lambda: val
-
-
 String = str
 Number = float
 Integer = int
@@ -15,26 +15,21 @@ Boolean = bool
 Themerole = str
 Object = object
 Seconds = float
-Items = List[Dict]
-Datagridcolumns = List[str]
+Items = list
+Datagridcolumns = list
 Pixels = int
 Uri = str
 Html = str
 Icon = str
 Form = object
 
-
 @dataclass
 class DeliveryFailure():
-    pass
-
+	pass
 
 @dataclass
 class SendFailure():
-    pass
-
-
-def send(to=None, cc=None, bcc=None, from_address="no-reply", from_name=None, subject=None, text=None, html=None,
-         attachments=None, inline_attachments=None):
+	pass
+def send(to=None, cc=None, bcc=None, from_address="no-reply", from_name=None, subject=None, text=None, html=None, attachments=None, inline_attachments=None):
     """Send an email"""
     pass
