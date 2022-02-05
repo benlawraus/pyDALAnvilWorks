@@ -1,5 +1,6 @@
 from _anvil_designer.componentsUI.anvil import *
 from _anvil_designer.componentsUI.anvil import Container
+from dataclasses import dataclass, field
 
 link_signin = dict(
     role=None,
@@ -97,14 +98,15 @@ menu_panel = dict(
 )
 
 
+@dataclass
 class HomeFormTemplate(HtmlTemplate):
-    link_signin = Link(**link_signin)
-    link_login = Link(**link_login)
-    navbar_links = FlowPanel(**navbar_links)
-    label_title = Label(**label_title)
-    rich_text_1 = RichText(**rich_text_1)
-    content_panel = ColumnPanel(**content_panel)
-    menu_panel = ColumnPanel(**menu_panel)
+    link_signin: Link = field(default_factory=lambda: Link(**link_signin))
+    link_login: Link = field(default_factory=lambda: Link(**link_login))
+    navbar_links: FlowPanel = field(default_factory=lambda: FlowPanel(**navbar_links))
+    label_title: Label = field(default_factory=lambda: Label(**label_title))
+    rich_text_1: RichText = field(default_factory=lambda: RichText(**rich_text_1))
+    content_panel: ColumnPanel = field(default_factory=lambda: ColumnPanel(**content_panel))
+    menu_panel: ColumnPanel = field(default_factory=lambda: ColumnPanel(**menu_panel))
 
     def init_components(self, **kwargs):
-        pass
+        HomeFormTemplate.__init__(self)

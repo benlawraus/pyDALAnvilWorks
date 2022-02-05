@@ -1,5 +1,6 @@
 from _anvil_designer.componentsUI.anvil import *
 from _anvil_designer.componentsUI.anvil import Container
+from dataclasses import dataclass, field
 
 repeating_panel_2 = dict(
     role=None,
@@ -32,9 +33,10 @@ data_grid_1 = dict(
 )
 
 
+@dataclass
 class ContactListFormTemplate(ColumnPanel):
-    repeating_panel_2 = RepeatingPanel(**repeating_panel_2)
-    data_grid_1 = DataGrid(**data_grid_1)
+    repeating_panel_2: RepeatingPanel = field(default_factory=lambda: RepeatingPanel(**repeating_panel_2))
+    data_grid_1: DataGrid = field(default_factory=lambda: DataGrid(**data_grid_1))
 
     def init_components(self, **kwargs):
-        pass
+        ContactListFormTemplate.__init__(self)

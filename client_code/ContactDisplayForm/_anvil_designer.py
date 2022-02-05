@@ -1,5 +1,6 @@
 from _anvil_designer.componentsUI.anvil import *
 from _anvil_designer.componentsUI.anvil import Container
+from dataclasses import dataclass, field
 
 link_name = dict(
     col_widths='{}',
@@ -9,9 +10,10 @@ label_email = dict(
 )
 
 
+@dataclass
 class ContactDisplayFormTemplate(ColumnPanel):
-    link_name = Link(**link_name)
-    label_email = Label(**label_email)
+    link_name: Link = field(default_factory=lambda: Link(**link_name))
+    label_email: Label = field(default_factory=lambda: Label(**label_email))
 
     def init_components(self, **kwargs):
-        pass
+        ContactDisplayFormTemplate.__init__(self)

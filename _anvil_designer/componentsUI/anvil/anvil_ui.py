@@ -768,12 +768,12 @@ class RepeatingPanel(Component):
     border: String = None  # The border of this component. Can take any valid CSS border value.
     foreground: Color = None  # The foreground colour of this component.
     item_template: Form = None  # The name of the form to repeat for every item
-    items: Items = None  # A list of items for which the ‘item_template’ will be instantiated.
-    parent: Container = Container()  #
+    items: Items = field(default_factory=list)  # A list of items for which the ‘item_template’ will be instantiated.
+    parent: Container = field(default_factory=Container)  #
     role: Themerole = None  # Choose how this component can appear, based on your app’s visual theme.
     spacing_above: String = None  # The vertical space above this component.
     spacing_below: String = None  # The vertical space below this component.
-    tag:ClassDict = ClassDict()  # Use this property to store any extra information about this component
+    tag:ClassDict = field(default_factory=ClassDict)  # Use this property to store any extra information about this component
     tooltip: String = None  # Text to display when you hover the mouse over this component
     visible: Boolean = None  # Should this component be displayed?
     width: String = None  # The width of this RepeatingPanel, or “default” to have the width set by the container.

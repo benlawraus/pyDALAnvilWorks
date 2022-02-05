@@ -192,7 +192,8 @@ def yaml2definition(parsed: sy.YAML, form_name):
     After: {'column_panel1':{'type':ColumnPanel, 'role':'blah', 'text':'My Form' etc}
 """
     import_list = ["from _anvil_designer.componentsUI.anvil import *",
-                   "from _anvil_designer.componentsUI.anvil import Container"]
+                   "from _anvil_designer.componentsUI.anvil import Container",
+                   "from dataclasses import dataclass, field"]
 
     catalog = OrderedDict()
     TAB = '    '
@@ -204,13 +205,13 @@ def yaml2definition(parsed: sy.YAML, form_name):
         if key == form_name:
             continue
         default_string += f"{item.name} = dict(\n{item.as_string})\n"
-        attr_string += f"{TAB}{key} = {item.of_type}(**{item.name})\n"
+        attr_string += f"{TAB}{key}: {item.of_type} = field(default_factory=lambda: {item.of_type}(**{item.name}))\n"
     class_string = '\n'.join(import_list) + '\n\n' + \
                    default_string + '\n\n'+ \
-                   f"class {form_name}Template({catalog[form_name].of_type}):\n" + \
+                   f"@dataclass\nclass {form_name}Template({catalog[form_name].of_type}):\n" + \
                    attr_string
-    class_string += """
+    class_string += f"""
     def init_components(self, **kwargs):
-        pass
+        {form_name}Template.__init__(self)
 """
     return class_string

@@ -1,5 +1,6 @@
 from _anvil_designer.componentsUI.anvil import *
 from _anvil_designer.componentsUI.anvil import Container
+from dataclasses import dataclass, field
 
 label_email = dict(
     role=None,
@@ -116,14 +117,15 @@ column_panel_1 = dict(
 )
 
 
+@dataclass
 class EmailItemFormTemplate(ColumnPanel):
-    label_email = Label(**label_email)
-    text_box_email = TextBox(**text_box_email)
-    button_1 = Button(**button_1)
-    radio_btn_work = RadioButton(**radio_btn_work)
-    radio_button_2 = RadioButton(**radio_button_2)
-    radio_button_3 = RadioButton(**radio_button_3)
-    column_panel_1 = ColumnPanel(**column_panel_1)
+    label_email: Label = field(default_factory=lambda: Label(**label_email))
+    text_box_email: TextBox = field(default_factory=lambda: TextBox(**text_box_email))
+    button_1: Button = field(default_factory=lambda: Button(**button_1))
+    radio_btn_work: RadioButton = field(default_factory=lambda: RadioButton(**radio_btn_work))
+    radio_button_2: RadioButton = field(default_factory=lambda: RadioButton(**radio_button_2))
+    radio_button_3: RadioButton = field(default_factory=lambda: RadioButton(**radio_button_3))
+    column_panel_1: ColumnPanel = field(default_factory=lambda: ColumnPanel(**column_panel_1))
 
     def init_components(self, **kwargs):
-        pass
+        EmailItemFormTemplate.__init__(self)

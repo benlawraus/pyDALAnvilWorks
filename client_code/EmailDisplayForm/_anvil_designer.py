@@ -1,5 +1,6 @@
 from _anvil_designer.componentsUI.anvil import *
 from _anvil_designer.componentsUI.anvil import Container
+from dataclasses import dataclass, field
 
 label_1 = dict(
     role='headline',
@@ -45,10 +46,11 @@ data_grid_1 = dict(
 )
 
 
+@dataclass
 class EmailDisplayFormTemplate(ColumnPanel):
-    label_1 = Label(**label_1)
-    repeating_panel_1 = RepeatingPanel(**repeating_panel_1)
-    data_grid_1 = DataGrid(**data_grid_1)
+    label_1: Label = field(default_factory=lambda: Label(**label_1))
+    repeating_panel_1: RepeatingPanel = field(default_factory=lambda: RepeatingPanel(**repeating_panel_1))
+    data_grid_1: DataGrid = field(default_factory=lambda: DataGrid(**data_grid_1))
 
     def init_components(self, **kwargs):
-        pass
+        EmailDisplayFormTemplate.__init__(self)
