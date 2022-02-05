@@ -43,13 +43,14 @@ Recent Changes
 ---------------
 
 ..  csv-table::
-    :header: "Before","Now"
+    :header: "Before","Date","Now"
 
-    "No event handling","Can test for a .raise_event()"
-    "error for form dropped into container","If your UI has drag-n-dropped form component it will import ok"
-    "git cloned dependencies","use `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_"
-    "scanty users wrapper","Complete anvil.users with more rugged login system to prevent flaky (py)tests."
-    "","added auto-complete for: **apptables.TABLE.**"
+    "Bug in setting defaults","Feb 5 2022","Hopefully ok now."
+    "No event handling",,"Can test for a .raise_event()"
+    "error for form dropped into container",,"If your UI has drag-n-dropped form component it will import ok"
+    "git cloned dependencies",,"use `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_"
+    "scanty users wrapper",,"Complete anvil.users with more rugged login system to prevent flaky (py)tests."
+    "",,"added auto-complete for: **apptables.TABLE.**"
 
 
 
