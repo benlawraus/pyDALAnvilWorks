@@ -13,10 +13,11 @@ menu = [
 class HomeForm(HomeFormTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
-          
-        self.advanced_mode = False
-        navigation.build_menu(self.menu_panel, menu)
         self.init_components(**properties)
+
+        self.advanced_mode = False
+        print(self.menu_panel)
+        navigation.build_menu(self.menu_panel, menu)
         user = anvil.users.get_user(allow_remembered=True)
         if user is None:
           self.link_login_click()
