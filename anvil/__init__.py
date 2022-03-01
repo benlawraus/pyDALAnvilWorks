@@ -4,14 +4,13 @@ import pydal.helpers.classes
 
 from _anvil_designer.componentsUI.anvil import *
 
+
 class dict(UserDict):
     def __init__(self, *args, **kwargs):
-        if isinstance(args[0],pydal.helpers.classes.Reference):
+        if len(args) > 0 and isinstance(args[0], pydal.helpers.classes.Reference):
             args_ix = []
             for attr in args[0]._table._fields:
-                args_ix.append((attr,args[0][attr]))
+                args_ix.append((attr, args[0][attr]))
             return super().__init__(args_ix)
         else:
-            return super().__init__(*args,**kwargs)
-
-
+            return super().__init__(*args, **kwargs)
