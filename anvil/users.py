@@ -3,10 +3,9 @@ import os
 from warnings import warn
 
 import pydal.objects
-import tests.pydal_def as mydal
+import pydal_def as mydal
 from pydal import Field
 from _anvil_designer.componentsUI.anvilUsers import *
-
 
 def add_row(**kwargs):
     row_ref = mydal.db['users'].insert(**kwargs)

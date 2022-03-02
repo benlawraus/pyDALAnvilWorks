@@ -3,7 +3,7 @@ from collections import UserDict
 import pydal.helpers.classes
 
 from _anvil_designer.componentsUI.anvil import *
-
+from _anvil_designer.componentsUI.anvilUsers import *
 
 class dict(UserDict):
     def __init__(self, *args, **kwargs):

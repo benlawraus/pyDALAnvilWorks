@@ -1,5 +1,4 @@
-import anvil.users
-import tests.pydal_def as mydal
+import pydal_def as mydal
 
 try:
     from tests.common import user_generator

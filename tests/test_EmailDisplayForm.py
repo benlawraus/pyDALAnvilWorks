@@ -1,4 +1,4 @@
-import tests.pydal_def as mydal
+import pydal_def as mydal
 from _anvil_designer.set_up_user import new_user_in_db
 from client_code.EmailDisplayForm import EmailDisplayForm
 from tests.common import generate_contact_instance
