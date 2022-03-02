@@ -43,7 +43,7 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Date","Now"
 
-    "pydal_def.py and database directory inside tests","Mar 1 2022","Moved them into the project directory."
+    "pyDALAnvilWorks awkward when updating","Mar 2 2022","using .gitmodules."
     "Bug in setting defaults","Feb 5 2022","Hopefully ok now."
     "No event handling",,"Can test for a .raise_event()"
     "error for form dropped into container",,"If your UI has drag-n-dropped form component it will import ok"
@@ -95,10 +95,10 @@ Your directory structure on your laptop will look like this:
     - _anvil_designer (from this repo)
     - client_code  (git-cloned from anvil.works)
     - server_code  (git-cloned from anvil.works)
-    - database  (your sqlite and pydal files to run your database on your laptop)
-    - pydal_def.py  # generated from anvil.yaml using yaml2schema
     - tests (your tests you run on your laptop)
         - test1.py # your test file
+        - database  (your sqlite and pydal files to run your database on your laptop)
+        - pydal_def.py  # generated from anvil.yaml using yaml2schema
     - anvil.yaml (git-cloned from anvil.works)
 
 Kick the Tires
