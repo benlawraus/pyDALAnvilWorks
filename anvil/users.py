@@ -1,4 +1,4 @@
-"""Functions here over-write functions defined in _anvil_designer/componentsUI/users/Users.py"""
+"""Functions here over-write functions defined in _anvil_designer/componentsUI/anvilUsers"""
 import os
 from warnings import warn
 

@@ -9,7 +9,7 @@ except ImportError:
 
 
 def new_user_in_db():
-    """Creates a new user in the database using `tests/common.py"""
+    """Creates a new user in the database"""
     try:
         user_ref = mydal.db.users.insert(**user_generator())
     except AttributeError:
