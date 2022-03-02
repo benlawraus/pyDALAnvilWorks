@@ -1,17 +1,15 @@
 Note
 ====
 The best way to start is `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_.
-Basically it is an empty project. Clone it, change the directory name and then cd into the
-directory. From there run its script with the address of the anvil.works app.
+Basically it is an empty project. Clone it using::
+
+    git clone https://github.com/benlawraus/pyDALAnvilWorksDev --recursive
+
+
+cd into the repo and run its script with the address of the anvil.works app.
 The script will:
 
-* Install the git submodules:
-
-    * your anvil.works app (using $myAnvilGit script argument)
-    * `yaml2Schema <https://github.com/benlawraus/yaml2schema>`_ (to setup database)
-    * `pyDALAnvilWorks <https://github.com/benlawraus/pyDALAnvilWorks>`_ (for testing client and server code.)
-    * (optional `anvil-extras <https://github.com/anvilistas/anvil-extras>`_)
-
+* Install your anvil.works app (using $myAnvilGit)
 * Set up a virtualenv. In the virtualenv it pip-installs:
 
     *   `pyDAL <https://github.com/web2py/pydal>`_  (the database abstraction layer)
@@ -45,6 +43,7 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Date","Now"
 
+    "pydal_def.py and database directory inside tests","Mar 1 2022","Moved them into the project directory."
     "Bug in setting defaults","Feb 5 2022","Hopefully ok now."
     "No event handling",,"Can test for a .raise_event()"
     "error for form dropped into container",,"If your UI has drag-n-dropped form component it will import ok"
@@ -96,9 +95,9 @@ Your directory structure on your laptop will look like this:
     - _anvil_designer (from this repo)
     - client_code  (git-cloned from anvil.works)
     - server_code  (git-cloned from anvil.works)
+    - database  (your sqlite and pydal files to run your database on your laptop)
+    - pydal_def.py  # generated from anvil.yaml using yaml2schema
     - tests (your tests you run on your laptop)
-        - database  (your sqlite and pydal files to run your database on your laptop)
-        - pydal_def.py  # generated from anvil.yaml using yaml2schema
         - test1.py # your test file
     - anvil.yaml (git-cloned from anvil.works)
 
