@@ -7,7 +7,7 @@ from _anvil_designer.set_up_user import new_user_in_db
 from anvil import tables
 from anvil.tables import app_tables
 import anvil.tables.query as q
-import pydal_def as mydal
+from tests import pydal_def as mydal
 
 from tests.common import *
 from typing import Tuple

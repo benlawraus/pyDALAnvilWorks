@@ -18,13 +18,14 @@ echo "Also, updates AppTables.py to reflect correct table names with their colum
 # check that directories exists, exit otherwise
 if [ ! -d "$yaml2schema" ]; then
   echo "${yaml2schema} not there. Use https://github.com/benlawraus/yaml2schema"
-  yaml2schema="${PWD}/yaml2schema"
-  # clone yaml2schema
-  git clone https://github.com/benlawraus/yaml2schema.git
-  if [ ! -d "$yaml2schema" ]; then
-    echo "${yaml2schema} not there."
-    exit 1
-  fi
+#  yaml2schema="${PWD}/yaml2schema"
+#  # clone yaml2schema
+#  git clone https://github.com/benlawraus/yaml2schema.git
+#  if [ ! -d "$yaml2schema" ]; then
+#    echo "${yaml2schema} not there."
+#    exit 1
+#  fi
+  exit 1
 fi
 if [ ! -d "$app_on_laptop" ]; then
   echo "${app_on_laptop} not there.
@@ -38,7 +39,7 @@ fi
 # copy anvil.yaml and anvil_refined.yaml (anvil_refined.yaml lives with your app_on_laptop)
 anvil_refined_yaml=$app_on_laptop/anvil_refined.yaml
 echo "Using anvil.yaml and ${anvil_refined_yaml} to generate pydal_def.py"
-cp "$anvil_app"/anvil.yaml "$yaml2schema"/src/yaml2schema/input/
+cp "$anvil_app"/anvil.yaml "$yaml2schema"/src/yaml2schema/input/ || exit 1
 if ! cp "$app_on_laptop"/anvil_refined.yaml "$yaml2schema"/src/yaml2schema/input/; then
   echo "No anvil_refined.yaml. Continuing..."
 fi

@@ -1,4 +1,4 @@
-import pydal_def as mydal
+from tests import pydal_def as mydal
 from _anvil_designer.set_up_user import new_user_in_db
 import anvil.users
 from tests.test_app_table import insert_get_contact_row_ref

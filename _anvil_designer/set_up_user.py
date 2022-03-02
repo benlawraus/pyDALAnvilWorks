@@ -1,4 +1,4 @@
-import pydal_def as mydal
+from tests import pydal_def as mydal
 
 try:
     from tests.common import user_generator

@@ -1,7 +1,7 @@
 import anvil.users
 from _anvil_designer.set_up_user import new_user_in_db
 from anvil.tables import app_tables
-import pydal_def as mydal
+from tests import pydal_def as mydal
 from tests.common import generate_contact_instance
 
 

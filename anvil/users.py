@@ -3,7 +3,7 @@ import os
 from warnings import warn
 
 import pydal.objects
-import pydal_def as mydal
+from tests import pydal_def as mydal
 from pydal import Field
 from _anvil_designer.componentsUI.anvilUsers import *
 

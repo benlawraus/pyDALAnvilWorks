@@ -5,7 +5,7 @@ from functools import wraps
 from types import NoneType
 
 import anvil.users
-import pydal_def as mydal
+from tests import pydal_def as mydal
 import pathlib
 
 

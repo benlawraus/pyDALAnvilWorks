@@ -2,7 +2,7 @@ from _anvil_designer.set_up_user import new_user_in_db
 import anvil.users
 from server_code.server_code_functions import example_1
 from client_code.client_code_functions import example_A, save_contact_from_client
-import pydal_def as mydal
+from tests import pydal_def as mydal
 
 
 class TestServer:
