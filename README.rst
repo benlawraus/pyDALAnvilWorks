@@ -276,6 +276,21 @@ Updating Rows
 This is allowed in this wrapper, with the allowance that no sqlite row will be updated, only the object ``row`` will be
 updated. To update the database row, you have to use ``row.update()``
 
+Using dict(row)
+^^^^^^^^^^^^^^^^
+The ``dict()`` function needed to be overwritten in order for it to work with pydal row objects. So if
+``dict()`` is used, also use::
+
+    from anvil import *
+
+Circular Referencing Tables
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``yaml2schema`` cannot handle two tables referencing each-other. For example::
+
+        child_table['parent_table']  <-> parent_table['child_table']
+
+
+
 Pytest Fixtures and User login
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 When running a test, this project uses the process id (PID) of the test to keep track of the user that is logged in.
