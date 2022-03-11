@@ -1,10 +1,5 @@
-from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import List, Dict
-
-from ...common_structures import ClassDict
-
-
 from ..anvil import component as anvil
 
 def default_val(val):
