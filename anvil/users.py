@@ -100,7 +100,8 @@ def login_with_email(email, password, remember=False):
     if len(user_rows) != 1:
         return None
     user = user_rows[0]
-    return force_login(user)
+    force_login(user)
+    return user
 
 
 def login_with_form(show_signup_option=True, remember_by_default=True, allow_remembered=True, allow_cancel=False):
@@ -112,4 +113,5 @@ def login_with_form(show_signup_option=True, remember_by_default=True, allow_rem
     # select random user
     user_rows = mydal.db().select(mydal.db.users.ALL)
     user = user_rows[random.randrange(0, len(user_rows))]
-    return force_login(user)
+    force_login(user)
+    return user
