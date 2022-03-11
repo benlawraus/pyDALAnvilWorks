@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-from anvil.tables import app_tables
 from ..anvil import component as anvil
 
 def default_val(val):
@@ -91,7 +90,7 @@ def login_with_email(email, password, remember=False):
     """Log in with the specified email address and password. Raises anvil.users.AuthenticationFailed exception if the
     login failed.By default, login status is not remembered between sessions; set remember=True to remember login
     status. """
-    user = app_tables.users.get(email=email)
+    pass
 
 
 def login_with_facebook(additional_scopes, remember=False):

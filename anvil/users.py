@@ -1,11 +1,13 @@
 """Functions here over-write functions defined in _anvil_designer/componentsUI/anvilUsers"""
 import os
+import random
 from warnings import warn
 
 import pydal.objects
 from tests import pydal_def as mydal
 from pydal import Field
 from _anvil_designer.componentsUI.anvilUsers import *
+
 
 def add_row(**kwargs):
     row_ref = mydal.db['users'].insert(**kwargs)
@@ -26,7 +28,7 @@ def logout(user=None):
     pid = os.getpid()
     current_test = os.getenv('PYTEST_CURRENT_TEST')
     query = (mydal.db.logged_in_users.pid == pid) \
-        & (mydal.db.logged_in_users.pytest == current_test)
+            & (mydal.db.logged_in_users.pytest == current_test)
     mydal.db(query).delete()
     mydal.db.commit()
     return
@@ -69,13 +71,15 @@ def get_user(allow_remembered=True) -> pydal.helpers.classes.Reference:
         pid = os.getpid()
         current_test = os.getenv('PYTEST_CURRENT_TEST')
         assert current_test
+        if 'logged_in_users' not in mydal.db.tables:
+            return None
         query = (mydal.db.logged_in_users.pid == pid) & \
                 (mydal.db.logged_in_users.pytest == current_test)
         rows = mydal.db(query).select()
         if len(rows) == 1:
             return rows[0]
         elif len(rows) == 0:
-            warn(UserWarning("No user logged in. Use 'force_login(user)'."))
+            # warn(UserWarning("No user logged in. Use 'force_login(user)'."))
             return None
         else:
             raise ValueError("More than one user is logged in for the same pid.")
@@ -86,3 +90,26 @@ def get_user(allow_remembered=True) -> pydal.helpers.classes.Reference:
     if logged_in_user:
         return logged_in_user.user_ref
     return None
+
+
+def login_with_email(email, password, remember=False):
+    """Log in with the specified email address and password. Raises anvil.users.AuthenticationFailed exception if the
+    login failed.By default, login status is not remembered between sessions; set remember=True to remember login
+    status. """
+    user_rows = mydal.db(mydal.db.users.email == email).select()
+    if len(user_rows) != 1:
+        return None
+    user = user_rows[0]
+    return force_login(user)
+
+
+def login_with_form(show_signup_option=True, remember_by_default=True, allow_remembered=True, allow_cancel=False):
+    """Display a login form and allow user to log in. Returns user object if logged in, or None if
+    cancelled.show_signup_option: if True, the form will also show the option to sign up for a new
+    account.remember_by_default: if True, the ‘remember me’ checkbox will be enabled by default.allow_remembered: if
+    False, users with remembered login status will still be required to log in.allow_cancel: if True, the login form
+    has a Cancel button that the user can use to dismiss the form. """
+    # select random user
+    user_rows = mydal.db().select(mydal.db.users.ALL)
+    user = user_rows[random.randrange(0, len(user_rows))]
+    return force_login(user)
