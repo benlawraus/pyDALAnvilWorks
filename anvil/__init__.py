@@ -4,6 +4,7 @@ import pydal.helpers.classes
 
 from _anvil_designer.componentsUI.anvil import *
 
+
 class dict(UserDict):
     def __init__(self, *args, **kwargs):
         if len(args) > 0 and isinstance(args[0], pydal.helpers.classes.Reference):
