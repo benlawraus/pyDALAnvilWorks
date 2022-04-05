@@ -10,8 +10,8 @@ else
      ${app_on_laptop}"
 fi
 
-cd "$app_on_laptop" || exit 1
-git commit -am "Before a pull from anvil.works"
+#cd "$app_on_laptop" || exit 1
+#git commit -am "Before a pull from anvil.works"
 cd "$anvil_app" || exit 1
 echo "Git pull the anvil.works app.."
 if ! git pull origin master; then
@@ -19,12 +19,12 @@ if ! git pull origin master; then
     exit 1
 fi
 echo "Copy anvil app code to project directories.."
-if ! rsync -r "$anvil_app"/client_code/ "$app_on_laptop"/client_code; then
+if ! rsync -a --delete-after "$anvil_app"/client_code/ "$app_on_laptop"/client_code; then
     echo "An error while syncing the anvil.works app client code to the project."
     exit 1
 fi
-rsync -r "$anvil_app"/server_code/ "$app_on_laptop"/server_code
-rsync "$anvil_app"/anvil.yaml "$app_on_laptop"
+rsync -a -v --delete-after "$anvil_app"/server_code/ "$app_on_laptop"/server_code
+cp "$anvil_app"/anvil.yaml "$app_on_laptop"
 cd "$app_on_laptop" || exit 1
 echo "Regenerating _anvil_designer.py files in ${PWD}"
 python -m _anvil_designer.generate_files
