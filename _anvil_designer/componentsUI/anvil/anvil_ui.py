@@ -585,6 +585,11 @@ class Link(ColumnPanel):
 
 @dataclass
 class Notification():
+	message: String = "undefined"
+	title: String = ""
+	style: String = "info"
+	timeout: Number = 2
+
 	def __enter__(self): 
 		"""Show the notification when entering a ‘with’ block		"""
 		pass
