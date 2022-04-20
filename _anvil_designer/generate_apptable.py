@@ -9,7 +9,13 @@ def get_tables(parsed):
     for table_yaml in parsed['db_schema']:
         table_dict[table_yaml.text] = {}
         for column in parsed['db_schema'][table_yaml]['columns']:  # for later, not needed here
-            table_dict[table_yaml.text].update({column['name']: column['type']})
+            if column['type'] == 'link_single':
+                column_type = 'liveObject'
+            elif column['type'] == 'link_multiple':
+                column_type = 'liveObjectArray'
+            else:
+                column_type = column['type']
+            table_dict[table_yaml.text].update({column['name']: column_type})
     return table_dict
 
 
