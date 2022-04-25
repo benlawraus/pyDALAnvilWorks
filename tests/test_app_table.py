@@ -364,13 +364,13 @@ class TestListColumns:
         contact_dict = dict(
             name='string',
             phone='link_single',
-            email_list='link_multiple',
+            email_list='liveObjectArray',
             age='number',
-            created_by='link_single',
+            created_by='liveObject',
             created_on='datetime',
             family='simpleObject',
             uid='number',
-            father='link_single',
+            father='liveObject',
         )
         li_col = app_tables.contact.list_columns()
         assert len(contact_dict) == len(li_col)
