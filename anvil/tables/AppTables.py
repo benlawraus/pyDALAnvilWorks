@@ -14,25 +14,25 @@ TABLES = dict(
     ),
     email=dict(
         address='string',
-        created_by='link_single',
+        created_by='liveObject',
         created_on='datetime',
         place='number',
     ),
     phone=dict(
         number='string',
-        created_by='link_single',
+        created_by='liveObject',
         created_on='datetime',
     ),
     contact=dict(
         name='string',
-        phone='link_single',
-        email_list='link_multiple',
+        phone='liveObject',
+        email_list='liveObjectArray',
         age='number',
-        created_by='link_single',
+        created_by='liveObject',
         created_on='datetime',
         family='simpleObject',
         uid='number',
-        father='link_single',
+        father='liveObject',
     ),
 )
 
