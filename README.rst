@@ -14,6 +14,13 @@ Before executing the script, change the first line in the script from::
 
 To your actual anvil.works app.
 
+Also, check your database fields. AnvilWorks database types may need to be defined further. For example,
+'numbers' in AnvilWorks could be integer or double. Hence, redefine the column types with ``anvil._refined.yaml``.
+
+With these two issues done::
+
+    ./setup_project.zsh
+
 The script will:
 
 * Install your anvil.works app (using $myAnvilGit)
