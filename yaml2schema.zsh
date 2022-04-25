@@ -18,13 +18,6 @@ echo "Also, updates AppTables.py to reflect correct table names with their colum
 # check that directories exists, exit otherwise
 if [ ! -d "$yaml2schema" ]; then
   echo "${yaml2schema} not there. Use https://github.com/benlawraus/yaml2schema"
-#  yaml2schema="${PWD}/yaml2schema"
-#  # clone yaml2schema
-#  git clone https://github.com/benlawraus/yaml2schema.git
-#  if [ ! -d "$yaml2schema" ]; then
-#    echo "${yaml2schema} not there."
-#    exit 1
-#  fi
   exit 1
 fi
 if [ ! -d "$app_on_laptop" ]; then
@@ -54,16 +47,6 @@ echo "Use yaml2schema .."
 if ! python3 main.py; then
     echo "pydal_def not generated. yaml2schema interrupted."
     exit 1
-fi
-# save before copying
-cd "$app_on_laptop" || exit 1
-echo "Git commit project .."
-if ! git commit -am "Before copying new pydal_def.py to project."; then
-    git add .
-    if ! git commit -am "Before copying new pydal_def.py to project."; then
-         echo "Exiting."
-         exit 1
-    fi
 fi
 # copy the pyDAL definition file to app
 if ! cp "$yaml2schema"/src/yaml2schema/output/pydal_def.py "$app_on_laptop"/tests/; then

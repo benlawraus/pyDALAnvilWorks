@@ -18,8 +18,6 @@ else
     exit 1
 fi
 # use  --out-format='%n' if you want to list the rsync files copied
-#rsync -a --exclude='_anvil_designer.py' --exclude='__pycache__/' --include='*.py' --exclude='*.*' "$app_on_laptop"/client_code/ "$anvil_app"/client_code
-#rsync -r --exclude='__pycache__' --include='*.py' --exclude='*.*' "$app_on_laptop"/server_code/ "$anvil_app"/server_code
 rsync -a --exclude='_anvil_designer.py' --exclude='__pycache__' --include='*.py' --include='*/' --exclude='*'  "$app_on_laptop"/client_code/ "$anvil_app"/client_code
 rsync -a --exclude='__pycache__' --include='*.py' --include='*/' --exclude='*'  "$app_on_laptop"/server_code/ "$anvil_app"/server_code
 if git commit -am "Edited on laptop"; then
@@ -45,12 +43,6 @@ else
     exit 1
 fi
 cd "$app_on_laptop" || exit 1
-#if git commit -am "Before updating yaml from anvil.works"; then
-#    echo "git commit completed with no errors."
-#else
-#    echo "git commit errors initiated premature exit."
-#    exit 1
-#fi
 rsync -a --include='*.yaml' --include='*/' --exclude='*' "$anvil_app"/client_code/ "$app_on_laptop"/client_code
 echo "Regenerating _anvil_designer.py files in ${PWD}"
 python3 -m _anvil_designer.generate_files
