@@ -62,6 +62,7 @@ rm -f "$app_on_laptop"/tests/database/*.log
 rm -f "$app_on_laptop"/tests/database/*.sqlite
 echo "Generating new pydal database schema (pydal_def.py)."
 # check that directories are there and writable
+cd "$app_on_laptop" || exit 1
 if ! python3 tests/pydal_def.py; then
     echo "Error when generating database files. Exiting."
     exit 1
