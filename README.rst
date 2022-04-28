@@ -1,51 +1,7 @@
 Note
 ====
 The best way to start is `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_.
-Basically it is an empty project. Clone it using::
-
-    git clone https://github.com/benlawraus/pyDALAnvilWorksDev --recursive
-    mv pyDALAnvilWorksDev myProject
-    cd myProject
-    chmod +x setup_project.zsh
-
-Before executing the script, change the first line in the script from::
-
-    myAnvilGit="ssh://youranvilworksusername@anvil.works:2222/gobblygook.git"
-
-To your actual anvil.works app.
-
-Also, check your database fields. AnvilWorks database types may need to be defined further. For example,
-'numbers' in AnvilWorks could be integer or double. Hence, redefine the column types with ``anvil._refined.yaml``.
-
-With these two issues done::
-
-    ./setup_project.zsh
-
-The script will:
-
-* Install your anvil.works app (using $myAnvilGit)
-* Set up a virtualenv. In the virtualenv it pip-installs:
-
-    *   `pyDAL <https://github.com/web2py/pydal>`_  (the database abstraction layer)
-    *   `strictyaml <https://github.com/crdoconnor/strictyaml>`_ (to parse yaml files)
-    *   `pytest <https://github.com/pytest-dev/pytest>`_
-    *   `pytest-tornasync <https://github.com/eukaryote/pytest-tornasync>`_ (Parallel pytest helper for pyDAL)
-
-* Use yaml2schema to setup database.
-* Copy the files from the anvil app to the project directories
-* Generate the ``_anvil_designer.py`` files for IDE auto-completion.
-* Create scripts for push and pull to anvil server.
-
-After ``setup_project.zsh`` is finished::
-
-    source venv/bin/activate
-    python3 -m pytest tests
-
-This will run a test to make sure your test user can log in and out.
-
-Next, create another directory called 'tests_myproject'. Place all your pytests in there.  Why? Well,
-then you can save your pytests directory as a github repo. Then if you want a fresh project, you could
-run the script again, but this time add your pytests directory as a git submodule.
+`pyDALAnvilWorksDev`_ will initialize this repo.
 
 pyDALAnvilWorks
 ===============
@@ -67,13 +23,11 @@ Recent Changes
 ..  csv-table::
     :header: "Before","Date","Now"
 
+    "no self.refresh_data_bindings as it is not in the API","Apr 28 2022","added a dummy function"
     "pyDALAnvilWorks awkward when updating","Mar 2 2022","using .gitmodules."
     "Bug in setting defaults","Feb 5 2022","Hopefully ok now."
     "No event handling",,"Can test for a .raise_event()"
     "error for form dropped into container",,"If your UI has drag-n-dropped form component it will import ok"
-    "git cloned dependencies",,"use `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_"
-    "scanty users wrapper",,"Complete anvil.users with more rugged login system to prevent flaky (py)tests."
-    "",,"added auto-complete for: **apptables.TABLE.**"
 
 
 
@@ -134,7 +88,7 @@ Try and Use It
 ^^^^^^^^^^^^^^
 
 One way is to git clone `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_. After downloading,
-rename it and run the script with your anvil app link.
+rename it and run the setup_script with your anvil app link.
 
 Once this is set-up use the push and pull scripts generated, to sync to and from your anvil app.
 
@@ -189,7 +143,31 @@ or in your test , call::
 
 Note that the included scripts do this for you.
 
-If there is an error, something in your ``yaml`` has not been implemented yet...
+The entire anvil docs have been converted into dummy classes and functions. If the IDE does not auto-complete,
+make sure the dummy class or function has an instruction to be imported. These class and functions are here:
+`Dummy anvil classes and functions <https://github.com/benlawraus/pyDALAnvilWorks/tree/master/_anvil_designer/componentsUI>`_
+
+A form is then a child class of a Template class imported by::
+
+    from ._anvil_designer import Form1Template
+
+A Form __init__ would look like::
+
+    class Form1(Form1Template):
+        def __init__(self, **properties):
+            # Set Form properties and Data Bindings.
+            self.init_components(**properties)
+            self.drop_down.items = ('up','down','sideways')
+
+When running python on the laptop, the attributes of Form1 are initialized in the self.init_components(), so::
+
+    self.drop_down.items = ('up','down','sideways')
+
+has to be **AFTER** the call to init_components().
+
+
+
+
 
 User Login/Logout
 ^^^^^^^^^^^^^^^^^
@@ -271,8 +249,8 @@ You need to then substitute your clone example for `myAnvilGit` in the `long_scr
 And see some tests in the `tests` directory.
 
 
-Gotchas
--------
+Some Rules for Use
+------------------
 
 Updating Rows
 ^^^^^^^^^^^^^^
@@ -286,7 +264,7 @@ updated. To update the database row, you have to use ``row.update()``
 Using dict(row)
 ^^^^^^^^^^^^^^^^
 The ``dict()`` function needed to be overwritten in order for it to work with pydal row objects. So if
-``dict()`` is used, also use::
+``dict()`` is used, also neet to use::
 
     from anvil import *
 

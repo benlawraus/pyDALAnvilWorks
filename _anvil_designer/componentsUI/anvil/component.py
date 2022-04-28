@@ -59,6 +59,7 @@ class Component():
     def set_event_handler(self, event_name, handler_func):
         """Set a function to call when the ‘event_name’ event happens on this component. Using set_event_handler removes all other handlers. Setting the handler function to None removes all handlers.		"""
         self._events[event_name] = [handler_func]
+
 @dataclass
 class Container(Component):
     _components:list = field(default_factory=list)
@@ -78,6 +79,13 @@ class Container(Component):
 
     def raise_event_on_children(self, event_name, **event_args):
         """Trigger the ‘event_name’ event on all children of this component. Any keyword arguments are passed to the handler function.		"""
+        pass
+
+    def refresh_data_bindings(self):
+        """All bound properties for a particular Form are updated whenever:
+            self.refresh_data_bindings() is called, or
+            self.init_components(**properties) is called, or
+            the self.item for the Form is set."""
         pass
 
 @dataclass
