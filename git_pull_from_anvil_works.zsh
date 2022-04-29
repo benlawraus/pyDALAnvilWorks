@@ -12,8 +12,8 @@ fi
 # copy files into back directory
 echo "Copying laptop files into backup directory before syncing."
 mkdir -p "$app_on_laptop"/backup
-cp -r $app_on_laptop/server_code/ $app_on_laptop/backup
-cp -r $app_on_laptop/client_code/ $app_on_laptop/backup
+cp -r $app_on_laptop/server_code $app_on_laptop/backup
+cp -r $app_on_laptop/client_code $app_on_laptop/backup
 
 #cd "$app_on_laptop" || exit 1
 #git commit -am "Before a pull from anvil.works"
