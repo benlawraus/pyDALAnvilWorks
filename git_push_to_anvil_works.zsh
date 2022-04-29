@@ -26,7 +26,7 @@ else
   if git diff --exit-code; then
       echo "${anvil_app} has no changes. Nothing to commit."
   else
-    git add -A  --quiet
+    git add . 1>/dev/null 2>/dev/null
     if git commit -am "Edited on laptop" --quiet; then
       echo "git commit completed with no errors after adding new files.."
     else
@@ -42,7 +42,7 @@ else
     Was trying to push to anvil.works."
     exit 1
 fi
-cd "$app_on_laptop" || exit 1
-rsync -a --include='*.yaml' --include='*/' --exclude='*' "$anvil_app"/client_code/ "$app_on_laptop"/client_code
-echo "Regenerating _anvil_designer.py files in ${PWD}"
-python3 -m _anvil_designer.generate_files
+#cd "$app_on_laptop" || exit 1
+#rsync -a --include='*.yaml' --include='*/' --exclude='*' "$anvil_app"/client_code/ "$app_on_laptop"/client_code
+#echo "Regenerating _anvil_designer.py files in ${PWD}"
+#python3 -m _anvil_designer.generate_files
