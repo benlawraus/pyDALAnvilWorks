@@ -114,7 +114,7 @@ def only_space(txt):
     clean_txt = []
     for _c in txt:
         if _c in string.whitespace and _c != ' ':
-            continue
+            _c = ' '
         clean_txt.append(_c)
     return ''.join(clean_txt)
 
@@ -130,7 +130,7 @@ def add_properties(value: sy.YAML, parent: str) -> Dict:
     txt = properties_as_dict.get("text", None)
     if txt:
         properties_as_dict["text"] = only_space(txt)
-    attrs.update(value['properties'].data)
+    attrs.update(properties_as_dict)
     # add parent class
     attrs.update({'parent': 'Container()'})  # Container(**{parent}) ?
     return attrs
