@@ -1,4 +1,5 @@
 import pathlib
+import string
 from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Tuple, List, Dict, Union
@@ -109,12 +110,26 @@ def dict2string(of_dict: Dict) -> str:
     return kwargs_string
 
 
+def only_space(txt):
+    clean_txt = []
+    for _c in txt:
+        if _c in string.whitespace and _c != ' ':
+            continue
+        clean_txt.append(_c)
+    return ''.join(clean_txt)
+
+
 def add_properties(value: sy.YAML, parent: str) -> Dict:
     """Adds the YAML 'properties' to `attrs` as key:value pairs."""
     attrs = dict()  # getattr(defaults, value['type'].text, dict())
     if len(value.get('properties', [])) == 0:
         return attrs
     validate_yaml(value, 'properties')
+    properties_as_dict = value['properties'].data
+    # check that there are no newlines in the text
+    txt = properties_as_dict.get("text", None)
+    if txt:
+        properties_as_dict["text"] = only_space(txt)
     attrs.update(value['properties'].data)
     # add parent class
     attrs.update({'parent': 'Container()'})  # Container(**{parent}) ?
@@ -188,8 +203,10 @@ def yaml2definition(parsed: sy.YAML, form_name):
     and the YAML 'properties' are attributes.
 
     Example
-    Before: dict('components':list({'type':ColumnPanel,'name':'column_panel1',properties:{'role':'blah','text':'My Form'} etc)
-    After: {'column_panel1':{'type':ColumnPanel, 'role':'blah', 'text':'My Form' etc}
+    Before:
+    dict('components':list({'type':ColumnPanel,'name':'column_panel1',properties:{'role':'blah','text':'My Form'} etc)
+    After:
+    {'column_panel1':{'type':ColumnPanel, 'role':'blah', 'text':'My Form' etc}
 """
     import_list = ["from _anvil_designer.componentsUI.anvil import *",
                    "from _anvil_designer.componentsUI.anvil import Container",
@@ -207,7 +224,7 @@ def yaml2definition(parsed: sy.YAML, form_name):
         default_string += f"{item.name} = dict(\n{item.as_string})\n"
         attr_string += f"{TAB}{key}: {item.of_type} = field(default_factory=lambda: {item.of_type}(**{item.name}))\n"
     class_string = '\n'.join(import_list) + '\n\n' + \
-                   default_string + '\n\n'+ \
+                   default_string + '\n\n' + \
                    f"@dataclass\nclass {form_name}Template({catalog[form_name].of_type}):\n" + \
                    attr_string
     class_string += f"""
