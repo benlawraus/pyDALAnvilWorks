@@ -125,12 +125,17 @@ def add_properties(value: sy.YAML, parent: str) -> Dict:
     if len(value.get('properties', [])) == 0:
         return attrs
     validate_yaml(value, 'properties')
-    properties_as_dict = value['properties'].data
-    # check that there are no newlines in the text
-    txt = properties_as_dict.get("text", None)
-    if txt:
-        properties_as_dict["text"] = only_space(txt)
-    attrs.update(properties_as_dict)
+    properties_data = value['properties'].data
+    try:
+        # check that there are no newlines in the text
+        txt = properties_data.get("text", None)
+        if txt:
+            properties_data["text"] = only_space(txt)
+        attrs.update(properties_data)
+    except AttributeError:
+        # if it is a list, the parent is probably a custom component
+        for p in properties_data:
+            attrs.update(p)
     # add parent class
     attrs.update({'parent': 'Container()'})  # Container(**{parent}) ?
     return attrs
@@ -192,6 +197,12 @@ def derive_dict(value: sy.YAML, catalog: OrderedDict, parent: str, import_list: 
             # create a dict from each in the component list
             derive_dict(component, catalog, parent, import_list)
     if top_level:
+        # check for properties
+        if 'properties' in value:
+            for property in value['properties']:
+                cat_card = lowest_level_component(property, parent, import_list)
+                cat_card.of_type = cat_card.of_type.capitalize()
+                catalog[cat_card.name]=cat_card
         value = value.get('container')
         value['name'] = sy.load(TOP_LEVEL_NAME, sy.Str())
     catalog[name] = lowest_level_component(value, parent, import_list)
