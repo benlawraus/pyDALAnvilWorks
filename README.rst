@@ -13,21 +13,11 @@ This project exists in order to use `PyCharm <https://www.jetbrains.com/pycharm/
 `anvil.works <https://anvil.works>`_ apps. It allow you to:
 
     * Use any local database while testing your `anvil.works <https://anvil.works>`_ app.
-    * Create and run tests using pytest. These tests would be for the python in client_side forms, as well as server_side python. No testing of javascript UI can be done here.
+    * Create and run tests using pytest. These tests would be for the python in client_side forms, as well as
+      server_side python. No testing of javascript UI can be done here, although it is possible to execute the
+      self.link_clicked(**event_args) of form's class.
     * Most importantly: use `PyCharm <https://www.jetbrains.com/pycharm/>`_ with auto-complete.
 
-
-Recent Changes
----------------
-
-..  csv-table::
-    :header: "Before","Date","Now"
-
-    "no self.refresh_data_bindings as it is not in the API","Apr 28 2022","added a dummy function"
-    "pyDALAnvilWorks awkward when updating","Mar 2 2022","using .gitmodules."
-    "Bug in setting defaults","Feb 5 2022","Hopefully ok now."
-    "No event handling",,"Can test for a .raise_event()"
-    "error for form dropped into container",,"If your UI has drag-n-dropped form component it will import ok"
 
 
 
@@ -74,9 +64,10 @@ Your directory structure on your laptop will look like this:
     - client_code  (git-cloned from anvil.works)
     - server_code  (git-cloned from anvil.works)
     - tests (your tests you run on your laptop)
-        - test1.py # your test file
         - database  (your sqlite and pydal files to run your database on your laptop)
         - pydal_def.py  # generated from anvil.yaml using yaml2schema
+    - tests_projects
+        - test_00_yaml.py  (your own pytest)
     - anvil.yaml (git-cloned from anvil.works)
 
 Kick the Tires
@@ -90,7 +81,8 @@ Try and Use It
 One way is to git clone `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_. After downloading,
 rename it and run the setup_script with your anvil app link.
 
-Once this is set-up use the push and pull scripts generated, to sync to and from your anvil app.
+Once this is set-up use the push and pull scripts generated, to sync to and from your anvil app.  Run ./yaml2schema.zsh
+after you change your database schema to sync with your online anvil app.
 
 If you want to, it is possible to download your anvil.works database into your laptop's sqlite database.
 A csv file can be exported from your anvil.works database and imported into your sqlite using  `pyDal <http://www.web2py.com/books/default/chapter/29/06/the-database-abstraction-layer#Exporting-and-importing-data>`_,
@@ -102,7 +94,7 @@ Laptop Testing an Anvil.Works app.
 server_code
 ^^^^^^^^^^^^
 The `anvil.yaml` file is used to generate the database and the `AppTable` class. The `AppTable` class is needed
-to have auto-complete in your IDE for table names. The database and AppTable needs to be re-generated
+to utilize auto-complete in your IDE for table names. The database and AppTable needs to be re-generated
 after every change to the database on anvil.works otherwise your code won't be synced.  This means your test
 database on your laptop will be deleted and re-schemed. `yaml2schema.zsh <https://github.com/benlawraus/pyDALAnvilWorks/blob/master/yaml2schema.zsh>`_
 does this for you.
@@ -127,8 +119,9 @@ Yes, this is annoying. Maybe there is a better way...
 client_code
 ^^^^^^^^^^^
 For client code tests, the ``_anvil_designer.py`` needs to be generated in the form directory. Every form needs one.
-``_anvil_designer`` allows testing on code on the client side (see ``test_ContactForm.py`` for some pytests) and auto-complete on form components.
-To generate these, run::
+``_anvil_designer`` allows testing on code on the client side (see ``test_ContactForm.py`` for some pytests) and
+auto-complete on form components.
+To generate the ``_anvil_designer.py`` files, run::
 
     python -m _anvil_designer.generate_files
 
@@ -144,7 +137,7 @@ or in your test , call::
 Note that the included scripts do this for you.
 
 The entire anvil docs have been converted into dummy classes and functions. If the IDE does not auto-complete,
-make sure the dummy class or function has an instruction to be imported. These class and functions are here:
+make sure the dummy class or function has an instruction to be imported. These classes and functions are here:
 `Dummy anvil classes and functions <https://github.com/benlawraus/pyDALAnvilWorks/tree/master/_anvil_designer/componentsUI>`_
 
 A form is then a child class of a Template class imported by::
@@ -196,7 +189,7 @@ There is a ``anvil.server.context`` object that could help you with types such a
         from typing import Union
         from .portable_contact import Phone, Email, Location
 
-        texts_to_check = dict()  # type: dict[str, Union[Phone,Email,Location]]
+    texts_to_check = dict()  # type: dict[str, Union[Phone,Email,Location]]
 
 
 
@@ -214,6 +207,9 @@ The files in the form directories ``_anvil_designer.py`` are (re)generated when 
 that syncs your laptop database schema from your anvil.works schema. To do this though, the old laptop database
 is erased.
 
+After running the setup script in `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_, scripts
+in the home directory will automatically have the correct paths.
+
 
 Anvil-Extras
 --------------
@@ -221,32 +217,9 @@ Anvil-Extras
 navigation module. So as to use it, there is an ``anvil_extras`` folder here too, but none of its tests or its functionality
 have been tested with pyDALAnvilWorks repo.
 
+What has been used successfully though, is to copy ``messaging.py`` from anvil_extras and placed in the ``client_code``
+folder. Then the publish/subscribe functionality can be used on your laptop and on anvil.works without further change.
 
-This project is in its infancy...
-
-Demonstration
---------------
-
-Simple
-^^^^^^
-
-This repo has a copy of an anvil.works app already there. So, you can download this repo and run a few commands in your terminal.
-Copy and paste what is inside `short_script.zsh <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/short_script.zsh>`_ to your mac terminal.
-
-
-Complicated
-^^^^^^^^^^^
-But if you want to see how to use your own anvil.works app here, try to understand this `script <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/long_script.zsh>`_.
-Copy into your terminal. It will download everything, including this repo.
-
-It will run in your terminal (good for python 3.7+). Before doing, make sure you
-create a copy of the example app in your `anvil.works` account.
-
-`CLONE ME <https://anvil.works/build#clone:63HO5XJHHGWRT4ZI=P4WJZJOPX4LOJOMPTTU5XPAT>`_
-
-You need to then substitute your clone example for `myAnvilGit` in the `long_script.zsh <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/long_script.zsh>`_. Take a look.
-
-And see some tests in the `tests` directory.
 
 
 Some Rules for Use
@@ -264,7 +237,7 @@ updated. To update the database row, you have to use ``row.update()``
 Using dict(row)
 ^^^^^^^^^^^^^^^^
 The ``dict()`` function needed to be overwritten in order for it to work with pydal row objects. So if
-``dict()`` is used, also neet to use::
+``dict()`` is used, also need to add::
 
     from anvil import *
 
@@ -319,9 +292,6 @@ occur after the users tables has been initialized. An example is from `test_Home
 Package and Module Forms
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In the anvil.works, there are package forms and module forms. pyDALAnvilWorks was built to handle package forms.
-
-
-to be continued....
 
 System
 ^^^^^^^
