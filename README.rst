@@ -239,7 +239,9 @@ Using dict(row)
 The ``dict()`` function needed to be overwritten in order for it to work with pydal row objects. So if
 ``dict()`` is used, also need to add::
 
-    from anvil import *
+if anvil.server.context.type == 'laptop':
+    from anvil import dict
+
 
 Circular Referencing Tables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
