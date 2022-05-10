@@ -10,6 +10,8 @@ class dict(UserDict):
         if len(args) > 0 and isinstance(args[0], pydal.helpers.classes.Reference):
             args_ix = []
             for attr in args[0]._table._fields:
+                if attr == 'id':
+                    continue
                 args_ix.append((attr, args[0][attr]))
             return super().__init__(args_ix)
         else:
