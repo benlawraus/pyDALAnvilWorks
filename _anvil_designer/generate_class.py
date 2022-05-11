@@ -124,7 +124,8 @@ def add_properties(value: sy.YAML, parent: str) -> Dict:
     attrs = dict()  # getattr(defaults, value['type'].text, dict())
     if len(value.get('properties', [])) == 0:
         return attrs
-    validate_yaml(value, 'properties')
+    # If validate_yaml is commented, then there is no check on the correctness of the yaml and other errors can occur.
+    # validate_yaml(value, 'properties')
     properties_data = value['properties'].data
     try:
         # check that there are no newlines in the text
