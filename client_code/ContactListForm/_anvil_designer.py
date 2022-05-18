@@ -3,12 +3,12 @@ from _anvil_designer.componentsUI.anvil import Container
 from dataclasses import dataclass, field
 
 repeating_panel_2 = dict(
-    role=None,
+    role='null',
     tooltip='',
     border='',
     foreground='',
-    items=None,
-    visible=True,
+    items='null',
+    visible='true',
     spacing_above='none',
     spacing_below='none',
     item_template='ContactDisplayForm',
@@ -16,16 +16,16 @@ repeating_panel_2 = dict(
     parent=Container(),
 )
 data_grid_1 = dict(
-    role=None,
+    role='null',
     columns=[{'id': 'IZKCYB', 'title': 'Name', 'data_key': 'name'}, {'id': 'VBCVHP', 'title': 'Phone', 'data_key': 'phone'}],
-    auto_header=True,
+    auto_header='true',
     tooltip='',
     border='',
     foreground='',
-    rows_per_page=20.0,
-    visible=True,
+    rows_per_page='20',
+    visible='true',
     wrap_on='never',
-    show_page_controls=True,
+    show_page_controls='true',
     spacing_above='small',
     spacing_below='small',
     background='',
