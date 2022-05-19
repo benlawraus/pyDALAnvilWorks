@@ -2,8 +2,8 @@ from collections import UserDict
 
 import pydal.helpers.classes, pydal.objects
 
-from _anvil_designer.componentsUI.anvil import *
-
+from .anvil_ui import *
+from .component import *
 
 class dict(UserDict):
     def __init__(self, *args, **kwargs):

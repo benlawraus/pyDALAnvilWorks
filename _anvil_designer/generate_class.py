@@ -82,7 +82,10 @@ def validate_yaml(value: sy.YAML, sequence_key: Union[str, int]) -> None:
                 validate_yaml(value[sequence_key], key)
     elif value[sequence_key].is_sequence():
         if len(value[sequence_key]) == 0:
-            value.revalidate(sy.EmptyList())
+            try:
+                value.revalidate(sy.EmptyList())
+            except:
+                del value[sequence_key]
         else:
             for ix in range(len(value[sequence_key])):
                 validate_yaml(value[sequence_key], ix)
@@ -125,7 +128,7 @@ def add_properties(value: sy.YAML, parent: str) -> Dict:
     if len(value.get('properties', [])) == 0:
         return attrs
     # If validate_yaml is commented, then there is no check on the correctness of the yaml and other errors can occur.
-    # validate_yaml(value, 'properties')
+    validate_yaml(value, 'properties')
     properties_data = value['properties'].data
     try:
         # check that there are no newlines in the text

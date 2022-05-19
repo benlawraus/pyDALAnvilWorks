@@ -13,6 +13,6 @@ def new_user_in_db():
     try:
         user_ref = mydal.db.users.insert(**user_generator())
     except AttributeError:
-        raise AttributeError("Database not defined. Did you forget 'mydal.define_tables_of_db()'?")
+        raise AttributeError("'User' table or Database not defined. Either no 'user' table or did not run 'mydal.define_tables_of_db()'?")
     mydal.db.commit()
     return user_ref  # gets last inserted user

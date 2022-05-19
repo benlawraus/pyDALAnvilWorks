@@ -1,3 +1,5 @@
+from .anvilUsers import *
+
 """Functions here over-write functions defined in _anvil_designer/componentsUI/anvilUsers"""
 import os
 import random
@@ -6,7 +8,6 @@ from warnings import warn
 import pydal.objects
 from tests import pydal_def as mydal
 from pydal import Field
-from _anvil_designer.componentsUI.anvilUsers import *
 
 
 def add_row(**kwargs):
