@@ -10,3 +10,10 @@ class ClassDict:
             return "Unassigned. (Databindings not implemented yet.)"
         return self.__dict__[item]
 
+
+def make_no_None_kwargs(**kwargs):
+    _kwargs = []
+    for key in kwargs:
+        if kwargs[key] is not None:
+            _kwargs.append(kwargs[key])
+    return _kwargs
