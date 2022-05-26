@@ -1,4 +1,5 @@
 import pydal.helpers.classes
+from .anvilTables import *
 
 from tests import pydal_def as mydal
 from anvil.tables.query import *

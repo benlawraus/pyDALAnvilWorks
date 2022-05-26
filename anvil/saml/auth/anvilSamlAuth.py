@@ -1,10 +1,3 @@
-from collections import defaultdict
-from dataclasses import dataclass, field
-from typing import List, Dict
-
-from _anvil_designer.common_structures import ClassDict
-
-
 def get_user_attributes():
     """Get the user attributes of the currently-logged-in SAML user.The exact attributes available will depend on
     your SAML Identity Provider. """
