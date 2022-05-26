@@ -66,7 +66,7 @@ def call(*args):
     # register
     """arg[0] = function name, arg[1:] are the arguments of function."""
     if args[0] not in PLUGINS:
-        pth = pathlib.Path(__file__).parent.parent / 'server_code'
+        pth = pathlib.Path(__file__).parent.parent.parent / 'server_code'
         for p in pth.iterdir():
             if p.is_file():
                 import_source_file(p, p.stem)

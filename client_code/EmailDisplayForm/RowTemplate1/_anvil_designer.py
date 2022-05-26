@@ -1,5 +1,4 @@
-from _anvil_designer.componentsUI.anvil import *
-from _anvil_designer.componentsUI.anvil import Container
+from anvil import *
 from dataclasses import dataclass, field
 
 

@@ -231,8 +231,7 @@ def yaml2definition(parsed: sy.YAML, form_name):
     After:
     {'column_panel1':{'type':ColumnPanel, 'role':'blah', 'text':'My Form' etc}
 """
-    import_list = ["from _anvil_designer.componentsUI.anvil import *",
-                   "from _anvil_designer.componentsUI.anvil import Container",
+    import_list = ["from anvil import *",
                    "from dataclasses import dataclass, field"]
 
     catalog = OrderedDict()
