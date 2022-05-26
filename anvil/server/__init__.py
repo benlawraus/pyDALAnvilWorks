@@ -1,3 +1,5 @@
+from .anvilServer import *
+
 """Thanks to https://realpython.com/primer-on-python-decorators/
 """
 import pickle
@@ -85,3 +87,4 @@ def class_decor(_class):
 
 
 portable_class = class_decor
+
