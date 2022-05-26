@@ -137,8 +137,8 @@ or in your test , call::
 Note that the included scripts do this for you.
 
 The entire anvil docs have been converted into dummy classes and functions. If the IDE does not auto-complete,
-make sure the dummy class or function has an instruction to be imported. These classes and functions are here:
-`Dummy anvil classes and functions <https://github.com/benlawraus/pyDALAnvilWorks/tree/master/_anvil_designer/componentsUI>`_
+make sure the dummy class or function has an instruction to be imported. These classes and functions are in the `anvil`
+folder.
 
 A form is then a child class of a Template class imported by::
 
@@ -181,8 +181,11 @@ Type Checking
 ^^^^^^^^^^^^^
 It is possible to type check client code using Python 2 style comments and
 PyCharm. See `PyCharm type checking <https://www.jetbrains.com/help/pycharm/type-hinting-in-product.html>`_
-There is a ``anvil.server.context`` object that could help you with types such as ``Union`` and ``Any``.  Here,
-``anvil.server.context.type = "laptop"`` so in your client code (thanks,
+There is a ``anvil.server.context`` object that could help you with types such as ``Union`` and ``Any``.  Here::
+
+    anvil.server.context.type = "laptop"
+
+so in your client code (thanks,
 `Stefano <https://anvil.works/forum/t/detecting-whether-anvil-is-running-in-the-browser-typing/10975/2?u=ben.lawrence>`_) ::
 
     if anvil.server.context.type == "laptop":  # for type checking
@@ -201,7 +204,7 @@ Two scripts are included here to make that easier :
 `git_push_to_anvil_works.zsh <https://raw.githubusercontent.com/benlawraus/pyDALAnvilWorks/master/git_push_to_anvil_works.zsh>`_.
 They assume you have your anvil app already git-cloned on your laptop.
 
-The files in the form directories ``_anvil_designer.py`` are (re)generated when you use ``git_pull_from_anvil_works.zsh``.
+The files in the form directories `_anvil_designer.py` are (re)generated when you use `git_pull_from_anvil_works.zsh`.
 
 `yaml2schema.zsh <https://github.com/benlawraus/pyDALAnvilWorks/blob/master/yaml2schema.zsh>`_ is another script
 that syncs your laptop database schema from your anvil.works schema. To do this though, the old laptop database
@@ -214,11 +217,12 @@ in the home directory will automatically have the correct paths.
 Anvil-Extras
 --------------
 `Anvil-Extras <https://github.com/anvilistas/anvil-extras>`_ is really nice, especially its publish-subscribe module and its
-navigation module. So as to use it, there is an ``anvil_extras`` folder here too, but none of its tests or its functionality
+navigation module. So as to use it, there is an `anvil_extras` folder here too, but none of its tests or its functionality
 have been tested with pyDALAnvilWorks repo.
 
-What has been used successfully though, is to copy ``messaging.py`` from anvil_extras and placed in the ``client_code``
-folder. Then the publish/subscribe functionality can be used on your laptop and on anvil.works without further change.
+What has been used successfully though, is to copy `messaging.py` from anvil_extras and placed in the `client_code`
+folder. Then the publish/subscribe functionality can be used on your laptop and on anvil.works without further
+(Of course, then you do not need to have `anvil_extras` as a third-party dependence.)
 
 
 
@@ -231,21 +235,21 @@ Updating Rows
 
     row['name']="Rex Eagle"
 
-This is allowed in this wrapper, with the allowance that no sqlite row will be updated, only the object ``row`` will be
-updated. To update the database row, you have to use ``row.update()``
+This is allowed in this wrapper, with the allowance that no sqlite row will be updated, only the object `row` will be
+updated. To update the database row, you have to use `row.update()`
 
 Using dict(row)
 ^^^^^^^^^^^^^^^^
-The ``dict()`` function needed to be overwritten in order for it to work with pydal row objects. So if
-``dict()`` is used, also need to add::
+The `dict()` function needed to be overwritten in order for it to work with pydal row objects. So if
+`dict()` is used, also need to add::
 
-if anvil.server.context.type == 'laptop':
-    from anvil import dict
+    if anvil.server.context.type == 'laptop':
+        from anvil import dict
 
 
 Circular Referencing Tables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``yaml2schema`` cannot handle two tables referencing each-other. For example::
+`yaml2schema` cannot handle two tables referencing each-other. For example::
 
         child_table['parent_table']  <-> parent_table['child_table']
 
@@ -287,8 +291,6 @@ occur after the users tables has been initialized. An example is from `test_Home
                 from client_code.HomeForm import HomeForm
                 home_form=HomeForm()
                 home_form.contact_form.repeating_panel_2.raise_event("x-contact_name", uid=contact_ref)
-
-
 
 
 Package and Module Forms
