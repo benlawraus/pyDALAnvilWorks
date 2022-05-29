@@ -155,9 +155,9 @@ class CatalogCard:
 
 def format_import_list(of_type: str) -> str:
     modules = of_type.split('.')
-    nr_dots = '.'*len(modules)
-    if len(modules)==1:
-        nr_dots+='.'
+    nr_dots = '.' * len(modules)
+    if len(modules) == 1:
+        nr_dots += '.'
     return f"from {nr_dots}{of_type} import {modules[-1]}"
 
 
@@ -211,8 +211,8 @@ def derive_dict(value: sy.YAML, catalog: OrderedDict, parent: str, import_list: 
     if top_level:
         # check for properties
         if 'properties' in value:
-            for property in value['properties']:
-                cat_card = lowest_level_component(property, parent, import_list)
+            for prop in value['properties']:
+                cat_card = lowest_level_component(prop, parent, import_list)
                 cat_card.of_type = cat_card.of_type.capitalize()
                 catalog[cat_card.name] = cat_card
         value = value.get('container')
@@ -241,10 +241,10 @@ def yaml2definition(parsed: sy.YAML, form_name):
     attr_string = ""
     default_string = ""
     for key, item in catalog.items():
-        if key == form_name:
+        if key == form_name or len(item.name.split()) == 0:
             continue
         default_string += f"{item.name} = dict(\n{item.as_string})\n"
-        _class=item.of_type.split('.')[-1]
+        _class = item.of_type.split('.')[-1]
         attr_string += f"{TAB}{key}: {_class} = field(default_factory=lambda: {_class}(**{item.name}))\n"
     class_string = '\n'.join(import_list) + '\n\n' + \
                    default_string + '\n\n' + \
