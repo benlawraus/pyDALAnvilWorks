@@ -20,39 +20,6 @@ This project exists in order to use `PyCharm <https://www.jetbrains.com/pycharm/
 
 
 
-How is it done?
----------------
-Server-side
-^^^^^^^^^^^
-The program uses `pyDAL <https://github.com/web2py/pydal>`_ to substitute
-the database interactions. This means you can git clone your app on your laptop and run some tests on it without
-modifying your app or using the external server's database. The anvil.works commands have been turned into wrappers for
-`pyDAL <https://github.com/web2py/pydal>`_ commands to your sqlite database on your laptop.
-
-**But how is the sqlite database set-up?**
-
-`Yaml2Schema <https://github.com/benlawraus/yaml2schema>`_ uses the
-file called ``anvil.yaml``. This file contains a description of your
-database schema. `Yaml2Schema  <https://github.com/benlawraus/yaml2schema>`_ will read
-the ``anvil.yaml`` and generate a `pyDAL <https://github.com/web2py/pydal>`_
-definition file (``pydal_def.py``) that should be placed into your
-``tests`` directory. During your set-up, this file is executed and generates the sqlite database. Note that
-if you want to run any other kind of database (e.g. postgresql, mysql etc) instead of sqlite,
-you can do this by changing the adapter in ``pydal_def.py``.
-Take a look at the pyDAL's `documentation <https://py4web.com/_documentation/static/en/chapter-07.html>`_ to know more.
-
-Client-side
-^^^^^^^^^^^
-For the client-side, ``_anvil_designer.py`` files are generated to mimic the UI on `anvil.works <anvil.works>`_. When your
-client_side code meets a component it uses a dummy class from that file instead.
-
-``_anvil_designer.py`` will be referencing other dummy classes and functions in ``anvil`` directory. If you want to
-flesh them out a bit, you can do that there. Otherwise, most likely functions will have a ``def function(*args):pass`` format.
-
-``anvil`` directory is basically the `anvil API docs <https://anvil.works/docs/api>`_ turned into python code.
-All the methods and functions in the api are in this directory.
-If your IDE is not auto-completing for a method, it probably is because an entry needs to be made in ``anvil/__init__.py``
-to point to that method. PyCharm is smart enough to find it.
 
 How to use it?
 ---------------
@@ -68,6 +35,7 @@ Your directory structure on your laptop will look like this:
     - tests_projects
         - test_00_yaml.py  (your own pytest)
     - anvil.yaml (git-cloned from anvil.works)
+    - backup  This is a copy of client_code and server_code that is saved here before pulling the app from anvil.works.
 
 Kick the Tires
 ^^^^^^^^^^^^^^
@@ -78,7 +46,7 @@ Try and Use It
 ^^^^^^^^^^^^^^
 
 One way is to git clone `pyDALAnvilWorksDev <https://github.com/benlawraus/pyDALAnvilWorksDev>`_. After downloading,
-rename it and run the setup_script with your anvil app link.
+rename it and run `pyDALAnvilWorksDev`_'s setup_script edited with your anvil app link.
 
 Once this is set-up use the push and pull scripts generated, to sync to and from your anvil app.  Run ./yaml2schema.zsh
 after you change your database schema to sync with your online anvil app.
@@ -293,6 +261,41 @@ occur after the users tables has been initialized. An example is from `test_Home
 Package and Module Forms
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In the anvil.works, there are package forms and module forms. pyDALAnvilWorks was built to handle package forms.
+
+
+How is it done?
+---------------
+Server-side
+^^^^^^^^^^^
+The program uses `pyDAL <https://github.com/web2py/pydal>`_ to substitute
+the database interactions. This means you can git clone your app on your laptop and run some tests on it without
+modifying your app or using the external server's database. The anvil.works commands have been turned into wrappers for
+`pyDAL <https://github.com/web2py/pydal>`_ commands to your sqlite database on your laptop.
+
+**But how is the sqlite database set-up?**
+
+`Yaml2Schema <https://github.com/benlawraus/yaml2schema>`_ uses the
+file called ``anvil.yaml``. This file contains a description of your
+database schema. `Yaml2Schema  <https://github.com/benlawraus/yaml2schema>`_ will read
+the ``anvil.yaml`` and generate a `pyDAL <https://github.com/web2py/pydal>`_
+definition file (``pydal_def.py``) that should be placed into your
+``tests`` directory. During your set-up, this file is executed and generates the sqlite database. Note that
+if you want to run any other kind of database (e.g. postgresql, mysql etc) instead of sqlite,
+you can do this by changing the adapter in ``pydal_def.py``.
+Take a look at the pyDAL's `documentation <https://py4web.com/_documentation/static/en/chapter-07.html>`_ to know more.
+
+Client-side
+^^^^^^^^^^^
+For the client-side, ``_anvil_designer.py`` files are generated to mimic the UI on `anvil.works <anvil.works>`_. When your
+client_side code meets a component it uses a dummy class from that file instead.
+
+``_anvil_designer.py`` will be referencing other dummy classes and functions in ``anvil`` directory. If you want to
+flesh them out a bit, you can do that there. Otherwise, most likely functions will have a ``def function(*args):pass`` format.
+
+``anvil`` directory is basically the `anvil API docs <https://anvil.works/docs/api>`_ turned into python code.
+All the methods and functions in the api are in this directory.
+If your IDE is not auto-completing for a method, it probably is because an entry needs to be made in ``anvil/__init__.py``
+to point to that method. PyCharm is smart enough to find it.
 
 System
 ^^^^^^^
