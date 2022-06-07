@@ -107,6 +107,7 @@ def dict2string(of_dict: Dict) -> str:
     kwargs_string = ""
     for key, value in of_dict.items():
         if isinstance(value, str):
+            value = value.replace('\n',' ')
             if key != 'parent':
                 value = f"'{value}'"
         kwargs_string += kwargs_template.substitute(key=key, value=value)
