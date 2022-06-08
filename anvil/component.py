@@ -1,6 +1,7 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import List, Dict
+from unittest.mock import Mock
 
 from _anvil_designer.common_structures import ClassDict
 
@@ -71,7 +72,7 @@ class Container(Component):
 
     def add_component(self, component, **kwargs):
         """Add a component to this container.		"""
-        if kwargs.get('index',None):
+        if kwargs.get('index', None):
             self._components.insert(kwargs["index"])
         else:
             self._components.append(component)
@@ -101,9 +102,8 @@ class Container(Component):
 class Media():
     def get_bytes(self):
         """Get a binary string of the data represented by this Media object		"""
-        pass
+        return Mock()
 
-    pass
 
 
 def alert(content, title="", buttons=None, large=False, dismissible=True, role=None):
@@ -111,6 +111,7 @@ def alert(content, title="", buttons=None, large=False, dismissible=True, role=N
     if buttons:
         return buttons[0][1]
     return True
+
 
 def confirm(content, title="", buttons=None, large=False, dismissible=False, role=None):
     """Pop up a confirmation box. By default, it will have “Yes” and “No” buttons which will return True and False
@@ -120,34 +121,34 @@ def confirm(content, title="", buttons=None, large=False, dismissible=False, rol
 
 def download(media):
     """Download the given Media Object immediately in the user’s browser."""
-    pass
+    return Mock()
 
 
 def get_focused_component():
     """Get the currently focused Anvil component, or None if focus is not in a component."""
-    pass
+    return Mock()
 
 
 def get_open_form():
     """Returns the form most recently opened with open_form()."""
-    pass
+    return Mock()
 
 
 def get_url_hash():
     """Get the decoded hash (the part after the ‘#’ character) of the URL used to open this app. If the first character of the hash is a question mark (eg ‘#?a=foo&b=bar’), it will be interpreted as query-string-type parameters and returned as a dictionary (eg {‘a’: ‘foo’, ‘b’: ‘bar’})."""
-    pass
+    return Mock()
 
 
 def open_form(form, *args, **kwargs):
     """Open the specified form as a new page.If ‘form’ is a string, a new form will be created (extra arguments will be passed to its constructor).If ‘form’ is a Form object, it will be opened directly."""
-    pass
+    return Mock()
 
 
 def set_default_error_handling(handler_fn):
     """Set a function to be called when an uncaught exception occurs. If set to None, a pop-up will appear letting the user know that an error has occurred."""
-    pass
+    return Mock()
 
 
 def set_url_hash(*args, **kwargs):
     """This is added for `anvil_extras`. for some reason it is not in the anvil documentation."""
-    pass
+    return Mock()
