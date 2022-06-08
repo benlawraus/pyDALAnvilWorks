@@ -26,10 +26,10 @@ def get_connection_string(via_host=None, via_port=None):
     pass
 
 
-def in_transaction(function, server_function):
+def in_transaction(function):
     """When applied to a function (as a decorator), the whole function will run in a data tables transaction. If it
     conflicts with another transaction, it will retry up to five times. """
-    pass
+    return function
 
 
 def order_by(column_name, ascending):

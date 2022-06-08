@@ -42,6 +42,7 @@ def save_contact(contact_dict):
 
 
 @anvil.server.callable
+@anvil.tables.in_transaction
 def get_emails():
     user = anvil.users.get_user()
     email_rows = app_tables.email.search(created_by=user)
