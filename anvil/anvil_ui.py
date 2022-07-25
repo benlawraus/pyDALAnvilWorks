@@ -32,7 +32,11 @@ Form = object
 
 @dataclass
 class BlobMedia(Media):
-    pass
+    """Create a Media object with the specified content_type (a string such as ‘text/plain’) and content (a binary string).
+    Optionally specify a filename as well."""
+    content_type: String = field(default_factory=String)
+    content: Object = field(default_factory=Object)
+    name: String = None
 
 
 @dataclass

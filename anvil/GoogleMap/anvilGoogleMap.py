@@ -6,12 +6,12 @@ from _anvil_designer.common_structures import *
 
 
 @dataclass
-class Icon():
+class Icon:
     pass
 
 
 @dataclass
-class LatLng():
+class LatLng:
     def lat(self):
         """Returns the latitude in degrees.		"""
         pass
@@ -235,15 +235,33 @@ class IconSequence():
 
 @dataclass
 class InfoWindow(Component):
+    """
+    GoogleMap.InfoWindow
+
+    Display a popup on the map at a particular position.
+
+    Properties
+
+    position: GoogleMap.LatLng - Specifies the position of the popup. Not required if this popup is anchored to a component (see the open method, below).
+    content: anvil.Component | string - The content of the popup. Can be a string, or an Anvil Component.
+    """
     content: Component = field(default_factory=Component)  # Content to display in the InfoWindow.
     disable_auto_pan: Boolean = field(default_factory=Boolean)  # Disable auto-pan on open.
     max_width: Number = field(default_factory=Number)  # Maximum width of the infowindow, regardless of content’s width.
     parent: Container = field(default_factory=Container)  #
-    pixel_offset: Size = field(default_factory=Size)  # The offset, in pixels, of the tip of the info window from the point on the map at whose geographical coordinates the info window is anchored.
+    pixel_offset: Size = field(
+        default_factory=Size)  # The offset, in pixels, of the tip of the info window from the point on the map at whose geographical coordinates the info window is anchored.
     position: LatLng = field(default_factory=LatLng)  # The LatLng at which to display this InfoWindow.
     z_index: Number = field(
         default_factory=Number)  # All InfoWindows are displayed on the map in order of their zIndex, with higher values displaying in front of InfoWindows with lower values.
-    pass
+
+    def open(self, map, anchor=None):
+        """ Display this InfoWindow on the specified map. If anchor is specified, the InfoWindow does not need to have its own position property set."""
+        pass
+
+    def close(self):
+        """ Hide this InfoWindow. The user can also cause this to happen by clicking the close button in the top-right of the popup."""
+        pass
 
 
 @dataclass
