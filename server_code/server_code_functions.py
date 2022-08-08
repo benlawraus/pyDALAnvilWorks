@@ -47,3 +47,14 @@ def get_emails():
     user = anvil.users.get_user()
     email_rows = app_tables.email.search(created_by=user)
     return email_rows
+
+
+@anvil.server.background_task
+def multiply(a, b):
+    return a * b
+
+
+@anvil.server.callable
+def run_background(a, b):
+    c = anvil.server.launch_background_task('multiply', a, b)
+    return c

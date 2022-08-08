@@ -1,6 +1,6 @@
 from _anvil_designer.set_up_user import new_user_in_db
 import anvil.users
-from server_code.server_code_functions import example_1
+from server_code.server_code_functions import example_1, run_background
 from client_code.client_code_functions import example_A, save_contact_from_client
 from tests import pydal_def as mydal
 
@@ -42,3 +42,11 @@ class TestServer:
         from client_code.EmailDisplayForm import EmailDisplayForm
         test_import_ok = EmailDisplayForm()
         anvil.users.logout()
+
+
+    def test_background_task(self):
+        a=3
+        b=4
+        answer = run_background(a,b)
+        assert 12 == answer
+
