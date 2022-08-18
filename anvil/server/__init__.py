@@ -18,6 +18,8 @@ class Context:
 PLUGINS = dict()
 context = Context()
 
+no_loading_indicator = NoLoadingIndicator()
+
 
 def callable(_func=None, *, require_user=None):
     """ Wraps the decorator of the function."""

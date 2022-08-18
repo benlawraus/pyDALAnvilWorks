@@ -139,3 +139,12 @@ def launch_background_task(*args):
             temp = pickle.dumps(arg)
             new_args.append(pickle.loads(temp))
         return BACKGROUND_FUNCTIONS[args[0]](*new_args)
+
+
+class NoLoadingIndicator:
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
