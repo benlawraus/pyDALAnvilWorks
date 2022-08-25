@@ -107,7 +107,7 @@ def dict2string(of_dict: Dict) -> str:
     kwargs_string = ""
     for key, value in of_dict.items():
         if isinstance(value, str):
-            value = value.replace('\n',' ')
+            value = value.replace('\n', ' ')
             if key != 'parent':
                 value = f"'{value}'"
         kwargs_string += kwargs_template.substitute(key=key, value=value)
@@ -128,7 +128,8 @@ def add_properties(value: sy.YAML, parent: str) -> Dict:
     attrs = dict()  # getattr(defaults, value['type'].text, dict())
     if len(value.get('properties', [])) == 0:
         return attrs
-    # If validate_yaml is commented, then there is no check on the correctness of the yaml and other errors can occur.
+    # If validate_yaml is commented out,
+    # then there is no check on the correctness of the yaml and other errors can occur.
     validate_yaml(value, 'properties')
     properties_data = value['properties'].data
     try:
@@ -147,11 +148,19 @@ def add_properties(value: sy.YAML, parent: str) -> Dict:
 
 
 @dataclass
+class DataBinding:
+    item: str  # usually in the form of `item['font']`
+    element: str  # usually in the form of `rich_text1.text`
+    writeback: bool
+
+
+@dataclass
 class CatalogCard:
     name: str
     of_type: str
     parent: str
     as_string: str
+    databindings: List[DataBinding]
 
 
 def format_import_list(of_type: str) -> str:
@@ -160,6 +169,16 @@ def format_import_list(of_type: str) -> str:
     if len(modules) == 1:
         nr_dots += '.'
     return f"from {nr_dots}{of_type} import {modules[-1]}"
+
+
+def add_databindings(value: sy.YAML):
+    """    An example of output is :
+    `self.__bindings = [{'item': "item['text']", 'element': "text_area.text", 'writeback': True}]`
+    """
+    return [DataBinding(db['code'].text,
+                        value['name'].text + "." + db['property'].text,
+                        db.get('writeback', None) is not None).__dict__
+            for db in value.get('data_bindings', [])]
 
 
 def lowest_level_component(value: sy.YAML, parent: str, import_list: List[str]) -> CatalogCard:
@@ -179,22 +198,26 @@ def lowest_level_component(value: sy.YAML, parent: str, import_list: List[str]) 
         import_list.append(format_import_list(of_type))
     attrs = add_properties(value, parent)
     attrs_as_string = dict2string(attrs)
-    return CatalogCard(name=name, of_type=of_type, parent=parent, as_string=attrs_as_string)
+    databindings = add_databindings(value)
+    # db_as_string = "".join([dict2string(databinding)+",\n" for databinding in databindings])
+    return CatalogCard(name=name, of_type=of_type, parent=parent, as_string=attrs_as_string, databindings=databindings)
 
 
-def derive_dict(value: sy.YAML, catalog: OrderedDict, parent: str, import_list: List[str]):
-    """
+def derive_dict(value: sy.YAML, catalog: OrderedDict[str, CatalogCard], parent: str, import_list: List[str]):
+    """Organizes the YAML into a nested dict where the keys are the names of the components
+    and the YAML 'properties' are attributes.
 
-    Parameters
-    ----------
-    value :
-    catalog :
-    parent :
-    import_list :
+    Example
+    Before:
+    dict('components':list({'type':ColumnPanel,'name':'column_panel1',properties:{'role':'blah','text':'My Form'} etc)
+    After:
+    {'column_panel1':{'type':ColumnPanel, 'role':'blah', 'text':'My Form' etc}
 
-    Returns
-    -------
-
+    :param value: The YAML from the `form_template.yaml` file
+    :param catalog: This is this function's return. It is a parameter because this function is recursive.
+    :param parent:
+    :param import_list: Contains the import statement at beginning of file.
+    :return: None   (`catalog` is changed)
     """
     top_level = False
     try:
@@ -222,37 +245,56 @@ def derive_dict(value: sy.YAML, catalog: OrderedDict, parent: str, import_list: 
     return
 
 
-def yaml2definition(parsed: sy.YAML, form_name):
-    """Organizes the YAML into a nested dict where the keys are the names of the components
-    and the YAML 'properties' are attributes.
+def databindings_as_string(databindings, TAB):
+    as_str = 'databindings = [\n'
+    for d in databindings:
 
-    Example
-    Before:
-    dict('components':list({'type':ColumnPanel,'name':'column_panel1',properties:{'role':'blah','text':'My Form'} etc)
-    After:
-    {'column_panel1':{'type':ColumnPanel, 'role':'blah', 'text':'My Form' etc}
-"""
-    import_list = ["from anvil import *",
-                   "from dataclasses import dataclass, field"]
+        as_str += f'{TAB}dict(' + dict2string(d).replace('\n', '').replace(TAB, ' ').replace("['",'["').replace("']",'"]') + '),\n'
+    as_str += ']'
+    return as_str
 
-    catalog = OrderedDict()
-    TAB = '    '
-    derive_dict(parsed, catalog, form_name, import_list)
-    # create form class
-    attr_string = ""
+
+def form_the__init__str(catalog: OrderedDict[str, CatalogCard], form_name: str, TAB: str) -> Tuple[str, str]:
+    """Derives the def __init__() part of the class definition from catalog."""
+    attr_string = f"{TAB}def __init__(self, **properties):\n{TAB}{TAB}super({form_name}Template, self).__init__()\n"
     default_string = ""
+    databindings = []
     for key, item in catalog.items():
         if key == form_name or len(item.name.split()) == 0:
             continue
         default_string += f"{item.name} = dict(\n{item.as_string})\n"
         _class = item.of_type.split('.')[-1]
-        attr_string += f"{TAB}{key}: {_class} = field(default_factory=lambda: {_class}(**{item.name}))\n"
+        attr_string += f"{TAB}{TAB}self.{key} = {_class}(**{item.name})\n"
+        databindings.extend(item.databindings)
+    # add databindings
+    databindings_as_str = databindings_as_string(databindings, TAB)
+    default_string += databindings_as_str
+    attr_string += f"{TAB}{TAB}self.__bindings = databindings"
+    attr_string += f"""
+{TAB}{TAB}if len(self.__bindings) >0:
+{TAB}{TAB}{TAB}self.item = binding_property('item')
+{TAB}{TAB}if properties.get('item', None):
+{TAB}{TAB}    self.item = properties['item']
+    """
+    return attr_string, default_string
+
+
+def yaml2definition(parsed: sy.YAML, form_name):
+    """Converts the YAML into a string that contains the class definition."""
+    import_list = ["from anvil import *",
+                   # "from dataclasses import dataclass, field",
+                   "from _anvil_designer.common_structures import binding_property"
+                   ]
+    catalog = OrderedDict()
+    TAB = '    '
+    derive_dict(parsed, catalog, form_name, import_list)
+    attr_string, default_string = form_the__init__str(catalog, form_name, TAB)
     class_string = '\n'.join(import_list) + '\n\n' + \
                    default_string + '\n\n' + \
-                   f"@dataclass\nclass {form_name}Template({catalog[form_name].of_type}):\n" + \
+                   f"class {form_name}Template({catalog[form_name].of_type}):\n" + \
                    attr_string
     class_string += f"""
-    def init_components(self, **kwargs):
-        {form_name}Template.__init__(self)
+    def init_components(self, **properties):
+        {form_name}Template.__init__(self, **properties)
 """
     return class_string
