@@ -1,5 +1,5 @@
 from anvil import *
-from dataclasses import dataclass, field
+from _anvil_designer.common_structures import binding_property
 
 link_signin = dict(
     role=None,
@@ -95,17 +95,24 @@ content_panel = dict(
 )
 menu_panel = dict(
 )
+databindings = [
+]
 
-
-@dataclass
 class HomeFormTemplate(HtmlTemplate):
-    link_signin: Link = field(default_factory=lambda: Link(**link_signin))
-    link_login: Link = field(default_factory=lambda: Link(**link_login))
-    navbar_links: FlowPanel = field(default_factory=lambda: FlowPanel(**navbar_links))
-    label_title: Label = field(default_factory=lambda: Label(**label_title))
-    rich_text_1: RichText = field(default_factory=lambda: RichText(**rich_text_1))
-    content_panel: ColumnPanel = field(default_factory=lambda: ColumnPanel(**content_panel))
-    menu_panel: ColumnPanel = field(default_factory=lambda: ColumnPanel(**menu_panel))
-
-    def init_components(self, **kwargs):
-        HomeFormTemplate.__init__(self)
+    def __init__(self, **properties):
+        super(HomeFormTemplate, self).__init__()
+        self.link_signin = Link(**link_signin)
+        self.link_login = Link(**link_login)
+        self.navbar_links = FlowPanel(**navbar_links)
+        self.label_title = Label(**label_title)
+        self.rich_text_1 = RichText(**rich_text_1)
+        self.content_panel = ColumnPanel(**content_panel)
+        self.menu_panel = ColumnPanel(**menu_panel)
+        self.__bindings = databindings
+        if len(self.__bindings) >0:
+            self.item = binding_property('item')
+        if properties.get('item', None):
+            self.item = properties['item']
+    
+    def init_components(self, **properties):
+        HomeFormTemplate.__init__(self, **properties)

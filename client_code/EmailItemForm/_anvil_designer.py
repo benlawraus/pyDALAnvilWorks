@@ -1,5 +1,5 @@
 from anvil import *
-from dataclasses import dataclass, field
+from _anvil_designer.common_structures import binding_property
 
 label_email = dict(
     role=None,
@@ -114,17 +114,25 @@ column_panel_1 = dict(
     col_widths='{}',
     parent=Container(),
 )
+databindings = [
+    dict( item='self.item["email"]', element='text_box_email.text', writeback=True,),
+]
 
-
-@dataclass
 class EmailItemFormTemplate(ColumnPanel):
-    label_email: Label = field(default_factory=lambda: Label(**label_email))
-    text_box_email: TextBox = field(default_factory=lambda: TextBox(**text_box_email))
-    button_1: Button = field(default_factory=lambda: Button(**button_1))
-    radio_btn_work: RadioButton = field(default_factory=lambda: RadioButton(**radio_btn_work))
-    radio_button_2: RadioButton = field(default_factory=lambda: RadioButton(**radio_button_2))
-    radio_button_3: RadioButton = field(default_factory=lambda: RadioButton(**radio_button_3))
-    column_panel_1: ColumnPanel = field(default_factory=lambda: ColumnPanel(**column_panel_1))
-
-    def init_components(self, **kwargs):
-        EmailItemFormTemplate.__init__(self)
+    def __init__(self, **properties):
+        super(EmailItemFormTemplate, self).__init__()
+        self.label_email = Label(**label_email)
+        self.text_box_email = TextBox(**text_box_email)
+        self.button_1 = Button(**button_1)
+        self.radio_btn_work = RadioButton(**radio_btn_work)
+        self.radio_button_2 = RadioButton(**radio_button_2)
+        self.radio_button_3 = RadioButton(**radio_button_3)
+        self.column_panel_1 = ColumnPanel(**column_panel_1)
+        self.__bindings = databindings
+        if len(self.__bindings) >0:
+            self.item = binding_property('item')
+        if properties.get('item', None):
+            self.item = properties['item']
+    
+    def init_components(self, **properties):
+        EmailItemFormTemplate.__init__(self, **properties)

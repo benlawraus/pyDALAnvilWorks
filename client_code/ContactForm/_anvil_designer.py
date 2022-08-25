@@ -1,5 +1,5 @@
 from anvil import *
-from dataclasses import dataclass, field
+from _anvil_designer.common_structures import binding_property
 from ..EmailDisplayForm import EmailDisplayForm
 
 label_name = dict(
@@ -94,20 +94,27 @@ content_panel = dict(
     col_widths='{}',
     parent=Container(),
 )
+databindings = [
+]
 
-
-@dataclass
 class ContactFormTemplate(HtmlTemplate):
-    label_name: Label = field(default_factory=lambda: Label(**label_name))
-    text_box_name: TextBox = field(default_factory=lambda: TextBox(**text_box_name))
-    label_phone: Label = field(default_factory=lambda: Label(**label_phone))
-    text_box_phone: TextBox = field(default_factory=lambda: TextBox(**text_box_phone))
-    column_panel_1: ColumnPanel = field(default_factory=lambda: ColumnPanel(**column_panel_1))
-    repeating_panel_email: RepeatingPanel = field(default_factory=lambda: RepeatingPanel(**repeating_panel_email))
-    button_save: Button = field(default_factory=lambda: Button(**button_save))
-    email_display_form: EmailDisplayForm = field(default_factory=lambda: EmailDisplayForm(**email_display_form))
-    column_panel_email_lists: ColumnPanel = field(default_factory=lambda: ColumnPanel(**column_panel_email_lists))
-    content_panel: ColumnPanel = field(default_factory=lambda: ColumnPanel(**content_panel))
-
-    def init_components(self, **kwargs):
-        ContactFormTemplate.__init__(self)
+    def __init__(self, **properties):
+        super(ContactFormTemplate, self).__init__()
+        self.label_name = Label(**label_name)
+        self.text_box_name = TextBox(**text_box_name)
+        self.label_phone = Label(**label_phone)
+        self.text_box_phone = TextBox(**text_box_phone)
+        self.column_panel_1 = ColumnPanel(**column_panel_1)
+        self.repeating_panel_email = RepeatingPanel(**repeating_panel_email)
+        self.button_save = Button(**button_save)
+        self.email_display_form = EmailDisplayForm(**email_display_form)
+        self.column_panel_email_lists = ColumnPanel(**column_panel_email_lists)
+        self.content_panel = ColumnPanel(**content_panel)
+        self.__bindings = databindings
+        if len(self.__bindings) >0:
+            self.item = binding_property('item')
+        if properties.get('item', None):
+            self.item = properties['item']
+    
+    def init_components(self, **properties):
+        ContactFormTemplate.__init__(self, **properties)

@@ -1,10 +1,17 @@
 from anvil import *
-from dataclasses import dataclass, field
+from _anvil_designer.common_structures import binding_property
 
+databindings = [
+]
 
-
-@dataclass
 class ItemTemplate1Template(ColumnPanel):
-
-    def init_components(self, **kwargs):
-        ItemTemplate1Template.__init__(self)
+    def __init__(self, **properties):
+        super(ItemTemplate1Template, self).__init__()
+        self.__bindings = databindings
+        if len(self.__bindings) >0:
+            self.item = binding_property('item')
+        if properties.get('item', None):
+            self.item = properties['item']
+    
+    def init_components(self, **properties):
+        ItemTemplate1Template.__init__(self, **properties)

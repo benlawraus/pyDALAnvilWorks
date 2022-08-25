@@ -1,5 +1,5 @@
 from anvil import *
-from dataclasses import dataclass, field
+from _anvil_designer.common_structures import binding_property
 
 label_1 = dict(
     role='headline',
@@ -43,13 +43,20 @@ data_grid_1 = dict(
     background='',
     parent=Container(),
 )
+databindings = [
+]
 
-
-@dataclass
 class EmailDisplayFormTemplate(ColumnPanel):
-    label_1: Label = field(default_factory=lambda: Label(**label_1))
-    repeating_panel_1: RepeatingPanel = field(default_factory=lambda: RepeatingPanel(**repeating_panel_1))
-    data_grid_1: DataGrid = field(default_factory=lambda: DataGrid(**data_grid_1))
-
-    def init_components(self, **kwargs):
-        EmailDisplayFormTemplate.__init__(self)
+    def __init__(self, **properties):
+        super(EmailDisplayFormTemplate, self).__init__()
+        self.label_1 = Label(**label_1)
+        self.repeating_panel_1 = RepeatingPanel(**repeating_panel_1)
+        self.data_grid_1 = DataGrid(**data_grid_1)
+        self.__bindings = databindings
+        if len(self.__bindings) >0:
+            self.item = binding_property('item')
+        if properties.get('item', None):
+            self.item = properties['item']
+    
+    def init_components(self, **properties):
+        EmailDisplayFormTemplate.__init__(self, **properties)
