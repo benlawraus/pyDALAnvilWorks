@@ -1,12 +1,11 @@
-from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import List, Dict
-
-from _anvil_designer.common_structures import ClassDict, make_no_None_kwargs
-
-from . import GoogleMap
-from .component import Component, Container, Media
 from math import pi as PI
+from typing import List, Dict
+from urllib.error import URLError, HTTPError
+from urllib.request import Request, urlopen
+from . import GoogleMap
+from _anvil_designer.common_structures import ClassDict, make_no_None_kwargs
+from .component import Component, Container, Media
 
 
 def default_val(val):
@@ -30,13 +29,13 @@ Icon = str
 Form = object
 
 
-@dataclass
+# @dataclass
 class BlobMedia(Media):
     """Create a Media object with the specified content_type (a string such as ‘text/plain’) and content (a binary string).
     Optionally specify a filename as well."""
-    content_type: String = field(default_factory=String)
-    content: Object = field(default_factory=Object)
-    name: String = None
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
 @dataclass
@@ -753,7 +752,7 @@ class Link(ColumnPanel):
 
 
 @dataclass
-class Notification():
+class Notification:
     message: String = "undefined"
     title: String = ""
     style: String = "info"
@@ -1026,9 +1025,25 @@ class Timer(Component):
     pass
 
 
-@dataclass
+
+# @dataclass
 class URLMedia(Media):
-    pass
+    """URLMedia only stores a URL; it does not fetch its data unless the length
+    or content_type attributes are accessed, or get_bytes() is called."""
+    def __init__(self, url):
+        super().__init__(url)
+        req = Request(self.url)
+        try:
+            response = urlopen(req)
+        except HTTPError as e:
+            raise Exception(HTTPError)
+        except URLError as e:
+            raise Exception(URLError)
+        self.url = response.geturl()
+        _info = response.info()
+        self.content_type = _info["Content-Type"]
+        self.content = response.read()
+
 
 
 @dataclass

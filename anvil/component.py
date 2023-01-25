@@ -1,9 +1,6 @@
-from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import List, Dict
 from unittest.mock import Mock
-
-from _anvil_designer.common_structures import ClassDict
+from typing import Optional, Dict, List
 
 
 def default_val(val):
@@ -28,7 +25,7 @@ Form = object
 
 
 @dataclass
-class Component():
+class Component:
     _events: dict = field(default_factory=dict)
 
     def add_event_handler(self, event_name, handler_func):
@@ -73,7 +70,7 @@ class Container(Component):
     def add_component(self, component, **kwargs):
         """Add a component to this container.		"""
         if kwargs.get('index', None):
-            self._components.insert(kwargs["index"])
+            self._components.insert(kwargs["index"],component)
         else:
             self._components.append(component)
         pass
@@ -97,12 +94,48 @@ class Container(Component):
             the self.item for the Form is set."""
         pass
 
+# @dataclass
+class Media:
+    """Media object subclassed by BlobMedia and UrlMedia.
 
-@dataclass
-class Media():
-    def get_bytes(self):
+    Attributes
+    ----------
+    content_type : str
+        the MIME type of this media. This is a string with values like "text/plain" or "image/png".
+    content : bytes
+        a binary string of the image or file
+    name : str
+        optional filename
+    length:
+        length in bytes of `content`
+    url:
+        Gives an URL where this media can be downloaded, if this Media is “permanent” (e.g. if it is stored in
+        Data Tables, or a Google Drive file). If a Media object is not permanent (e.g. it is an anonymous
+        BlobMedia object), its url property will be None. However, you can still download non-permanent Media
+        objects using Link components, or display them with Image components.
+
+    Methods
+    -------
+    get_bytes
+        returns the content as a string
+    """
+    # url:Optional[str]=None
+    # content_type:Optional[str] = None
+    # content:bytes = b''
+    # name:str = ''
+    def __init__(self, url:str=None, content_type:str=None, content:bytes=None, name:str=None):
+        self.url = url
+        self.content_type = content_type
+        self.content = content
+        self.name = name
+    @property
+    def length(self):
+        """length in bytes of `content`"""
+        return len(self.content)
+
+    def get_bytes(self)->str:
         """Get a binary string of the data represented by this Media object		"""
-        return Mock()
+        return self.content.decode()
 
 
 
@@ -119,7 +152,7 @@ def confirm(content, title="", buttons=None, large=False, dismissible=False, rol
     return True
 
 
-def download(media):
+def download(media:Media):
     """Download the given Media Object immediately in the user’s browser."""
     return Mock()
 
