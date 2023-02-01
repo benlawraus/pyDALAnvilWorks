@@ -94,7 +94,7 @@ class Container(Component):
             the self.item for the Form is set."""
         pass
 
-# @dataclass
+
 class Media:
     """Media object subclassed by BlobMedia and UrlMedia.
 
@@ -119,13 +119,11 @@ class Media:
     get_bytes
         returns the content as a string
     """
-    # url:Optional[str]=None
-    # content_type:Optional[str] = None
-    # content:bytes = b''
-    # name:str = ''
     def __init__(self, url:str=None, content_type:str=None, content:bytes=None, name:str=None):
         self.url = url
         self.content_type = content_type
+        if content_type=="text/plain" and not isinstance(content,bytes):
+            raise TypeError("`content` should be type bytes")
         self.content = content
         self.name = name
     @property
