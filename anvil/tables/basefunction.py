@@ -92,9 +92,12 @@ class BaseFunction:
                     orderby = {'orderby': _o}
                 else:
                     self.query = self.add_to_query(None, arg)
-        # can only be one kwarg
+        #
         for key in kwargs:
-            self.query = self.add_to_query(key, kwargs[key])
+            if self.query:
+                self.query &= (self.add_to_query(key, kwargs[key]))
+            else:
+                self.query = self.add_to_query(key, kwargs[key])
         if self.query is None and len(orderby)==0:
             self.query = mydal.db[self.table_name]['id'] != None
         return mydal.db(self.query).select(**orderby)
