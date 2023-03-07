@@ -70,17 +70,6 @@ FYI, to generate ``anvil/tables/AppTables.py`` (`pyDALAnvilWorksDev`_'s ``yaml2s
 
     python -m _anvil_designer.generate_apptable
 
-Also depending on your project structure, you might need to do something like::
-
-    try:
-        # when running on anvil.works
-        from portable_classes import Phone, Email, Contact
-    except ImportError:
-        # when running on your laptop
-        from client_code.portable_classes import Phone, Email, Contact
-
-Yes, this is annoying. Maybe there is a better way...
-
 client_code
 ^^^^^^^^^^^
 For client code tests, the ``_anvil_designer.py`` needs to be generated in the form directory. Every form needs one.
