@@ -13,15 +13,6 @@ class ModuleDict(dict):
         else:
             pass
 
-def module_tree(client_code)->Dict[str:pathlib.Path]:
-    """Forms a dictionary of all the modules {module_name:module_hierarchy, ..} where
-    module_hierarchy is the path relative to the dir 'client_code'"""
-    module_path = {}
-    for init_file in client_code.rglob('__init__.py'):
-        form_path = init_file.parent.relative_to(client_code)
-        module_path[form_path.name] = form_path
-    return module_path
-
 def yaml2classes():
     client_code = pathlib.Path(__file__).parent.parent / 'client_code'
     for yaml_file in client_code.rglob('*.yaml'):

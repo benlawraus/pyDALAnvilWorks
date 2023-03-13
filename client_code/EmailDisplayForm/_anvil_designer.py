@@ -52,11 +52,14 @@ class EmailDisplayFormTemplate(ColumnPanel):
         self.label_1 = Label(**label_1)
         self.repeating_panel_1 = RepeatingPanel(**repeating_panel_1)
         self.data_grid_1 = DataGrid(**data_grid_1)
-        self.__bindings = databindings
-        if len(self.__bindings) >0:
-            self.item = binding_property('item')
-        if properties.get('item', None):
-            self.item = properties['item']
-    
+        self.__bindings = databindings@property
+    def item(self):
+        return attr_getter(self, 'item')
+
+    @item.setter
+    def item(self, some_dict):
+        attr_setter(self, some_dict, 'item')
+        return
+
     def init_components(self, **properties):
         EmailDisplayFormTemplate.__init__(self, **properties)

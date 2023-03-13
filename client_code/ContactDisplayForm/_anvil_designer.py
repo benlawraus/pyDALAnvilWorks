@@ -17,11 +17,14 @@ class ContactDisplayFormTemplate(ColumnPanel):
         super(ContactDisplayFormTemplate, self).__init__()
         self.link_name = Link(**link_name)
         self.label_email = Label(**label_email)
-        self.__bindings = databindings
-        if len(self.__bindings) >0:
-            self.item = binding_property('item')
-        if properties.get('item', None):
-            self.item = properties['item']
-    
+        self.__bindings = databindings@property
+    def item(self):
+        return attr_getter(self, 'item')
+
+    @item.setter
+    def item(self, some_dict):
+        attr_setter(self, some_dict, 'item')
+        return
+
     def init_components(self, **properties):
         ContactDisplayFormTemplate.__init__(self, **properties)

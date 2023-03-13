@@ -1,10 +1,11 @@
 from dataclasses import dataclass, field
 from math import pi as PI
-from typing import List, Dict
-from urllib.error import URLError, HTTPError
+from typing import Dict, List
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
-from . import GoogleMap
+
 from _anvil_designer.common_structures import ClassDict, make_no_None_kwargs
+from . import GoogleMap
 from .component import Component, Container, Media
 
 
@@ -31,7 +32,8 @@ Form = object
 
 # @dataclass
 class BlobMedia(Media):
-    """Create a Media object with the specified content_type (a string such as ‘text/plain’) and content (a binary string).
+    """Create a Media object with the specified content_type (a string such as ‘text/plain’) and content (a binary
+    string).
     Optionally specify a filename as well."""
 
     def __init__(self, **kwargs):
@@ -49,9 +51,11 @@ class Button(Component):
     font_size: Pixels = field(default_factory=Pixels)  # The height of text displayed on this component in pixels
     foreground: Color = field(default_factory=Color)  # The foreground colour of this component.
     icon: Icon = field(
-        default_factory=Icon)  # The icon to display on this component. Either a URL, or a FontAwesome Icon, e.g. ‘fa:user’.
+        default_factory=Icon)  # The icon to display on this component. Either a URL, or a FontAwesome Icon,
+    # e.g. ‘fa:user’.
     icon_align: String = field(
-        default_factory=String)  # The alignment of the icon on this component. Set to ‘top’ for a centred icon on a component with no text.
+        default_factory=String)  # The alignment of the icon on this component. Set to ‘top’ for a centred icon on a
+    # component with no text.
     italic: Boolean = field(default_factory=Boolean)  # Display this component’s text in italics
     parent: Container = field(default_factory=Container)  #
     role: Themerole = field(
@@ -112,7 +116,8 @@ class Canvas(Component):
         pass
 
     def bezier_curve_to(self, cp1x, cp1y, cp2x, cp2y, x, y):
-        """Adds a Bezier curve at the end of the current path to (x,y) with control points (cp1x,cp1y) and (cp2x,cp2y).		"""
+        """Adds a Bezier curve at the end of the current path to (x,y) with control points (cp1x,cp1y) and (cp2x,
+        cp2y).		"""
         pass
 
     def clear_rect(self, x, y, width, height):
@@ -132,15 +137,19 @@ class Canvas(Component):
         pass
 
     def create_radial_gradient(self, x0, y0, x1, y1):
-        """Returns a gradient object representing a radial gradient from (x0,y0) with radius r0 to (x1,y1) with radius r1.		"""
+        """Returns a gradient object representing a radial gradient from (x0,y0) with radius r0 to (x1,y1) with radius
+        r1.		"""
         pass
 
     def draw_image(self, media, x, y, width, height):
-        """Draw an image (from a Media object) onto the canvas at the specified coordinates (optionally scaling to the specified width and height)		"""
+        """Draw an image (from a Media object) onto the canvas at the specified coordinates (optionally scaling to the
+        specified width and height)		"""
         pass
 
     def draw_image_part(self, media, sx, sy, s_width, s_height, dx, dy, d_width, d_height):
-        """Draw a subset of an image (from a Media object) onto the canvas.sx, sy, s_width and s_height specify which pixels within the source image of the source image to draw. dx and dy (and optionally d_width and d_height) specify where (and optionally what dimensions) on the canvas to draw the image.		"""
+        """Draw a subset of an image (from a Media object) onto the canvas.sx, sy, s_width and s_height specify which
+        pixels within the source image of the source image to draw. dx and dy (and optionally d_width and d_height)
+        specify where (and optionally what dimensions) on the canvas to draw the image.		"""
         pass
 
     def fill(self):
@@ -238,7 +247,8 @@ class Canvas(Component):
 class CheckBox(Component):
     align: String = field(default_factory=String)  # Align this component’s text
     allow_indeterminate: Boolean = field(
-        default_factory=Boolean)  # Support an indeterminate state. The indeterminate state can only be set in code by setting checked=None.
+        default_factory=Boolean)  # Support an indeterminate state. The indeterminate state can only be set in code
+    # by setting checked=None.
     background: Color = field(default_factory=Color)  # The background colour of this component.
     bold: Boolean = field(default_factory=Boolean)  # Display this component’s text in bold
     border: String = field(default_factory=String)  # The border of this component. Can take any valid CSS border value.
@@ -291,7 +301,8 @@ class ColumnPanel(Container):
     wrap_on: String = "mobile"  # The largest display on which to wrap columns in this panel
 
     def add_component(self, component, full_width_row=False, **layout_props):
-        """Add a component to the bottom of this ColumnPanel. Useful layout properties:full_width_row = True|False row_background = [colour]		"""
+        """Add a component to the bottom of this ColumnPanel. Useful layout properties:full_width_row = True|False
+        row_background = [colour]		"""
         super(ColumnPanel, self).add_component(component=component)
 
 
@@ -321,7 +332,8 @@ class DataGrid(Container):
     wrap_on: String = field(default_factory=String)  # The largest display on which to wrap columns in this DataGrid
 
     def add_component(self, component, index=None, pinned=False):
-        """Add a component to this DataGrid, in the ‘index’th position. If ‘index’ is not specified, adds to the bottom.		"""
+        """Add a component to this DataGrid, in the ‘index’th position. If ‘index’ is not specified, adds to the
+        bottom.		"""
         pass
 
     def get_page(self):
@@ -379,7 +391,8 @@ class DataRowPanel(Container):
         default_factory=String)  # The width of this DataRowPanel, or “default” to have the width set by the container.
 
     def add_component(self, component, column=None):
-        """Add a component to the specified column of this DataRowPanel. TODO: If ‘column’ is not specified, adds the component full-width.		"""
+        """Add a component to the specified column of this DataRowPanel. TODO: If ‘column’ is not specified,
+        adds the component full-width.		"""
         pass
 
     pass
@@ -463,18 +476,22 @@ class FileLoader(Component):
     border: String = field(default_factory=String)  # The border of this component. Can take any valid CSS border value.
     enabled: Boolean = field(default_factory=Boolean)  # True if this component should allow user interaction.
     file: Media = field(
-        default_factory=Media)  # The currently selected file (or the first, if multiple files are selected). This is a Media object.
+        default_factory=Media)  # The currently selected file (or the first, if multiple files are selected). This is
+    # a Media object.
     file_types: String = field(
-        default_factory=String)  # Specify what type of file to upload. Can accept a MIME type (eg “image/png” or “image/*“), or an extension (eg “.png”), or a comma-separated set of them (eg “.png,.jpg,.jpeg”)
+        default_factory=String)  # Specify what type of file to upload. Can accept a MIME type (eg “image/png” or
+    # “image/*“), or an extension (eg “.png”), or a comma-separated set of them (eg “.png,.jpg,.jpeg”)
     files: List[Media] = field(
         default_factory=List[Media])  # A list of currently selected files. Each file is a Media object.
     font: String = field(default_factory=String)  # The font to use for this component.
     font_size: Pixels = field(default_factory=Pixels)  # The height of text displayed on this component in pixels
     foreground: Color = field(default_factory=Color)  # The foreground colour of this component.
     icon: Icon = field(
-        default_factory=Icon)  # The icon to display on this component. Either a URL, or a FontAwesome Icon, e.g. ‘fa:user’.
+        default_factory=Icon)  # The icon to display on this component. Either a URL, or a FontAwesome Icon,
+    # e.g. ‘fa:user’.
     icon_align: String = field(
-        default_factory=String)  # The alignment of the icon on this component. Set to ‘top’ for a centred icon on a component with no text.
+        default_factory=String)  # The alignment of the icon on this component. Set to ‘top’ for a centred icon on a
+    # component with no text.
     italic: Boolean = field(default_factory=Boolean)  # Display this component’s text in italics
     multiple: Boolean = field(
         default_factory=Boolean)  # If True, this FileLoader can load multiple files at the same time
@@ -524,7 +541,8 @@ class FlowPanel(Container):
         default_factory=String)  # The width of this FlowPanel, or “default” to have the width set by the container.
 
     def add_component(self, component, index=None, width=None, expand=None):
-        """Add a component to this panel. Optionally specify the position in the panel to add it, or the width to apply to components that can’t self-size width-wise.		"""
+        """Add a component to this panel. Optionally specify the position in the panel to add it, or the width to
+        apply to components that can’t self-size width-wise.		"""
         pass
 
     pass
@@ -533,7 +551,8 @@ class FlowPanel(Container):
 @dataclass
 class GoogleMap(Container):
     background_color: String = field(
-        default_factory=String)  # Color used for the background of the Map div. This color will be visible when tiles have not yet loaded as the user pans.
+        default_factory=String)  # Color used for the background of the Map div. This color will be visible when
+    # tiles have not yet loaded as the user pans.
     center: GoogleMap.LatLng = field(default_factory=GoogleMap.LatLng)  # The Map center.
     clickable_icons: Boolean = field(
         default_factory=Boolean)  # When false, map icons are not clickable. A map icon represents a point of interest
@@ -552,7 +571,8 @@ class GoogleMap(Container):
     gesture_handling: String = field(
         default_factory=String)  # This setting controls how gestures on the map are handled.
     heading: Number = field(
-        default_factory=Number)  # The heading for aerial imagery in degrees measured clockwise from cardinal direction North.
+        default_factory=Number)  # The heading for aerial imagery in degrees measured clockwise from cardinal
+    # direction North.
     height: String = field(default_factory=String)  # The height of this component.
     keyboard_shortcuts: Boolean = field(
         default_factory=Boolean)  # If false, prevents the map from being controlled by the keyboard.
@@ -624,40 +644,12 @@ class GridPanel(Container):
 
 
 @dataclass
-class HtmlTemplate(Container):
-    background: Color = field(default_factory=Color)  # The background colour of this component.
-    border: String = field(default_factory=String)  # The border of this component. Can take any valid CSS border value.
-    foreground: Color = field(default_factory=Color)  # The foreground colour of this component.
-    html: Html = field(default_factory=Html)  # The HTML from which this panel is defined
-    parent: Container = field(default_factory=Container)  #
-    role: Themerole = field(
-        default_factory=Themerole)  # Choose how this component can appear, based on your app’s visual theme.
-    tag: ClassDict = field(
-        default_factory=ClassDict)  # Use this property to store any extra information about this component
-    tooltip: String = field(default_factory=String)  # Text to display when you hover the mouse over this component
-    visible: Boolean = field(default_factory=Boolean)  # Should this component be displayed?
-
-    def add_component(self, component, slot="default"):
-        """Add a component to the named slot of this HTML templated panel. If no slot is specified, the ‘default’ slot will be used.		"""
-        super().add_component(component)
-
-    def call_js(self, js_function_name, *args):
-        """Call a Javascript function		"""
-        pass
-
-    def clear(self, slot="default"):
-        """clear the HTML template of all components or clear a specific slot of components.		"""
-        super().clear()
-
-    pass
-
-
-@dataclass
 class Image(Component):
     background: Color = field(default_factory=Color)  # The background colour of this component.
     border: String = field(default_factory=String)  # The border of this component. Can take any valid CSS border value.
     display_mode: String = field(
-        default_factory=String)  # Determines how the image’s size should be adjusted to fit the size of this Image component
+        default_factory=String)  # Determines how the image’s size should be adjusted to fit the size of this Image
+    # component
     foreground: Color = field(default_factory=Color)  # The foreground colour of this component.
     height: String = field(default_factory=String)  # The height of this component.
     horizontal_align: String = field(default_factory=String)  # Position the image horizontally within this component
@@ -687,9 +679,11 @@ class Label(Component):
     font_size: Pixels = field(default_factory=Pixels)  # The height of text displayed on this component in pixels
     foreground: Color = field(default_factory=Color)  # The foreground colour of this component.
     icon: Icon = field(
-        default_factory=Icon)  # The icon to display on this component. Either a URL, or a FontAwesome Icon, e.g. ‘fa:user’.
+        default_factory=Icon)  # The icon to display on this component. Either a URL, or a FontAwesome Icon,
+    # e.g. ‘fa:user’.
     icon_align: String = field(
-        default_factory=String)  # The alignment of the icon on this component. Set to ‘top’ for a centred icon on a component with no text.
+        default_factory=String)  # The alignment of the icon on this component. Set to ‘top’ for a centred icon on a
+    # component with no text.
     italic: Boolean = field(default_factory=Boolean)  # Display this component’s text in italics
     parent: Container = field(default_factory=Container)  #
     role: Themerole = field(
@@ -727,7 +721,8 @@ class LinearPanel(Container):
         default_factory=String)  # The width of this LinearPanel, or “default” to have the width set by the container.
 
     def add_component(self, component, index=None):
-        """Add a component to this LinearPanel, in the ‘index’th position. If ‘index’ is not specified, adds to the bottom.		"""
+        """Add a component to this LinearPanel, in the ‘index’th position. If ‘index’ is not specified, adds to the
+        bottom.		"""
         kwargs = make_no_None_kwargs(component=component, index=index)
         super().add_component(**kwargs)
 
@@ -739,7 +734,8 @@ class Link(ColumnPanel):
     font: String = "Arial"  # The font to use for this component.
     font_size: Pixels = None  # The height of text displayed on this component in pixels
     icon: Icon = ""  # The icon to display on this component. Either a URL, or a FontAwesome Icon, e.g. ‘fa:user’.
-    icon_align: String = "left"  # The alignment of the icon on this component. Set to ‘top’ for a centred icon on a component with no text.
+    icon_align: String = "left"  # The alignment of the icon on this component. Set to ‘top’ for a centred icon on a
+    # component with no text.
     italic: Boolean = False  # Display this component’s text in italics
     parent: Container = field(default_factory=Container)  #
     tag: ClassDict = field(
@@ -808,15 +804,18 @@ class Plot(Component):
         pass
 
     def relayout(self, update):
-        """A more efficient means of updating just the layout in a graphDiv. The call signature and arguments for relayout are similar (but simpler) to restyle.		"""
+        """A more efficient means of updating just the layout in a graphDiv. The call signature and arguments for
+        relayout are similar (but simpler) to restyle.		"""
         pass
 
     def restyle(self, update, traces):
-        """A more efficient means of changing attributes in the data array. When restyling, you may choose to have the specified changes effect as many traces as desired.		"""
+        """A more efficient means of changing attributes in the data array. When restyling, you may choose to have the
+        specified changes effect as many traces as desired.		"""
         pass
 
     def to_image(self, options):
-        """Returns a Media object containing a snapshot of this plot. The argument is a dictionary specifying image options.		"""
+        """Returns a Media object containing a snapshot of this plot. The argument is a dictionary specifying image
+        options.		"""
         pass
 
     pass
@@ -874,14 +873,17 @@ class RepeatingPanel(Component):
     tooltip: String = field(default_factory=String)  # Text to display when you hover the mouse over this component
     visible: Boolean = field(default_factory=Boolean)  # Should this component be displayed?
     width: String = field(
-        default_factory=String)  # The width of this RepeatingPanel, or “default” to have the width set by the container.
+        default_factory=String)  # The width of this RepeatingPanel, or “default” to have the width set by the
+    # container.
 
     def get_components(self):
-        """Get the list of components created by this Repeating Panel. Each will be an instance of ‘item_template’, one for each item in ‘items’.		"""
+        """Get the list of components created by this Repeating Panel. Each will be an instance of ‘item_template’,
+        one for each item in ‘items’.		"""
         pass
 
     def raise_event_on_children(self, event_name, **event_args):
-        """Trigger the ‘event_name’ event on all children of this component. Any keyword arguments are passed to the handler function.		"""
+        """Trigger the ‘event_name’ event on all children of this component. Any keyword arguments are passed to the
+        handler function.		"""
         pass
 
     pass
@@ -893,10 +895,12 @@ class RichText(Container):
     background: Color = field(default_factory=Color)  # The background colour of this component.
     border: String = field(default_factory=String)  # The border of this component. Can take any valid CSS border value.
     content: String = field(
-        default_factory=String)  # The content to render in this component, in the format specified by the ‘format’ property
+        default_factory=String)  # The content to render in this component, in the format specified by the ‘format’
+    # property
     data: Object = field(default_factory=Object)  # A dict of data or Components to populate the named content {slots}.
     enable_slots: Boolean = field(
-        default_factory=Boolean)  # If true {braces} in content define slots. If false, braces in content display normally.
+        default_factory=Boolean)  # If true {braces} in content define slots. If false, braces in content display
+    # normally.
     font: String = field(default_factory=String)  # The font to use for this component.
     font_size: Pixels = field(default_factory=Pixels)  # The height of text displayed on this component in pixels
     foreground: Color = field(default_factory=Color)  # The foreground colour of this component.
@@ -1025,11 +1029,11 @@ class Timer(Component):
     pass
 
 
-
 # @dataclass
 class URLMedia(Media):
     """URLMedia only stores a URL; it does not fetch its data unless the length
     or content_type attributes are accessed, or get_bytes() is called."""
+
     def __init__(self, url):
         super().__init__(url)
         req = Request(self.url)
@@ -1043,7 +1047,6 @@ class URLMedia(Media):
         _info = response.info()
         self.content_type = _info["Content-Type"]
         self.content = response.read()
-
 
 
 @dataclass
@@ -1066,7 +1069,8 @@ class XYPanel(Container):
         default_factory=String)  # The width of this XYPanel, or “default” to have the width set by the container.
 
     def add_component(self, component, x=0, y=0, width=None):
-        """Add a component to this XYPanel, at the specified coordinates. If the component’s width is not specified, uses the component’s default width.		"""
+        """Add a component to this XYPanel, at the specified coordinates. If the component’s width is not specified,
+        uses the component’s default width.		"""
         super(XYPanel, self).add_component(component=component)
 
     def get_width(self):

@@ -110,11 +110,14 @@ class ContactFormTemplate(HtmlTemplate):
         self.email_display_form = EmailDisplayForm(**email_display_form)
         self.column_panel_email_lists = ColumnPanel(**column_panel_email_lists)
         self.content_panel = ColumnPanel(**content_panel)
-        self.__bindings = databindings
-        if len(self.__bindings) >0:
-            self.item = binding_property('item')
-        if properties.get('item', None):
-            self.item = properties['item']
-    
+        self.__bindings = databindings@property
+    def item(self):
+        return attr_getter(self, 'item')
+
+    @item.setter
+    def item(self, some_dict):
+        attr_setter(self, some_dict, 'item')
+        return
+
     def init_components(self, **properties):
         ContactFormTemplate.__init__(self, **properties)

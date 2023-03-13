@@ -128,11 +128,14 @@ class EmailItemFormTemplate(ColumnPanel):
         self.radio_button_2 = RadioButton(**radio_button_2)
         self.radio_button_3 = RadioButton(**radio_button_3)
         self.column_panel_1 = ColumnPanel(**column_panel_1)
-        self.__bindings = databindings
-        if len(self.__bindings) >0:
-            self.item = binding_property('item')
-        if properties.get('item', None):
-            self.item = properties['item']
-    
+        self.__bindings = databindings@property
+    def item(self):
+        return attr_getter(self, 'item')
+
+    @item.setter
+    def item(self, some_dict):
+        attr_setter(self, some_dict, 'item')
+        return
+
     def init_components(self, **properties):
         EmailItemFormTemplate.__init__(self, **properties)

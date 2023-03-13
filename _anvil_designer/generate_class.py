@@ -1,6 +1,6 @@
 import pathlib
 import string
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 from dataclasses import dataclass
 from typing import Tuple, List, Dict, Union
 import strictyaml as sy
@@ -256,7 +256,16 @@ def databindings_as_string(databindings, TAB):
     as_str += ']'
     return as_str
 
+ItemGetterSetter = namedtuple('ItemGetterSetter', ['defs', 'imports'])
+item_getter_setter = ItemGetterSetter("""@property
+    def item(self):
+        return attr_getter(self, 'item')
 
+    @item.setter
+    def item(self, some_dict):
+        attr_setter(self, some_dict, 'item')
+        return
+""", "from _anvil_designer.common_structures import binding_property")
 def form_the__init__str(catalog: OrderedDict[str, CatalogCard], form_name: str, TAB: str) -> Tuple[str, str]:
     """Derives the def __init__() part of the class definition from catalog."""
     attr_string = f"{TAB}def __init__(self, **properties):\n{TAB}{TAB}super({form_name}Template, self).__init__()\n"
@@ -273,12 +282,13 @@ def form_the__init__str(catalog: OrderedDict[str, CatalogCard], form_name: str, 
     databindings_as_str = databindings_as_string(databindings, TAB)
     default_string += databindings_as_str
     attr_string += f"{TAB}{TAB}self.__bindings = databindings"
-    attr_string += f"""
-{TAB}{TAB}if len(self.__bindings) >0:
-{TAB}{TAB}{TAB}self.item = binding_property('item')
-{TAB}{TAB}if properties.get('item', None):
-{TAB}{TAB}    self.item = properties['item']
-    """
+    attr_string += item_getter_setter.defs
+#     f"""
+# {TAB}{TAB}if len(self.__bindings) >0:
+# {TAB}{TAB}{TAB}self.item = binding_property('item')
+# {TAB}{TAB}if properties.get('item', None):
+# {TAB}{TAB}    self.item = properties['item']
+#     """
     return attr_string, default_string
 
 
@@ -286,7 +296,7 @@ def yaml2definition(parsed: sy.YAML, form_name):
     """Converts the YAML into a string that contains the class definition."""
     import_list = ["from anvil import *",
                    # "from dataclasses import dataclass, field",
-                   "from _anvil_designer.common_structures import binding_property"
+                   item_getter_setter.imports
                    ]
     catalog = OrderedDict()
     TAB = '    '

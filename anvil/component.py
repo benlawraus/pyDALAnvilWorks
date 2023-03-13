@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from unittest.mock import Mock
 from typing import Optional, Dict, List
+from _anvil_designer.common_structures import ClassDict
 
 
 def default_val(val):
@@ -172,7 +173,7 @@ def get_url_hash():
 
 def open_form(form, *args, **kwargs):
     """Open the specified form as a new page.If ‘form’ is a string, a new form will be created (extra arguments will be passed to its constructor).If ‘form’ is a Form object, it will be opened directly."""
-    return Mock()
+    return form(*args, **kwargs)
 
 
 def set_default_error_handling(handler_fn):
@@ -183,3 +184,54 @@ def set_default_error_handling(handler_fn):
 def set_url_hash(*args, **kwargs):
     """This is added for `anvil_extras`. for some reason it is not in the anvil documentation."""
     return Mock()
+
+
+class RunTimeSettings:
+    _open_form: str = None  # used for get_open_form()
+
+    @property
+    def open_form(self):
+        """Returns the form instance of the form that is currently open.
+        This is used by get_open_form() to return the form instance and
+        is set by a form dependent on HtmlTemplate (when it is opened)."""
+        if self._open_form is None:
+            # no form dependent on HtmlTemplate has been opened yet
+            return Mock()
+        return self._open_form
+
+    @open_form.setter
+    def open_form(self, form_instance):
+        self._open_form = form_instance
+        return
+
+
+@dataclass
+class HtmlTemplate(Container):
+    background: Color = field(default_factory=Color)  # The background colour of this component.
+    border: String = field(default_factory=String)  # The border of this component. Can take any valid CSS border value.
+    foreground: Color = field(default_factory=Color)  # The foreground colour of this component.
+    html: Html = field(default_factory=Html)  # The HTML from which this panel is defined
+    parent: Container = field(default_factory=Container)  #
+    role: Themerole = field(
+        default_factory=Themerole)  # Choose how this component can appear, based on your app’s visual theme.
+    tag: ClassDict = field(
+        default_factory=ClassDict)  # Use this property to store any extra information about this component
+    tooltip: String = field(default_factory=String)  # Text to display when you hover the mouse over this component
+    visible: Boolean = field(default_factory=Boolean)  # Should this component be displayed?
+
+    def __post_init__(self):
+        RunTimeSettings.open_form = self
+
+    def add_component(self, component, slot="default"):
+        """Add a component to the named slot of this HTML templated panel. If no slot is specified, the ‘default’ slot will be used.		"""
+        super().add_component(component)
+
+    def call_js(self, js_function_name, *args):
+        """Call a Javascript function		"""
+        pass
+
+    def clear(self, slot="default"):
+        """clear the HTML template of all components or clear a specific slot of components.		"""
+        super().clear()
+
+    pass
