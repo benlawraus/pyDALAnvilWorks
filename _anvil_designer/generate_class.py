@@ -163,13 +163,16 @@ class CatalogCard:
     databindings: List[DataBinding]
 
 
+# def format_import_list(of_type: str) -> str:
+#     modules = of_type.split('.')
+#     nr_dots = '.' * len(modules)
+#     if len(modules) == 1:
+#         nr_dots += '.'
+#     return f"from {nr_dots}{of_type} import {modules[-1]}"
+
 def format_import_list(of_type: str) -> str:
     modules = of_type.split('.')
-    nr_dots = '.' * len(modules)
-    if len(modules) == 1:
-        nr_dots += '.'
-    return f"from {nr_dots}{of_type} import {modules[-1]}"
-
+    return f"from {of_type} import {modules[-1]}"
 
 def add_databindings(value: sy.YAML):
     """    An example of output is :
