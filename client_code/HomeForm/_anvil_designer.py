@@ -1,5 +1,5 @@
 from anvil import *
-from _anvil_designer.common_structures import binding_property
+from _anvil_designer.common_structures import attr_getter, attr_setter
 
 link_signin = dict(
     role=None,
@@ -108,7 +108,12 @@ class HomeFormTemplate(HtmlTemplate):
         self.rich_text_1 = RichText(**rich_text_1)
         self.content_panel = ColumnPanel(**content_panel)
         self.menu_panel = ColumnPanel(**menu_panel)
-        self.__bindings = databindings@property
+        self._bindings = databindings
+        self._item = {}
+
+        self._item = {}
+
+    @property
     def item(self):
         return attr_getter(self, 'item')
 

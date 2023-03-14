@@ -1,5 +1,5 @@
 from anvil import *
-from _anvil_designer.common_structures import binding_property
+from _anvil_designer.common_structures import attr_getter, attr_setter
 
 label_email = dict(
     role=None,
@@ -128,7 +128,12 @@ class EmailItemFormTemplate(ColumnPanel):
         self.radio_button_2 = RadioButton(**radio_button_2)
         self.radio_button_3 = RadioButton(**radio_button_3)
         self.column_panel_1 = ColumnPanel(**column_panel_1)
-        self.__bindings = databindings@property
+        self._bindings = databindings
+        self._item = {}
+
+        self._item = {}
+
+    @property
     def item(self):
         return attr_getter(self, 'item')
 

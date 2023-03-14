@@ -2,13 +2,15 @@ import pathlib
 import string
 from collections import OrderedDict, namedtuple
 from dataclasses import dataclass
-from typing import Tuple, List, Dict, Union
-import strictyaml as sy
 from string import Template
+from typing import Dict, List, Tuple, Union
+
+import strictyaml as sy
 
 # from collections import defaultdict
 
 TOP_LEVEL_NAME = "container"
+TAB = ' ' * 4
 
 
 def anvil_yaml_schema() -> sy.MapPattern:
@@ -84,7 +86,7 @@ def validate_yaml(value: sy.YAML, sequence_key: Union[str, int]) -> None:
         if len(value[sequence_key]) == 0:
             try:
                 value.revalidate(sy.EmptyList())
-            except:
+            except AttributeError:
                 del value[sequence_key]
         else:
             for ix in range(len(value[sequence_key])):
@@ -160,7 +162,7 @@ class CatalogCard:
     of_type: str
     parent: str
     as_string: str
-    databindings: List[DataBinding]
+    data_bindings: List[Dict]
 
 
 # def format_import_list(of_type: str) -> str:
@@ -174,7 +176,8 @@ def format_import_list(of_type: str) -> str:
     modules = of_type.split('.')
     return f"from {of_type} import {modules[-1]}"
 
-def add_databindings(value: sy.YAML):
+
+def add_databindings(value: sy.YAML)-> List[Dict]:
     """    An example of output is :
     `self.__bindings = [{'item': "item['text']", 'element': "text_area.text", 'writeback': True}]`
     """
@@ -203,7 +206,7 @@ def lowest_level_component(value: sy.YAML, parent: str, import_list: List[str]) 
     attrs_as_string = dict2string(attrs)
     databindings = add_databindings(value)
     # db_as_string = "".join([dict2string(databinding)+",\n" for databinding in databindings])
-    return CatalogCard(name=name, of_type=of_type, parent=parent, as_string=attrs_as_string, databindings=databindings)
+    return CatalogCard(name=name, of_type=of_type, parent=parent, as_string=attrs_as_string, data_bindings=databindings)
 
 
 def derive_dict(value: sy.YAML, catalog: OrderedDict[str, CatalogCard], parent: str, import_list: List[str]):
@@ -248,16 +251,20 @@ def derive_dict(value: sy.YAML, catalog: OrderedDict[str, CatalogCard], parent: 
     return
 
 
-def databindings_as_string(databindings, TAB):
+def databindings_as_string(databindings)->str:
     as_str = 'databindings = [\n'
     for d in databindings:
-
-        as_str += f'{TAB}dict(' + dict2string(d).replace('\n', '').replace(TAB, ' ').replace("['",'["').replace("']",'"]') + '),\n'
+        as_str += f'{TAB}dict(' + dict2string(d).replace('\n', '').replace(TAB, ' ').replace("['", '["').replace("']",
+                                                                                                                 '"]') + '),\n'
     as_str += ']'
     return as_str
 
+
 ItemGetterSetter = namedtuple('ItemGetterSetter', ['defs', 'imports'])
-item_getter_setter = ItemGetterSetter("""@property
+item_getter_setter = ItemGetterSetter("""
+        self._item = {}
+
+    @property
     def item(self):
         return attr_getter(self, 'item')
 
@@ -265,8 +272,10 @@ item_getter_setter = ItemGetterSetter("""@property
     def item(self, some_dict):
         attr_setter(self, some_dict, 'item')
         return
-""", "from _anvil_designer.common_structures import binding_property")
-def form_the__init__str(catalog: OrderedDict[str, CatalogCard], form_name: str, TAB: str) -> Tuple[str, str]:
+""", "from _anvil_designer.common_structures import attr_getter, attr_setter")
+
+
+def form_the__init__str(catalog: OrderedDict[str, CatalogCard], form_name: str) -> Tuple[str, str]:
     """Derives the def __init__() part of the class definition from catalog."""
     attr_string = f"{TAB}def __init__(self, **properties):\n{TAB}{TAB}super({form_name}Template, self).__init__()\n"
     default_string = ""
@@ -277,18 +286,19 @@ def form_the__init__str(catalog: OrderedDict[str, CatalogCard], form_name: str, 
         default_string += f"{item.name} = dict(\n{item.as_string})\n"
         _class = item.of_type.split('.')[-1]
         attr_string += f"{TAB}{TAB}self.{key} = {_class}(**{item.name})\n"
-        databindings.extend(item.databindings)
+        databindings.extend(item.data_bindings)
     # add databindings
-    databindings_as_str = databindings_as_string(databindings, TAB)
+    databindings_as_str = databindings_as_string(databindings)
     default_string += databindings_as_str
-    attr_string += f"{TAB}{TAB}self.__bindings = databindings"
+    attr_string += f"{TAB}{TAB}self._bindings = databindings\n"
+    attr_string += f"{TAB}{TAB}self._item = {{}}\n"
     attr_string += item_getter_setter.defs
-#     f"""
-# {TAB}{TAB}if len(self.__bindings) >0:
-# {TAB}{TAB}{TAB}self.item = binding_property('item')
-# {TAB}{TAB}if properties.get('item', None):
-# {TAB}{TAB}    self.item = properties['item']
-#     """
+    #     f"""
+    # {TAB}{TAB}if len(self.__bindings) >0:
+    # {TAB}{TAB}{TAB}self.item = binding_property('item')
+    # {TAB}{TAB}if properties.get('item', None):
+    # {TAB}{TAB}    self.item = properties['item']
+    #     """
     return attr_string, default_string
 
 
@@ -299,9 +309,8 @@ def yaml2definition(parsed: sy.YAML, form_name):
                    item_getter_setter.imports
                    ]
     catalog = OrderedDict()
-    TAB = '    '
     derive_dict(parsed, catalog, form_name, import_list)
-    attr_string, default_string = form_the__init__str(catalog, form_name, TAB)
+    attr_string, default_string = form_the__init__str(catalog, form_name)
     class_string = '\n'.join(import_list) + '\n\n' + \
                    default_string + '\n\n' + \
                    f"class {form_name}Template({catalog[form_name].of_type}):\n" + \

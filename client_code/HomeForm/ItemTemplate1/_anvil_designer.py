@@ -1,5 +1,5 @@
 from anvil import *
-from _anvil_designer.common_structures import binding_property
+from _anvil_designer.common_structures import attr_getter, attr_setter
 
 databindings = [
 ]
@@ -7,7 +7,12 @@ databindings = [
 class ItemTemplate1Template(ColumnPanel):
     def __init__(self, **properties):
         super(ItemTemplate1Template, self).__init__()
-        self.__bindings = databindings@property
+        self._bindings = databindings
+        self._item = {}
+
+        self._item = {}
+
+    @property
     def item(self):
         return attr_getter(self, 'item')
 

@@ -1,5 +1,5 @@
 from anvil import *
-from _anvil_designer.common_structures import binding_property
+from _anvil_designer.common_structures import attr_getter, attr_setter
 
 repeating_panel_2 = dict(
     role=None,
@@ -38,7 +38,12 @@ class ContactListFormTemplate(ColumnPanel):
         super(ContactListFormTemplate, self).__init__()
         self.repeating_panel_2 = RepeatingPanel(**repeating_panel_2)
         self.data_grid_1 = DataGrid(**data_grid_1)
-        self.__bindings = databindings@property
+        self._bindings = databindings
+        self._item = {}
+
+        self._item = {}
+
+    @property
     def item(self):
         return attr_getter(self, 'item')
 
