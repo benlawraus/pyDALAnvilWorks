@@ -1,6 +1,6 @@
 from anvil import *
 from _anvil_designer.common_structures import attr_getter, attr_setter
-from EmailDisplayForm import EmailDisplayForm
+from ..EmailDisplayForm import EmailDisplayForm
 
 label_name = dict(
     role=None,

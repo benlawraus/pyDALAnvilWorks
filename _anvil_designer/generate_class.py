@@ -7,10 +7,25 @@ from typing import Dict, List, Tuple, Union
 
 import strictyaml as sy
 
+# from _anvil_designer.generate_files import MODULE_PATH
+
 # from collections import defaultdict
 
+
+CLIENT_CODE_PATH = pathlib.Path(__file__).parent.parent / 'client_code'
 TOP_LEVEL_NAME = "container"
 TAB = ' ' * 4
+
+
+def module_tree(client_code) -> Dict[str, pathlib.Path]:
+    module_path = {}
+    for init_file in client_code.rglob('__init__.py'):
+        form_path = init_file.parent.relative_to(client_code)
+        module_path[form_path.name] = form_path
+    return module_path
+
+
+MODULE_PATH: Dict[str, pathlib.Path] = module_tree(CLIENT_CODE_PATH)
 
 
 def anvil_yaml_schema() -> sy.MapPattern:
@@ -165,19 +180,22 @@ class CatalogCard:
     data_bindings: List[Dict]
 
 
-# def format_import_list(of_type: str) -> str:
-#     modules = of_type.split('.')
-#     nr_dots = '.' * len(modules)
-#     if len(modules) == 1:
-#         nr_dots += '.'
-#     return f"from {nr_dots}{of_type} import {modules[-1]}"
-
-def format_import_list(of_type: str) -> str:
+def format_import_list(of_type: str, form_name: str) -> str:
     modules = of_type.split('.')
-    return f"from {of_type} import {modules[-1]}"
+    # print(len(MODULE_PATH[parent].parts), len(modules))
+    nr_dots = '.' * (len(MODULE_PATH[form_name].parts)+2 - len(modules))
+    return f"from {nr_dots}{of_type} import {modules[-1]}"
 
 
-def add_databindings(value: sy.YAML)-> List[Dict]:
+# def format_import_list(of_type: str, parent:str) -> str:
+#     if of_type == 'ActionForm':
+#         print(of_type)
+#         exit(0)
+#     modules = of_type.split('.')
+#     return f"from {of_type} import {modules[-1]}"
+
+
+def add_databindings(value: sy.YAML) -> List[Dict]:
     """    An example of output is :
     `self.__bindings = [{'item': "item['text']", 'element': "text_area.text", 'writeback': True}]`
     """
@@ -187,7 +205,10 @@ def add_databindings(value: sy.YAML)-> List[Dict]:
             for db in value.get('data_bindings', [])]
 
 
-def lowest_level_component(value: sy.YAML, parent: str, import_list: List[str]) -> CatalogCard:
+def lowest_level_component(value: sy.YAML,
+                           parent: str,
+                           import_list: List[str],
+                           form_name:str) -> CatalogCard:
     """Derives dict from `value`. `value` has to have `type`
 
     Parameters
@@ -201,7 +222,7 @@ def lowest_level_component(value: sy.YAML, parent: str, import_list: List[str]) 
     if "form:" in of_type:
         of_type = of_type.replace("form:", '')
         # add to list of imports
-        import_list.append(format_import_list(of_type))
+        import_list.append(format_import_list(of_type, form_name))
     attrs = add_properties(value, parent)
     attrs_as_string = dict2string(attrs)
     databindings = add_databindings(value)
@@ -209,7 +230,11 @@ def lowest_level_component(value: sy.YAML, parent: str, import_list: List[str]) 
     return CatalogCard(name=name, of_type=of_type, parent=parent, as_string=attrs_as_string, data_bindings=databindings)
 
 
-def derive_dict(value: sy.YAML, catalog: OrderedDict[str, CatalogCard], parent: str, import_list: List[str]):
+def derive_dict(value: sy.YAML,
+                catalog: OrderedDict[str, CatalogCard],
+                parent: str,
+                import_list: List[str],
+                form_name: str) -> None:
     """Organizes the YAML into a nested dict where the keys are the names of the components
     and the YAML 'properties' are attributes.
 
@@ -237,21 +262,21 @@ def derive_dict(value: sy.YAML, catalog: OrderedDict[str, CatalogCard], parent: 
         parent = name
         for component in value['components']:
             # create a dict from each in the component list
-            derive_dict(component, catalog, parent, import_list)
+            derive_dict(component, catalog, parent, import_list, form_name)
     if top_level:
         # check for properties
         if 'properties' in value:
             for prop in value['properties']:
-                cat_card = lowest_level_component(prop, parent, import_list)
+                cat_card = lowest_level_component(prop, parent, import_list, form_name)
                 cat_card.of_type = cat_card.of_type.capitalize()
                 catalog[cat_card.name] = cat_card
         value = value.get('container')
         value['name'] = sy.load(TOP_LEVEL_NAME, sy.Str())
-    catalog[name] = lowest_level_component(value, parent, import_list)
+    catalog[name] = lowest_level_component(value, parent, import_list, form_name)
     return
 
 
-def databindings_as_string(databindings)->str:
+def databindings_as_string(databindings) -> str:
     as_str = 'databindings = [\n'
     for d in databindings:
         as_str += f'{TAB}dict(' + dict2string(d).replace('\n', '').replace(TAB, ' ').replace("['", '["').replace("']",
@@ -309,7 +334,7 @@ def yaml2definition(parsed: sy.YAML, form_name):
                    item_getter_setter.imports
                    ]
     catalog = OrderedDict()
-    derive_dict(parsed, catalog, form_name, import_list)
+    derive_dict(parsed, catalog, form_name, import_list, form_name)
     attr_string, default_string = form_the__init__str(catalog, form_name)
     class_string = '\n'.join(import_list) + '\n\n' + \
                    default_string + '\n\n' + \
