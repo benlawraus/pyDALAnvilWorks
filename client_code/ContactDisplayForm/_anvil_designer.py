@@ -1,5 +1,5 @@
 from anvil import *
-from _anvil_designer.common_structures import attr_getter, attr_setter
+from _anvil_designer.common_structures import attr_getter, attr_setter, ClassDict
 
 link_name = dict(
     col_widths='{}',
@@ -18,9 +18,10 @@ class ContactDisplayFormTemplate(ColumnPanel):
         self.link_name = Link(**link_name)
         self.label_email = Label(**label_email)
         self._bindings = databindings
-        self._item = {}
+        self._item = ClassDict()
 
-        self._item = {}
+        if properties.get('item', None) is not None:
+            self.item = properties['item']
 
     @property
     def item(self):

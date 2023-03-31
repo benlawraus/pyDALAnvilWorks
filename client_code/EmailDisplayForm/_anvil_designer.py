@@ -1,5 +1,5 @@
 from anvil import *
-from _anvil_designer.common_structures import attr_getter, attr_setter
+from _anvil_designer.common_structures import attr_getter, attr_setter, ClassDict
 
 label_1 = dict(
     role='headline',
@@ -53,9 +53,10 @@ class EmailDisplayFormTemplate(ColumnPanel):
         self.repeating_panel_1 = RepeatingPanel(**repeating_panel_1)
         self.data_grid_1 = DataGrid(**data_grid_1)
         self._bindings = databindings
-        self._item = {}
+        self._item = ClassDict()
 
-        self._item = {}
+        if properties.get('item', None) is not None:
+            self.item = properties['item']
 
     @property
     def item(self):

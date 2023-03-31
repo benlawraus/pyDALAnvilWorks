@@ -1,3 +1,5 @@
+from typing import Optional
+
 from .anvilUsers import *
 
 """Functions here over-write functions defined in _anvil_designer/componentsUI/anvilUsers"""
@@ -34,6 +36,15 @@ def logout(user=None):
     mydal.db.commit()
     return
 
+def pytest_identifier(warning:bool=False)->Optional[str]:
+    """Returns a test name for the current test
+    :param warning: If True, a warning is issued if PYTEST_CURRENT_TEST identifier is null
+    """
+    current_test = os.getenv('PYTEST_CURRENT_TEST')
+    if warning and (current_test is None or len(current_test) == 0):
+        warn("PYTEST_CURRENT_TEST is null. This is not a test?")
+        return None
+    return current_test
 
 def force_login(user_row, remember=False):
     """Set the specified user object (a row from a Data Table) as the current logged-in user.
@@ -43,9 +54,7 @@ def force_login(user_row, remember=False):
                               Field('pid', type='integer'),
                               Field('pytest', 'string'))
     pid = os.getpid()
-    current_test = os.getenv('PYTEST_CURRENT_TEST')
-    if current_test is None or len(current_test) == 0:
-        raise ValueError("PYTEST_CURRENT_TEST is null")
+    current_test = pytest_identifier(warning=True)
     login = mydal.db((mydal.db.logged_in_users.pid == pid) & (mydal.db.logged_in_users.pytest == current_test)).select()
     if len(login) == 0:
         new_log = mydal.db.logged_in_users.insert(user_ref=user_row,
@@ -71,7 +80,8 @@ def get_user(allow_remembered=True) -> pydal.helpers.classes.Reference:
     def get_user_with_pid():
         pid = os.getpid()
         current_test = os.getenv('PYTEST_CURRENT_TEST')
-        assert current_test
+        # if not current_test:
+        #     current_test = 'notest'
         if 'logged_in_users' not in mydal.db.tables:
             return None
         query = (mydal.db.logged_in_users.pid == pid) & \

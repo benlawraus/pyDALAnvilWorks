@@ -10,7 +10,6 @@ class order_by:
         self.order = '|'.join(args)
         self.kwargs = kwargs
 
-
 class BaseFunction:
     """Saving rows and getting rows to/from the database"""
 
@@ -75,21 +74,28 @@ class BaseFunction:
         else:
             return val
 
+    def _orderby(self, arg):
+        ord_for = arg.order.split('|')
+        _o = mydal.db[self.table_name][ord_for[0]]
+        if len(ord_for) > 1:
+            for f in ord_for[1:]:
+                _o |= mydal.db[self.table_name][f]
+        if 'ascending' in arg.kwargs:
+            if not arg.kwargs['ascending']:
+                _o = ~_o
+        return _o
+
+
     def search(self, *args, **kwargs):
-        orderby = {}
+        _orderby = {}
+        _fetch_only = None
         self.query = None
         if len(args) > 0:
             for arg in args:
                 if isinstance(arg, order_by):
-                    ord_for = arg.order.split('|')
-                    _o = mydal.db[self.table_name][ord_for[0]]
-                    if len(ord_for) > 1:
-                        for f in ord_for[1:]:
-                            _o |= mydal.db[self.table_name][f]
-                    if 'ascending' in arg.kwargs:
-                        if not arg.kwargs['ascending']:
-                            _o = ~_o
-                    orderby = {'orderby': _o}
+                    _orderby = {'orderby': self._orderby(arg)}
+                elif isinstance(arg, fetch_only):
+                    _fetch_only = arg.args
                 else:
                     self.query = self.add_to_query(None, arg)
         #
@@ -100,7 +106,9 @@ class BaseFunction:
                 self.query = self.add_to_query(key, kwargs[key])
         if self.query is None and len(orderby)==0:
             self.query = mydal.db[self.table_name]['id'] != None
-        return mydal.db(self.query).select(**orderby)
+        if _fetch_only:
+            return mydal.db(self.query).select(*_fetch_only, **_orderby)
+        return mydal.db(self.query).select(**_orderby)
 
     def get(self, **kwargs) -> Optional[pydal.objects.Row]:
         return mydal.db[self.table_name](**kwargs)

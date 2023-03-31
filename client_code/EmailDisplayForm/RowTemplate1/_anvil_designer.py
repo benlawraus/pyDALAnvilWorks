@@ -1,5 +1,5 @@
 from anvil import *
-from _anvil_designer.common_structures import attr_getter, attr_setter
+from _anvil_designer.common_structures import attr_getter, attr_setter, ClassDict
 
 databindings = [
 ]
@@ -8,9 +8,10 @@ class RowTemplate1Template(DataRowPanel):
     def __init__(self, **properties):
         super(RowTemplate1Template, self).__init__()
         self._bindings = databindings
-        self._item = {}
+        self._item = ClassDict()
 
-        self._item = {}
+        if properties.get('item', None) is not None:
+            self.item = properties['item']
 
     @property
     def item(self):

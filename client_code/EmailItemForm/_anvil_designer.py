@@ -1,5 +1,5 @@
 from anvil import *
-from _anvil_designer.common_structures import attr_getter, attr_setter
+from _anvil_designer.common_structures import attr_getter, attr_setter, ClassDict
 
 label_email = dict(
     role=None,
@@ -129,9 +129,10 @@ class EmailItemFormTemplate(ColumnPanel):
         self.radio_button_3 = RadioButton(**radio_button_3)
         self.column_panel_1 = ColumnPanel(**column_panel_1)
         self._bindings = databindings
-        self._item = {}
+        self._item = ClassDict()
 
-        self._item = {}
+        if properties.get('item', None) is not None:
+            self.item = properties['item']
 
     @property
     def item(self):

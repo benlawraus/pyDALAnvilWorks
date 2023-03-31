@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from math import pi as PI
-from typing import Dict, List
+from typing import Dict, List, Optional
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -752,7 +752,7 @@ class Notification:
     message: String = "undefined"
     title: String = ""
     style: String = "info"
-    timeout: Number = 2
+    timeout: Optional[Number] = 2
 
     def __enter__(self):
         """Show the notification when entering a ‘with’ block		"""

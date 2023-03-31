@@ -65,3 +65,7 @@ class any_of:
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
+
+class fetch_only:
+    def __init__(self, *args):
+        self.args = args

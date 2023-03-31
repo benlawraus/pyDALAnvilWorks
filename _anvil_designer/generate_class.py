@@ -183,7 +183,7 @@ class CatalogCard:
 def format_import_list(of_type: str, form_name: str) -> str:
     modules = of_type.split('.')
     # print(len(MODULE_PATH[parent].parts), len(modules))
-    nr_dots = '.' * (len(MODULE_PATH[form_name].parts)+2 - len(modules))
+    nr_dots = '.' * (len(MODULE_PATH[form_name].parts) + 1)
     return f"from {nr_dots}{of_type} import {modules[-1]}"
 
 
@@ -208,7 +208,7 @@ def add_databindings(value: sy.YAML) -> List[Dict]:
 def lowest_level_component(value: sy.YAML,
                            parent: str,
                            import_list: List[str],
-                           form_name:str) -> CatalogCard:
+                           form_name: str) -> CatalogCard:
     """Derives dict from `value`. `value` has to have `type`
 
     Parameters
@@ -287,8 +287,6 @@ def databindings_as_string(databindings) -> str:
 
 ItemGetterSetter = namedtuple('ItemGetterSetter', ['defs', 'imports'])
 item_getter_setter = ItemGetterSetter("""
-        self._item = {}
-
     @property
     def item(self):
         return attr_getter(self, 'item')
@@ -297,7 +295,13 @@ item_getter_setter = ItemGetterSetter("""
     def item(self, some_dict):
         attr_setter(self, some_dict, 'item')
         return
-""", "from _anvil_designer.common_structures import attr_getter, attr_setter")
+""", "from _anvil_designer.common_structures import attr_getter, attr_setter, ClassDict")
+
+def add_properties_to_item() -> str:
+    return f"""
+{TAB}{TAB}if properties.get('item', None) is not None:
+{TAB}{TAB}{TAB}self.item = properties['item']
+"""
 
 
 def form_the__init__str(catalog: OrderedDict[str, CatalogCard], form_name: str) -> Tuple[str, str]:
@@ -316,14 +320,9 @@ def form_the__init__str(catalog: OrderedDict[str, CatalogCard], form_name: str) 
     databindings_as_str = databindings_as_string(databindings)
     default_string += databindings_as_str
     attr_string += f"{TAB}{TAB}self._bindings = databindings\n"
-    attr_string += f"{TAB}{TAB}self._item = {{}}\n"
+    attr_string += f"{TAB}{TAB}self._item = ClassDict()\n"
+    attr_string += add_properties_to_item()
     attr_string += item_getter_setter.defs
-    #     f"""
-    # {TAB}{TAB}if len(self.__bindings) >0:
-    # {TAB}{TAB}{TAB}self.item = binding_property('item')
-    # {TAB}{TAB}if properties.get('item', None):
-    # {TAB}{TAB}    self.item = properties['item']
-    #     """
     return attr_string, default_string
 
 

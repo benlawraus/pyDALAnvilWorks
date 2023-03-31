@@ -1,5 +1,5 @@
 from anvil import *
-from _anvil_designer.common_structures import attr_getter, attr_setter
+from _anvil_designer.common_structures import attr_getter, attr_setter, ClassDict
 
 link_signin = dict(
     role=None,
@@ -109,9 +109,10 @@ class HomeFormTemplate(HtmlTemplate):
         self.content_panel = ColumnPanel(**content_panel)
         self.menu_panel = ColumnPanel(**menu_panel)
         self._bindings = databindings
-        self._item = {}
+        self._item = ClassDict()
 
-        self._item = {}
+        if properties.get('item', None) is not None:
+            self.item = properties['item']
 
     @property
     def item(self):
