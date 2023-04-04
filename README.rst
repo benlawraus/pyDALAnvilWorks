@@ -1,1 +1,1 @@
-Project moved to [anvil_works_design_test](https::github.com/benlawraus/anvil_works_design_test)
+Project moved to `anvil_works_design_test <https://github.com/benlawraus/anvil_works_design_test>`_
